@@ -42,6 +42,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .auth-submit{width:100%;padding:0.85rem;background:linear-gradient(135deg,rgba(184,146,58,0.9),rgba(106,142,127,0.7));border-radius:3px;font-family:'IM Fell English',serif;font-size:1.15rem;color:var(--ink);letter-spacing:0.06em;transition:opacity 0.2s,transform 0.1s}
 .auth-submit:hover{opacity:0.88;transform:translateY(-1px)}
 .auth-submit:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+/* Verification pending state */
 .auth-verify-box{display:flex;flex-direction:column;align-items:center;gap:1rem;padding:0.5rem 0;text-align:center}
 .auth-verify-icon{font-size:2.2rem;opacity:0.7}
 .auth-verify-title{font-family:'IM Fell English',serif;font-size:1.3rem;color:var(--gold)}
@@ -50,47 +51,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .auth-resend-btn:disabled{opacity:0.5;cursor:not-allowed}
 .auth-footer-note{font-family:'Inter',sans-serif;font-style:italic;font-size:0.78rem;color:rgba(122,110,100,0.65);text-align:center;line-height:1.5}
 
-/* ── TOP BAR (Merged and Centered) ──────────────────────────────── */
-#topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 500;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.75rem;
-  height: 46px;
-  background: rgba(14,12,11,0.75);
-  backdrop-filter: blur(8px);
-  border-bottom: 0.5px solid rgba(184,146,58,0.1);
-}
-.topbar-brand {
-  font-family: 'IM Fell English', serif;
-  font-size: 1.15rem;
-  color: var(--gold);
-  letter-spacing: 0.08em;
-  opacity: 0.8;
-}
-.story-meta {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'Cormorant SC', serif;
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  pointer-events: none;
-}
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-.restart-btn{font-family:'Cormorant SC',serif;font-size:0.75rem;letter-spacing:0.1em;color:var(--text-dim);border:0.5px solid rgba(255,255,255,0.1);border-radius:2px;padding:4px 12px;transition:color 0.2s,border-color 0.2s}
-.restart-btn:hover{color:var(--vellum);border-color:rgba(255,255,255,0.2)}
+/* ── TOP BAR ────────────────────────────────────────────────────── */
+#topbar{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;height:46px;background:rgba(14,12,11,0.75);backdrop-filter:blur(8px);border-bottom:0.5px solid rgba(184,146,58,0.1)}
+.topbar-brand{font-family:'IM Fell English',serif;font-size:1.15rem;color:var(--gold);letter-spacing:0.08em;opacity:0.8}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.topbar-user{font-family:'Inter',sans-serif;font-size:0.78rem;color:var(--text-dim)}
+.topbar-user .verified-badge{display:inline-block;width:7px;height:7px;background:var(--sage);border-radius:50%;margin-left:5px;vertical-align:middle;title:'Email verified'}
 .topbar-logout{font-family:'Cormorant SC',serif;font-size:0.72rem;letter-spacing:0.1em;color:var(--text-dim);border:0.5px solid rgba(255,255,255,0.12);border-radius:2px;padding:4px 12px;transition:color 0.2s,border-color 0.2s}
 .topbar-logout:hover{color:var(--rose);border-color:rgba(184,114,90,0.4)}
 
@@ -118,27 +84,20 @@ select.inp{appearance:none;-webkit-appearance:none;background-image:url("data:im
 select.inp option{background:#1C1917;color:var(--vellum)}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
 
-/* Vocab textarea wrapper */
-.vocab-wrap{position:relative;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;overflow:hidden;background:rgba(255,255,255,0.03);transition:border-color 0.2s}
-.vocab-wrap:focus-within{border-color:rgba(184,146,58,0.55)}
-.vocab-textarea{width:100%;background:transparent;border:none;padding:0.8rem 0.9rem 2.5rem 0.9rem;color:var(--vellum);font-size:0.98rem;line-height:1.7;resize:vertical;min-height:200px}
-
-/* Custom scrollbar */
-.vocab-textarea::-webkit-scrollbar{width:8px}
-.vocab-textarea::-webkit-scrollbar-track{background:rgba(0,0,0,0.15)}
-.vocab-textarea::-webkit-scrollbar-thumb{background:rgba(184,146,58,0.25);border-radius:4px}
-.vocab-textarea::-webkit-scrollbar-thumb:hover{background:rgba(184,146,58,0.45)}
-
-/* Fixed transparent background overlay */
-.vocab-status{position:absolute;bottom:0;left:0;right:0;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;border-top:0.5px solid rgba(184,146,58,0.15);background:linear-gradient(to bottom, #1e1c19, #16140f)}
-.vocab-status-left{display:flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;font-size:0.72rem;line-height:1}
+/* Vocab textarea wrapper — for the status tick */
+.vocab-wrap{position:relative}
+.vocab-textarea{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;padding:0.8rem 0.9rem 2rem 0.9rem;color:var(--vellum);font-size:0.98rem;line-height:1.7;resize:vertical;min-height:200px;transition:border-color 0.2s,background 0.2s}
+.vocab-textarea:focus{border-color:rgba(184,146,58,0.55);background:rgba(255,255,255,0.05)}
+.vocab-textarea::placeholder{color:rgba(242,232,217,0.28);font-style:italic}
+/* Status bar inside textarea bottom */
+.vocab-status{position:absolute;bottom:0;left:0;right:0;padding:4px 10px 5px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;border-top:0.5px solid rgba(184,146,58,0.1)}
+.vocab-status-left{display:flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;font-size:0.72rem}
 .vocab-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background 0.3s}
-.dot-idle{background:#5a544e} 
 .dot-ok{background:#6A8E7F}
 .dot-warn{background:#B8923A}
 .dot-err{background:#B8725A}
-.vocab-status-msg{color:rgba(242,232,217,0.45);transition:color 0.3s;display:inline-block;line-height:1}
-.vocab-status-count{font-family:'Inter',sans-serif;font-size:0.72rem;color:rgba(242,232,217,0.3);line-height:1}
+.vocab-status-msg{color:rgba(242,232,217,0.45);transition:color 0.3s}
+.vocab-status-count{font-family:'Inter',sans-serif;font-size:0.72rem;color:rgba(242,232,217,0.3)}
 
 /* Level pills */
 .level-pills{display:flex;gap:6px}
@@ -154,6 +113,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .key-note{font-family:'Inter',sans-serif;font-size:0.73rem;color:rgba(122,110,100,0.65);font-style:italic;line-height:1.5}
 .key-note a{color:var(--sage);text-decoration:none}
 .key-note a:hover{text-decoration:underline}
+.default-key-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(106,142,127,0.12);border:0.5px solid rgba(106,142,127,0.3);border-radius:20px;padding:3px 10px;font-family:'Inter',sans-serif;font-size:0.72rem;color:var(--sage);margin-top:0.3rem}
 
 /* Error + begin */
 .setup-error{font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--rose);min-height:1rem;text-align:center}
@@ -164,21 +124,21 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 
 /* ── STORY SCREEN ───────────────────────────────────────────────── */
 #story{min-height:100vh;padding-top:46px;display:flex;flex-direction:column;background:radial-gradient(ellipse 100% 50% at 50% 0%,rgba(184,146,58,0.06) 0%,transparent 55%),var(--ink)}
+.story-header{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 2rem;border-bottom:0.5px solid rgba(184,146,58,0.12);background:rgba(14,12,11,0.6);backdrop-filter:blur(6px)}
+.story-brand{font-family:'IM Fell English',serif;font-size:1.2rem;color:var(--gold);letter-spacing:0.08em;opacity:0.8}
+.story-meta{font-family:'Cormorant SC',serif;font-size:1rem;letter-spacing:0.12em;color:var(--text-dim);text-align:center}
+.restart-btn{font-family:'Cormorant SC',serif;font-size:0.75rem;letter-spacing:0.1em;color:var(--text-dim);border:0.5px solid rgba(255,255,255,0.1);border-radius:2px;padding:4px 12px;transition:color 0.2s,border-color 0.2s}
+.restart-btn:hover{color:var(--vellum);border-color:rgba(255,255,255,0.2)}
 .word-tracker{display:flex;align-items:center;gap:8px;padding:0.4rem 2rem;background:rgba(14,12,11,0.4);border-bottom:0.5px solid rgba(44,24,16,0.3);flex-wrap:wrap}
 .tracker-label{font-family:'Cormorant SC',serif;font-size:0.7rem;letter-spacing:0.1em;color:var(--text-dim)}
-
-/* Interactive Delete Action */
-.tracker-word{display:inline-flex;align-items:center;gap:4px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.88rem;color:rgba(242,232,217,0.35);padding:2px 10px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.08);transition:all 0.4s}
+.tracker-word{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.88rem;color:rgba(242,232,217,0.35);padding:2px 10px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.08);transition:all 0.4s}
 .tracker-word.seen{color:var(--gold);border-color:rgba(184,146,58,0.4);background:rgba(184,146,58,0.08)}
-.tracker-word-remove{font-family:'Inter', sans-serif;font-size:0.75rem;color:rgba(255,255,255,0.2);cursor:pointer;margin-left:2px;font-style:normal;line-height:1}
-.tracker-word-remove:hover{color:var(--rose)}
-
-.book{flex:1;display:grid;grid-template-columns:1fr 1.5px 1fr;max-width:1100px;width:100%;margin:0 auto} 
+.book{flex:1;display:grid;grid-template-columns:1fr 1.5px 1fr;max-width:1100px;width:100%;margin:0 auto}
 .book-gutter{background:linear-gradient(180deg,transparent 0%,rgba(184,146,58,0.15) 15%,rgba(184,146,58,0.08) 85%,transparent 100%);align-self:stretch}
 .page-left{padding:3rem 3rem 3rem 2.5rem;display:flex;flex-direction:column;gap:1.5rem}
 .chapter-label{font-family:'Cormorant SC',serif;font-size:0.72rem;letter-spacing:0.18em;color:var(--gold);opacity:0.75}
 .scene-title{font-family:'IM Fell English',serif;font-size:1.55rem;color:var(--vellum);line-height:1.3;font-style:italic}
-.scene-rule{height:0.5px;background:linear-gradient(90deg,rgba(184,146,58,0.355),transparent)}
+.scene-rule{height:0.5px;background:linear-gradient(90deg,rgba(184,146,58,0.35),transparent)}
 .narrative-body{font-family:'Cormorant Garamond',serif;font-size:1.12rem;line-height:1.9;color:rgba(242,232,217,0.82)}
 .narrative-body p{margin-bottom:1.1em}
 .narrative-body p:last-child{margin-bottom:0}
@@ -226,6 +186,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 
 <button id="vocab-tooltip">+ Add to Vocab</button>
 
+<!-- ══ AUTH MODAL ════════════════════════════════════════════════ -->
 <div id="auth-modal">
   <div class="auth-modal-box">
     <div class="auth-brand">
@@ -234,6 +195,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
       <div class="auth-brand-rule"></div>
     </div>
 
+    <!-- Sign-in / Sign-up form (shown until verified) -->
     <div id="auth-form-wrap">
       <div class="auth-tabs" style="margin-bottom:1.2rem">
         <button class="auth-tab active" id="tab-login">Sign In</button>
@@ -257,6 +219,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
       <button class="auth-submit" id="auth-submit-btn" style="margin-top:0.6rem">Sign In</button>
     </div>
 
+    <!-- Email verification pending (shown after signup) -->
     <div id="auth-verify-wrap" class="hidden">
       <div class="auth-verify-box">
         <div class="auth-verify-icon">✉</div>
@@ -272,15 +235,16 @@ select.inp option{background:#1C1917;color:var(--vellum)}
   </div>
 </div>
 
+<!-- ══ TOP BAR ═══════════════════════════════════════════════════ -->
 <div id="topbar" class="hidden">
   <span class="topbar-brand">Aesop</span>
-  <div class="story-meta hidden" id="story-meta">Chapter I · Scene 1</div>
   <div class="topbar-right">
-    <button class="restart-btn hidden" id="restart-btn">Close the book</button>
+    <span class="topbar-user" id="topbar-email"></span>
     <button class="topbar-logout" id="topbar-logout-btn">Sign out</button>
   </div>
 </div>
 
+<!-- ══ SETUP SCREEN ══════════════════════════════════════════════ -->
 <div id="setup" class="hidden">
   <div class="setup-wrap">
     <div class="masthead">
@@ -291,6 +255,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 
     <div class="setup-grid">
 
+      <!-- Column 1: Language + Level + API Key -->
       <div class="col-left">
         <div class="setup-card">
           <h2 class="card-header">Language & Level</h2>
@@ -324,6 +289,16 @@ select.inp option{background:#1C1917;color:var(--vellum)}
           </div>
           <div class="setup-divider"></div>
 
+          <!-- ═══════════════════════════════════════════════════════
+               API KEY SECTION
+               ─────────────────────────────────────────────────────
+               DEFAULT KEY CONFIGURATION:
+               Set DEFAULT_OPENAI_KEY or DEFAULT_GEMINI_KEY below to
+               provide a fallback key for users who don't have their own.
+               Leave as empty string '' to make the field required.
+               WARNING: this key will be visible in page source.
+               For production, proxy through a backend function instead.
+          ════════════════════════════════════════════════════════ -->
           <div class="field-group">
             <div class="api-toggle-row">
               <label class="field-label">AI Provider</label>
@@ -332,13 +307,17 @@ select.inp option{background:#1C1917;color:var(--vellum)}
                 <button class="api-provider-tab" data-provider="openai">ChatGPT</button>
               </div>
             </div>
-            <p class="field-hint" id="api-hint">Leave blank to route requests through FreeModel automatically.</p>
-            <input type="password" class="inp" id="api-key" placeholder="AIza… (Optional: Free fallback)" autocomplete="off" style="margin-top:0.3rem"/>
-            <p class="key-note" id="api-link-note">Get a dedicated key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a></p>
+            <p class="field-hint" id="api-hint">Optional if a default key is configured — enter yours for priority access</p>
+            <input type="password" class="inp" id="api-key" placeholder="AIza… or AQ…" autocomplete="off" style="margin-top:0.3rem"/>
+            <p class="key-note" id="api-link-note">Get a key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a></p>
+            <div id="default-key-indicator" class="hidden">
+              <span class="default-key-badge">✓ Default key available — your own key takes priority</span>
+            </div>
           </div>
         </div>
       </div>
 
+      <!-- Column 2: Vocabulary -->
       <div class="col-centre">
         <div class="setup-card" style="height:100%">
           <h2 class="card-header">Vocabulary & Expressions</h2>
@@ -349,8 +328,8 @@ select.inp option{background:#1C1917;color:var(--vellum)}
               <textarea class="vocab-textarea" id="vocab-textarea" placeholder="serendipity&#10;come hell or high water&#10;der Augenblick&#10;脱線する&#10;&#10;One per line or comma-separated…"></textarea>
               <div class="vocab-status">
                 <div class="vocab-status-left">
-                  <div class="vocab-status-dot dot-idle" id="vocab-dot"></div>
-                  <span class="vocab-status-msg" id="vocab-status-msg">not ready</span>
+                  <div class="vocab-status-dot dot-ok" id="vocab-dot"></div>
+                  <span class="vocab-status-msg" id="vocab-status-msg">ready</span>
                 </div>
                 <span class="vocab-status-count" id="vocab-count">0 / 30</span>
               </div>
@@ -365,6 +344,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
         </div>
       </div>
 
+      <!-- Column 3: Summary + Begin -->
       <div class="col-right">
         <div class="setup-card">
           <h2 class="card-header">Ready to begin?</h2>
@@ -400,7 +380,13 @@ select.inp option{background:#1C1917;color:var(--vellum)}
   </div>
 </div>
 
+<!-- ══ STORY SCREEN ══════════════════════════════════════════════ -->
 <div id="story" class="hidden">
+  <div class="story-header">
+    <span class="story-brand">Aesop</span>
+    <div class="story-meta" id="story-meta">Chapter I</div>
+    <button class="restart-btn" id="restart-btn">Close the book</button>
+  </div>
   <div class="word-tracker" id="word-tracker"><span class="tracker-label">words ·</span></div>
   <div class="book">
     <div class="page-left" id="page-left"><div class="thinking-text">The story is being written…</div></div>
@@ -426,6 +412,17 @@ import { getAuth,
          onAuthStateChanged,
          reload as reloadUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+/* ════════════════════════════════════════════════════════════════
+   DEFAULT API KEYS  ← safe to set here for development / demo use
+   For production: move these to a backend proxy and remove them here.
+   ──────────────────────────────────────────────────────────────
+   Set either (or both) to a non-empty string to provide a fallback
+   key for users who don't supply their own. Users' own keys always
+   take priority over these defaults.
+════════════════════════════════════════════════════════════════ */
+const DEFAULT_GEMINI_KEY = '';   // e.g. 'AIzaSy...'  ← paste your Gemini key here
+const DEFAULT_OPENAI_KEY = '';   // e.g. 'sk-proj-...' ← paste your OpenAI key here
+
 /* ── Firebase ──────────────────────────────────────────────────── */
 const firebaseConfig = {
   apiKey: "AIzaSyCLAxH6tbIWhIaa9Ah_wNmEfE4T-b3Ba2M",
@@ -445,9 +442,7 @@ const state = {
   apiKey:'', provider:'gemini',
   targetLang:'German', nativeLang:'English',
   level:'beginner', words:[], setting:'',
-  scene:0, maxScenes:10, streaming:false, currentUser:null,
-  isUsingProxy: false,
-  rollingSummary: '' // Replaces huge state.history array memory allocations
+  history:[], scene:0, maxScenes:10, streaming:false, currentUser:null
 };
 const MAX_WORDS = 30;
 
@@ -455,7 +450,7 @@ const MAX_WORDS = 30;
    AUTH MODAL
 ════════════════════════════════════════════════════════════════ */
 let isSignup = false;
-let pendingUser = null; 
+let pendingUser = null; // holds unverified user while awaiting verification
 
 const tabLogin    = document.getElementById('tab-login');
 const tabSignup   = document.getElementById('tab-signup');
@@ -480,6 +475,7 @@ function setAuthMode(signup) {
 tabLogin.addEventListener('click',  () => setAuthMode(false));
 tabSignup.addEventListener('click', () => setAuthMode(true));
 
+/* Show verification pending screen */
 function showVerifyScreen(email) {
   formWrap.classList.add('hidden');
   verifyWrap.classList.remove('hidden');
@@ -487,13 +483,15 @@ function showVerifyScreen(email) {
   authInfo.textContent = '';
 }
 
+/* Back to form from verify screen */
 document.getElementById('auth-back-btn').addEventListener('click', () => {
   verifyWrap.classList.add('hidden');
   formWrap.classList.remove('hidden');
-  setAuthMode(false);
+  setAuthMode(false); // switch to sign-in mode
   if (pendingUser) { signOut(auth); pendingUser = null; }
 });
 
+/* Resend verification email */
 const resendBtn = document.getElementById('auth-resend-btn');
 let resendCooldown = 0;
 resendBtn.addEventListener('click', async () => {
@@ -517,6 +515,7 @@ resendBtn.addEventListener('click', async () => {
   }
 });
 
+/* Main submit */
 submitBtn.addEventListener('click', async () => {
   const email = authEmail.value.trim();
   const pass  = authPass.value;
@@ -533,17 +532,21 @@ submitBtn.addEventListener('click', async () => {
       await sendEmailVerification(cred.user);
       authEmail.value = ''; authPass.value = ''; authConfirm.value = '';
       showVerifyScreen(email);
+      // Sign them out immediately — they must verify before accessing
       await signOut(auth);
     } else {
       const cred = await signInWithEmailAndPassword(auth, email, pass);
+      // Reload to get fresh emailVerified status
       await reloadUser(cred.user);
       if (!cred.user.emailVerified) {
         pendingUser = cred.user;
+        // Send a fresh verification link in case the old one expired
         await sendEmailVerification(cred.user);
         await signOut(auth);
         authError.textContent = '';
         showVerifyScreen(email);
       }
+      // If verified, onAuthStateChanged will handle the rest
     }
   } catch(err) {
     const msgs = {
@@ -565,26 +568,30 @@ submitBtn.addEventListener('click', async () => {
   el.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.click(); })
 );
 
+/* Auth state — only allow verified users through */
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    await reloadUser(user);
+    await reloadUser(user); // always get fresh state
     if (!user.emailVerified) {
+      // Logged in but not verified — sign them out, show verify screen
       pendingUser = user;
       showVerifyScreen(user.email);
       await signOut(auth);
       return;
     }
+    // Verified user
     state.currentUser = user;
     const modal = document.getElementById('auth-modal');
     modal.classList.add('fading');
     setTimeout(() => modal.classList.add('hidden'), 300);
-    
     document.getElementById('topbar').classList.remove('hidden');
+    const emailSpan = document.getElementById('topbar-email');
+    emailSpan.innerHTML = `${escHtml(user.email)}<span class="verified-badge" title="Email verified"></span>`;
     document.getElementById('setup').classList.remove('hidden');
   } else {
     state.currentUser = null;
     const modal = document.getElementById('auth-modal');
-    if (!verifyWrap.classList.contains('hidden')) return;
+    if (!verifyWrap.classList.contains('hidden')) return; // stay on verify screen
     modal.classList.remove('hidden','fading');
     document.getElementById('topbar').classList.add('hidden');
     document.getElementById('setup').classList.add('hidden');
@@ -602,15 +609,26 @@ function updateApiUI(provider) {
   document.querySelectorAll('.api-provider-tab').forEach(t => t.classList.toggle('active', t.dataset.provider === provider));
   const inp = document.getElementById('api-key');
   const hint = document.getElementById('api-hint');
+  const linkNote = document.getElementById('api-link-note');
+  const link = document.getElementById('api-link');
+  const indicator = document.getElementById('default-key-indicator');
   const summaryAi = document.getElementById('summary-ai');
 
   if (provider === 'gemini') {
-    inp.placeholder = 'AIza… (Optional: Free fallback)';
-    hint.textContent = 'Leave blank to route requests through FreeModel automatically.';
+    inp.placeholder = 'AIza… or AQ…';
+    link.href = 'https://aistudio.google.com/app/apikey';
+    link.textContent = 'aistudio.google.com';
+    const hasDefault = DEFAULT_GEMINI_KEY.length > 0;
+    indicator.classList.toggle('hidden', !hasDefault);
+    hint.textContent = hasDefault ? 'Optional — a default key is available. Your own key takes priority.' : 'Enter your Gemini API key';
     summaryAi.textContent = 'Gemini 2.5 Flash';
   } else {
-    inp.placeholder = 'sk-proj-… (Optional: Free fallback)';
-    hint.textContent = 'Leave blank to route requests through FreeModel automatically.';
+    inp.placeholder = 'sk-proj-…';
+    link.href = 'https://platform.openai.com/api-keys';
+    link.textContent = 'platform.openai.com';
+    const hasDefault = DEFAULT_OPENAI_KEY.length > 0;
+    indicator.classList.toggle('hidden', !hasDefault);
+    hint.textContent = hasDefault ? 'Optional — a default key is available. Your own key takes priority.' : 'Enter your OpenAI API key';
     summaryAi.textContent = 'GPT-4o';
   }
   inp.value = '';
@@ -619,6 +637,7 @@ function updateApiUI(provider) {
 document.querySelectorAll('.api-provider-tab').forEach(btn =>
   btn.addEventListener('click', () => updateApiUI(btn.dataset.provider))
 );
+// Init with default state
 updateApiUI('gemini');
 
 /* ════════════════════════════════════════════════════════════════
@@ -637,6 +656,14 @@ document.getElementById('target-lang').addEventListener('change', e => {
   document.getElementById('summary-lang').textContent = e.target.value;
 });
 
+/* ── Vocab textarea with inline status indicator ─────────────────
+   Status rules:
+   - Empty         → grey dot,  "ready"
+   - 1–30 valid    → green dot, "{n} word(s)"
+   - Duplicates    → amber dot, "{n} duplicates removed"
+   - Over limit    → red dot,   "max 30 — {n} trimmed"
+   - Blank lines only → grey dot, "ready"
+─────────────────────────────────────────────────────────────── */
 const vocabTextarea = document.getElementById('vocab-textarea');
 const vocabDot      = document.getElementById('vocab-dot');
 const vocabMsg      = document.getElementById('vocab-status-msg');
@@ -648,12 +675,15 @@ function parseVocabTextarea() {
   const raw = vocabTextarea.value;
   if (!raw.trim()) {
     state.words = [];
-    setVocabStatus('idle', 'not ready', 0);
+    setVocabStatus('idle', 'ready', 0);
     updateSummaryWords();
     return;
   }
 
+  // Split on newlines and commas
   const raw_items = raw.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
+
+  // Detect duplicates (case-insensitive)
   const seen = new Map();
   const unique = [];
   let dupCount = 0;
@@ -663,6 +693,7 @@ function parseVocabTextarea() {
     else dupCount++;
   });
 
+  // Check limit
   let trimmed = 0;
   let final = unique;
   if (unique.length > MAX_WORDS) {
@@ -672,6 +703,7 @@ function parseVocabTextarea() {
 
   state.words = final;
 
+  // Set status
   if (trimmed > 0) {
     setVocabStatus('err', `max ${MAX_WORDS} — ${trimmed} trimmed`, final.length);
   } else if (dupCount > 0) {
@@ -682,8 +714,8 @@ function parseVocabTextarea() {
   updateSummaryWords();
 }
 
-function setVocabStatus(statusType, msg, count) {
-  vocabDot.className = 'vocab-status-dot ' + (statusType==='ok'?'dot-ok':statusType==='warn'?'dot-warn':statusType==='err'?'dot-err':'dot-idle');
+function setVocabStatus(state, msg, count) {
+  vocabDot.className = 'vocab-status-dot ' + (state==='ok'?'dot-ok':state==='warn'?'dot-warn':state==='err'?'dot-err':'dot-ok');
   vocabMsg.textContent = msg;
   vocabCount.textContent = `${count} / ${MAX_WORDS}`;
 }
@@ -693,41 +725,34 @@ function updateSummaryWords() {
     state.words.length === 0 ? '0 entries' : `${state.words.length} entr${state.words.length===1?'y':'ies'}`;
 }
 
+/* ── Begin story ─────────────────────────────────────────────── */
 document.getElementById('begin-btn').addEventListener('click', beginStory);
 
 function beginStory() {
-  const userKey = document.getElementById('api-key').value.trim();
   const errEl = document.getElementById('setup-error');
   errEl.textContent = '';
   if (!state.currentUser) { errEl.textContent = 'Please sign in first.'; return; }
   if (state.words.length === 0) { errEl.textContent = 'Add at least one vocabulary word or expression.'; return; }
 
-  if (!userKey) {
-    state.apiKey = "fe_oa_fd1541103abadcbf97848c304e0ecd3ddb367baaa74f1467"; 
-    state.isUsingProxy = true;
+  // Resolve API key: user's own key takes priority, then default
+  const userKey = document.getElementById('api-key').value.trim();
+  if (state.provider === 'gemini') {
+    const key = userKey || DEFAULT_GEMINI_KEY;
+    if (!key) { errEl.textContent = 'A Gemini API key is required (or set a default in the code).'; return; }
+    state.apiKey = key;
   } else {
-    if (state.provider === 'gemini' && !userKey.startsWith('AIza') && !userKey.startsWith('AQ')) {
-      errEl.textContent = 'That doesn\'t look like a valid Gemini key.';
-      return;
-    }
-    state.apiKey = userKey;
-    state.isUsingProxy = false;
+    const key = userKey || DEFAULT_OPENAI_KEY;
+    if (!key) { errEl.textContent = 'An OpenAI API key is required (or set a default in the code).'; return; }
+    state.apiKey = key;
   }
 
   state.targetLang = document.getElementById('target-lang').value;
   state.nativeLang = document.getElementById('native-lang').value;
   state.setting    = document.getElementById('setting').value.trim();
-  state.scene = 0;
-  state.rollingSummary = ''; 
+  state.history = []; state.scene = 0;
 
-  // Transition layouts
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('story').classList.remove('hidden');
-  
-  // Show header content states
-  document.getElementById('story-meta').classList.remove('hidden');
-  document.getElementById('restart-btn').classList.remove('hidden');
-  
   buildWordTracker();
   generateScene();
 }
@@ -735,10 +760,6 @@ function beginStory() {
 function showSetupScreen() {
   document.getElementById('story').classList.add('hidden');
   document.getElementById('setup').classList.remove('hidden');
-  
-  // Revert header content states
-  document.getElementById('story-meta').classList.add('hidden');
-  document.getElementById('restart-btn').classList.add('hidden');
 }
 document.getElementById('restart-btn').addEventListener('click', showSetupScreen);
 
@@ -748,22 +769,12 @@ document.getElementById('restart-btn').addEventListener('click', showSetupScreen
 function buildWordTracker() {
   const tracker = document.getElementById('word-tracker');
   tracker.innerHTML = '<span class="tracker-label">words ·</span>';
-  state.words.forEach((w, index) => {
+  state.words.forEach(w => {
     const span = document.createElement('span');
     span.className = 'tracker-word';
-    span.innerHTML = `${escHtml(w)}<span class="tracker-word-remove" data-index="${index}">×</span>`; 
+    span.textContent = w;
     span.dataset.word = w.toLowerCase();
     tracker.appendChild(span);
-  });
-
-  tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const targetIdx = parseInt(btn.dataset.index);
-      state.words.splice(targetIdx, 1); 
-      buildWordTracker(); 
-      markWordsUsed(); 
-    });
   });
 }
 
@@ -841,11 +852,6 @@ DIRECTIVES:
 - The story has no fixed length. From scene 5 to scene 10, conclude naturally when the arc is complete. Set "is_final": true on the concluding scene.
 - Respond with raw valid JSON only. No markdown fences, no extra text.
 
-CRITICAL PAYLOAD COMPRESSION DIRECTIVE:
-You must maintain a brief summary of the narrative development for internal tracking. 
-In your JSON response payload, output a highly condensed one-sentence background summary inside the "context_summary" parameter string. 
-This summary must encompass all vital past narrative developments plus the most immediate scene choices.
-
 JSON SCHEMA:
 {
   "chapter": "short evocative title in ${targetLang}",
@@ -856,8 +862,7 @@ JSON SCHEMA:
     {"id":"II",  "text":"choice in ${targetLang}", "gloss":"optional brief ${nativeLang} gloss"},
     {"id":"III", "text":"choice in ${targetLang}", "gloss":"optional brief ${nativeLang} gloss"}
   ],
-  "is_final": false,
-  "context_summary": "1-sentence condensed summary of the overarching plot progression up to this moment, written in English for system context memory retention blocks"
+  "is_final": false
 }`;
 }
 
@@ -874,21 +879,16 @@ async function generateScene(chosenText = null) {
   showChoiceLoading();
 
   const isHardCeiling = state.scene >= state.maxScenes;
-  
-  let userMsg = "";
-  if (state.scene === 1) {
-    userMsg = `Begin the narrative. Setting: ${state.setting || 'An evocative and mysterious environment suited for discovery'}. Targeting these vocabulary tokens: ${state.words.join(', ')}. Draft scene 1.`;
-  } else {
-    userMsg = `Advance the plot progression pipeline framework. Overarching background history summary so far: "${state.rollingSummary}". The user chose this branch choice option path string: "${chosenText}". ${isHardCeiling ? 'This is the final scene — conclude the story now. Set is_final true, omit choices.' : 'Write the next scene. You may conclude naturally if the arc is complete.'}`;
-  }
+  const userMsg = state.history.length === 0
+    ? `Begin the narrative. Setting: ${state.setting || 'An evocative and mysterious environment suited for discovery'}. Targeting: ${state.words.join(', ')}. Draft scene 1.`
+    : `Advance the story. The reader chose: "${chosenText}". ${isHardCeiling ? 'This is the final scene — conclude the story now. Set is_final true, omit choices.' : 'Write the next scene. You may conclude naturally if the arc is complete.'}`;
 
   try {
-    const raw = await callAI(buildSystemPrompt(), userMsg);
+    const raw = await callAI(buildSystemPrompt(), state.history, userMsg);
+    state.history.push({ role:'user', content:userMsg });
+    state.history.push({ role:'assistant', content:raw });
     const scene = parseScene(raw);
     if (!scene) throw new Error('The model returned an unexpected format.');
-    
-    state.rollingSummary = scene.context_summary || ''; 
-    
     renderScene(scene, isHardCeiling);
   } catch(err) {
     pageLeft.innerHTML = `<p class="story-error">⚠ ${escHtml(err.message)}</p>`;
@@ -957,8 +957,8 @@ function onChoiceClick(card) {
   if (state.streaming) return;
   document.querySelectorAll('.choice-card').forEach(c => { c.classList.add('disabled'); c.removeEventListener('click', onChoiceClick); });
   card.classList.add('chosen');
-  const pageLeft = document.getElementById('page-left');
-  pageLeft.insertAdjacentHTML('beforeend', `<div class="scene-rule" style="margin:0.75rem 0"></div><p class="chapter-label" style="font-style:italic">» ${card.dataset.text}</p>`);
+  document.getElementById('page-left').insertAdjacentHTML('beforeend',
+    `<div class="scene-rule" style="margin:0.75rem 0"></div><p class="chapter-label" style="font-style:italic">» ${card.dataset.text}</p>`);
   setTimeout(() => generateScene(card.dataset.text), 350);
 }
 
@@ -975,101 +975,64 @@ function renderEnd(container) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   AI API TUNNEL 
+   AI API  — routes to Gemini or OpenAI based on state.provider
 ════════════════════════════════════════════════════════════════ */
-async function callAI(system, userMsg) {
-  let targetUrl = '';
-  let targetHeaders = { 'Content-Type': 'application/json' };
-  let payload = {};
+async function callAI(system, history, userMsg) {
+  if (state.provider === 'openai') return callOpenAI(system, history, userMsg);
+  return callGemini(system, history, userMsg);
+}
 
-  if (state.isUsingProxy) {
-    targetUrl = 'https://api.freemodel.dev/v1/chat/completions';
-    targetHeaders['Authorization'] = `Bearer ${state.apiKey}`;
+async function callGemini(system, history, userMsg) {
+  const contents = history.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }]
+  }));
+  contents.push({ role:'user', parts:[{ text:userMsg }] });
 
-    payload = {
-      model: 'openai-t1-sg',
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: userMsg }
-      ],
-      temperature: 0.82,
-      max_tokens: 2500,
-      response_format: { type: 'json_object' }
-    };
-  } else {
-    if (state.provider === 'openai') {
-      targetUrl = 'https://api.openai.com/v1/chat/completions';
-      targetHeaders['Authorization'] = `Bearer ${state.apiKey}`;
-      
-      payload = {
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user', content: userMsg }
-        ],
-        temperature: 0.82,
-        max_tokens: 2500,
-        response_format: { type: 'json_object' }
-      };
-    } else {
-      targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.apiKey}`;
-      
-      payload = {
-        contents: [
-          { role: 'user', parts: [{ text: userMsg }] }
-        ],
-        systemInstruction: { parts: [{ text: system }] },
-        generationConfig: { 
-          temperature: 0.82, 
-          maxOutputTokens: 2500, 
-          responseMimeType: 'application/json',
-          responseSchema: {
-            type: 'object',
-            properties: {
-              chapter: { type: 'string' },
-              narrative: { type: 'string' },
-              words_used: { type: 'array', items: { type: 'string' } },
-              choices: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string' },
-                    text: { type: 'string' },
-                    gloss: { type: 'string' }
-                  }
-                }
-              },
-              is_final: { type: 'boolean' },
-              context_summary: { type: 'string' }
-            }
-          }
-        }
-      };
-    }
-  }
-
-  const res = await fetch(targetUrl, {
-    method: 'POST',
-    headers: targetHeaders,
-    body: JSON.stringify(payload)
+  const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'x-goog-api-key': state.apiKey },
+    body: JSON.stringify({
+      contents,
+      systemInstruction: { parts:[{ text:system }] },
+      generationConfig:  { temperature:0.82, maxOutputTokens:2500, responseMimeType:'application/json' }
+    })
   });
-
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    const msg = err?.error?.message || `AI error ${res.status}`;
-    if (res.status === 401 || res.status === 403) throw new Error('API Authentication failed — confirm your credentials configuration parameters.');
-    if (res.status === 429) throw new Error('Rate limit reached. Wait a moment and try again.');
+    const err = await res.json().catch(()=>({}));
+    const msg = err?.error?.message || `Gemini error ${res.status}`;
+    if (res.status===403) throw new Error('Gemini key rejected — check it is enabled in Google AI Studio.');
+    if (res.status===429) throw new Error('Rate limit reached. Wait a moment and try again.');
     throw new Error(msg);
   }
+  return (await res.json()).candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
 
-  const data = await res.json();
-  
-  if (state.isUsingProxy || state.provider === 'openai') {
-    return data.choices?.[0]?.message?.content || '';
-  } else {
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+async function callOpenAI(system, history, userMsg) {
+  const messages = [
+    { role:'system', content:system },
+    ...history.map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.content })),
+    { role:'user', content:userMsg }
+  ];
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'Authorization': `Bearer ${state.apiKey}` },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages,
+      temperature: 0.82,
+      max_tokens: 2500,
+      response_format: { type:'json_object' }
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({}));
+    const msg = err?.error?.message || `OpenAI error ${res.status}`;
+    if (res.status===401) throw new Error('OpenAI key rejected — check your key at platform.openai.com.');
+    if (res.status===429) throw new Error('Rate limit reached. Wait a moment and try again.');
+    throw new Error(msg);
   }
+  return (await res.json()).choices?.[0]?.message?.content || '';
 }
 
 /* ── Helpers ─────────────────────────────────────────────────── */
