@@ -1,0 +1,25 @@
+mutation CreateStory($title: String!, $content: String!, $wordListId: UUID!) @auth(level: USER) {
+  story_insert(data: {
+    title: $title,
+    content: $content,
+    userId_expr: "auth.uid",
+    wordListId: $wordListId
+  })
+}
+
+query GetMyStories @auth(level: USER) {
+  stories(where: {userId: {eq_expr: "auth.uid"}}) {
+    id
+    title
+    content
+    completionStatus
+  }
+}
+
+mutation UpdateStoryStatus($id: UUID!, $status: String!) @auth(level: USER) {
+  story_update(key: {id: $id}, data: {completionStatus: $status})
+}
+
+mutation DeleteStory($id: UUID!) @auth(level: USER) {
+  story_delete(key: {id: $id})
+}

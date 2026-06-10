@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aesop — Learn Through Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cormorant+SC:wght@300;400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ─────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1C1917; --ink-deep:#0E0C0B; --vellum:#F2E8D9; --vellum-dim:#E0D1BA;
+  --dust:#7A8C7F; --rose:#B8725A; --gold:#B8923A; --gold-dim:#7A6028;
+  --sage:#6A8E7F; --text-dim:#7A6E64; --border:rgba(44,24,16,0.15);
+}
+html{font-size:16px}
+body{background:var(--ink);color:var(--vellum);font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,textarea,select{font-family:'Cormorant Garamond',Georgia,serif;font-size:1rem;outline:none}
+.hidden{display:none!important}
+
+/* ── Grain overlay ─────────────────────────────────────────────── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.6}
+
+/* ══════════════════════════════════════════════════════════════════
+   AUTH MODAL
+══════════════════════════════════════════════════════════════════ */
+#auth-modal{
+  position:fixed;inset:0;z-index:8000;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(10,9,8,0.88);
+  backdrop-filter:blur(6px);
+  padding:1.5rem;
+  transition:opacity 0.3s;
+}
+#auth-modal.fading{opacity:0;pointer-events:none}
+
+.auth-modal-box{
+  width:100%;max-width:420px;
+  background:linear-gradient(160deg,#1e1c19,#16140f);
+  border:0.5px solid rgba(184,146,58,0.3);
+  border-radius:6px;
+  padding:2.5rem 2.5rem 2rem;
+  display:flex;flex-direction:column;gap:1.5rem;
+  box-shadow:0 24px 60px rgba(0,0,0,0.6);
+}
+.auth-brand{text-align:center}
+.auth-brand h2{font-family:'IM Fell English',serif;font-size:2.8rem;color:var(--vellum);letter-spacing:0.04em;line-height:1}
+.auth-brand p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--dust);margin-top:0.35rem}
+.auth-brand-rule{height:0.5px;background:linear-gradient(90deg,transparent,rgba(184,146,58,0.4),transparent);margin:0.5rem 0 0}
+
+.auth-tabs{display:flex;gap:0;border:0.5px solid rgba(184,146,58,0.2);border-radius:3px;overflow:hidden}
+.auth-tab{flex:1;padding:0.6rem;font-family:'Cormorant SC',serif;font-size:0.9rem;letter-spacing:0.08em;color:var(--text-dim);background:transparent;transition:all 0.2s;text-align:center}
+.auth-tab.active{background:rgba(184,146,58,0.14);color:var(--gold)}
+
+.auth-fields{display:flex;flex-direction:column;gap:0.85rem}
+.auth-field-label{font-family:'Cormorant SC',serif;font-size:0.7rem;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:0.3rem}
+.auth-inp{
+  width:100%;background:rgba(255,255,255,0.04);
+  border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;
+  padding:0.7rem 0.9rem;color:var(--vellum);font-size:1rem;
+  transition:border-color 0.2s;
+}
+.auth-inp:focus{border-color:rgba(184,146,58,0.55)}
+.auth-inp::placeholder{color:rgba(242,232,217,0.25);font-style:italic}
+.auth-error{font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--rose);min-height:1rem;text-align:center}
+.auth-submit{
+  width:100%;padding:0.85rem;
+  background:linear-gradient(135deg,rgba(184,146,58,0.9),rgba(106,142,127,0.7));
+  border-radius:3px;font-family:'IM Fell English',serif;font-size:1.15rem;
+  color:var(--ink);letter-spacing:0.06em;
+  transition:opacity 0.2s,transform 0.1s;
+}
+.auth-submit:hover{opacity:0.88;transform:translateY(-1px)}
+.auth-submit:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.auth-footer-note{font-family:'Inter',sans-serif;font-style:italic;font-size:0.78rem;color:rgba(122,110,100,0.7);text-align:center;line-height:1.5}
+
+/* ══════════════════════════════════════════════════════════════════
+   TOP BAR (shown on all screens once logged in)
+══════════════════════════════════════════════════════════════════ */
+#topbar{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.75rem;height:46px;
+  background:rgba(14,12,11,0.75);
+  backdrop-filter:blur(8px);
+  border-bottom:0.5px solid rgba(184,146,58,0.1);
+  transition:opacity 0.3s;
+}
+#topbar.hidden{display:none!important}
+.topbar-brand{font-family:'IM Fell English',serif;font-size:1.15rem;color:var(--gold);letter-spacing:0.08em;opacity:0.8}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.topbar-user{font-family:'Inter',sans-serif;font-size:0.78rem;color:var(--text-dim)}
+.topbar-logout{
+  font-family:'Cormorant SC',serif;font-size:0.72rem;letter-spacing:0.1em;
+  color:var(--text-dim);border:0.5px solid rgba(255,255,255,0.12);
+  border-radius:2px;padding:4px 12px;
+  transition:color 0.2s,border-color 0.2s;
+}
+.topbar-logout:hover{color:var(--rose);border-color:rgba(184,114,90,0.4)}
+
+/* ══════════════════════════════════════════════════════════════════
+   SETUP SCREEN
+══════════════════════════════════════════════════════════════════ */
+#setup{
+  min-height:100vh;padding-top:46px;
+  display:flex;align-items:flex-start;justify-content:center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(184,146,58,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%,rgba(106,142,127,0.06) 0%,transparent 50%),
+    var(--ink);
+}
+.setup-wrap{width:100%;max-width:1200px;padding:3rem 2.5rem 4rem;display:flex;flex-direction:column;gap:2rem}
+
+/* Masthead */
+.masthead{text-align:center;margin-bottom:0.5rem}
+.masthead-rule{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;max-width:380px;margin-inline:auto}
+.masthead-rule::before,.masthead-rule::after{content:'';flex:1;height:0.5px;background:linear-gradient(90deg,transparent,rgba(184,146,58,0.5),transparent)}
+.masthead-ornament{font-family:'IM Fell English',serif;font-size:1rem;color:var(--gold);opacity:0.65;letter-spacing:0.2em}
+.masthead h1{font-family:'IM Fell English',serif;font-size:4rem;color:var(--vellum);letter-spacing:0.04em;line-height:1;margin-bottom:0.4rem}
+.masthead-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;color:var(--dust)}
+
+/* Three-column grid */
+.setup-grid{
+  display:grid;
+  grid-template-columns:1.1fr 1.4fr 1fr;
+  gap:2rem;
+  align-items:start;
+}
+
+/* Cards */
+.setup-card{
+  background:rgba(255,255,255,0.025);
+  border:0.5px solid rgba(184,146,58,0.18);
+  border-radius:4px;padding:2rem 1.75rem;
+  display:flex;flex-direction:column;gap:1.5rem;
+  box-shadow:0 8px 28px rgba(0,0,0,0.18);
+}
+.card-header{
+  font-family:'IM Fell English',serif;font-style:italic;font-size:1.1rem;color:var(--gold);
+  border-bottom:0.5px solid rgba(184,146,58,0.25);padding-bottom:0.5rem;
+}
+.field-group{display:flex;flex-direction:column;gap:0.4rem}
+.field-label{font-family:'Cormorant SC',serif;font-size:0.72rem;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase}
+.field-hint{font-family:'Inter',sans-serif;font-size:0.78rem;line-height:1.45;color:rgba(242,232,217,0.45)}
+.setup-divider{height:0.5px;background:linear-gradient(90deg,transparent,rgba(184,146,58,0.2),transparent)}
+
+/* Inputs */
+.inp{
+  width:100%;background:rgba(255,255,255,0.03);
+  border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;
+  padding:0.7rem 0.9rem;color:var(--vellum);font-size:1rem;
+  transition:border-color 0.2s,background 0.2s;
+}
+.inp:focus{border-color:rgba(184,146,58,0.55);background:rgba(255,255,255,0.05)}
+.inp::placeholder{color:rgba(242,232,217,0.28);font-style:italic}
+textarea.inp{resize:vertical;line-height:1.65}
+select.inp{
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8923A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 0.9rem center;
+  padding-right:2.5rem;cursor:pointer;
+}
+select.inp option{background:#1C1917;color:var(--vellum)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
+
+/* Vocab textarea */
+.vocab-textarea{
+  width:100%;background:rgba(255,255,255,0.03);
+  border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;
+  padding:0.8rem 0.9rem;color:var(--vellum);font-size:0.98rem;
+  line-height:1.7;resize:vertical;min-height:140px;
+  transition:border-color 0.2s,background 0.2s;
+}
+.vocab-textarea:focus{border-color:rgba(184,146,58,0.55);background:rgba(255,255,255,0.05)}
+.vocab-textarea::placeholder{color:rgba(242,232,217,0.28);font-style:italic}
+
+/* Chips */
+.chips-wrap{display:flex;flex-wrap:wrap;gap:6px;min-height:24px}
+.chip{display:inline-flex;align-items:center;gap:4px;background:rgba(106,142,127,0.14);border:0.5px solid rgba(106,142,127,0.38);border-radius:20px;padding:3px 11px 3px 13px;font-size:0.88rem;color:var(--sage)}
+.chip-remove{font-size:0.85rem;color:rgba(106,142,127,0.55);cursor:pointer;line-height:1;padding:0 1px;transition:color 0.15s}
+.chip-remove:hover{color:var(--rose)}
+
+/* Level pills */
+.level-pills{display:flex;gap:6px}
+.level-pill{flex:1;padding:0.6rem 0.4rem;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;background:transparent;color:var(--text-dim);font-family:'Cormorant SC',serif;font-size:0.88rem;letter-spacing:0.07em;text-align:center;cursor:pointer;transition:all 0.2s}
+.level-pill:hover{border-color:rgba(184,146,58,0.45);color:var(--vellum)}
+.level-pill.active{background:rgba(184,146,58,0.16);border-color:var(--gold);color:var(--gold)}
+
+/* Error + begin */
+.setup-error{font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--rose);min-height:1rem;text-align:center}
+.begin-btn{
+  width:100%;padding:0.95rem;
+  background:linear-gradient(135deg,rgba(184,146,58,0.9),rgba(106,142,127,0.7));
+  border-radius:3px;font-family:'IM Fell English',serif;font-size:1.2rem;
+  color:var(--ink);letter-spacing:0.07em;
+  transition:opacity 0.2s,transform 0.1s;
+  box-shadow:0 4px 16px rgba(0,0,0,0.28);
+}
+.begin-btn:hover{opacity:0.9;transform:translateY(-1px)}
+.begin-btn:active{transform:translateY(0)}
+.begin-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* API key note */
+.key-note{font-family:'Inter',sans-serif;font-size:0.75rem;color:rgba(122,110,100,0.65);font-style:italic;line-height:1.5}
+.key-note a{color:var(--sage);text-decoration:none}
+.key-note a:hover{text-decoration:underline}
+
+/* ══════════════════════════════════════════════════════════════════
+   STORY SCREEN
+══════════════════════════════════════════════════════════════════ */
+#story{min-height:100vh;padding-top:46px;display:flex;flex-direction:column;background:radial-gradient(ellipse 100% 50% at 50% 0%,rgba(184,146,58,0.06) 0%,transparent 55%),var(--ink)}
+.story-header{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 2rem;border-bottom:0.5px solid rgba(184,146,58,0.12);background:rgba(14,12,11,0.6);backdrop-filter:blur(6px)}
+.story-brand{font-family:'IM Fell English',serif;font-size:1.2rem;color:var(--gold);letter-spacing:0.08em;opacity:0.8}
+.story-meta{font-family:'Cormorant SC',serif;font-size:1rem;letter-spacing:0.12em;color:var(--text-dim);text-align:center}
+.restart-btn{font-family:'Cormorant SC',serif;font-size:0.75rem;letter-spacing:0.1em;color:var(--text-dim);border:0.5px solid rgba(255,255,255,0.1);border-radius:2px;padding:4px 12px;transition:color 0.2s,border-color 0.2s}
+.restart-btn:hover{color:var(--vellum);border-color:rgba(255,255,255,0.2)}
+.word-tracker{display:flex;align-items:center;gap:8px;padding:0.4rem 2rem;background:rgba(14,12,11,0.4);border-bottom:0.5px solid rgba(44,24,16,0.3);flex-wrap:wrap}
+.tracker-label{font-family:'Cormorant SC',serif;font-size:0.7rem;letter-spacing:0.1em;color:var(--text-dim)}
+.tracker-word{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.88rem;color:rgba(242,232,217,0.35);padding:2px 10px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.08);transition:all 0.4s}
+.tracker-word.seen{color:var(--gold);border-color:rgba(184,146,58,0.4);background:rgba(184,146,58,0.08)}
+.book{flex:1;display:grid;grid-template-columns:1fr 1.5px 1fr;max-width:1100px;width:100%;margin:0 auto}
+.book-gutter{background:linear-gradient(180deg,transparent 0%,rgba(184,146,58,0.15) 15%,rgba(184,146,58,0.08) 85%,transparent 100%);align-self:stretch}
+.page-left{padding:3rem 3rem 3rem 2.5rem;display:flex;flex-direction:column;gap:1.5rem}
+.chapter-label{font-family:'Cormorant SC',serif;font-size:0.72rem;letter-spacing:0.18em;color:var(--gold);opacity:0.75}
+.scene-title{font-family:'IM Fell English',serif;font-size:1.55rem;color:var(--vellum);line-height:1.3;font-style:italic}
+.scene-rule{height:0.5px;background:linear-gradient(90deg,rgba(184,146,58,0.35),transparent)}
+.narrative-body{font-family:'Cormorant Garamond',serif;font-size:1.12rem;line-height:1.9;color:rgba(242,232,217,0.82)}
+.narrative-body p{margin-bottom:1.1em}
+.narrative-body p:last-child{margin-bottom:0}
+.narrative-body .vocab-word{font-style:italic;font-weight:500;color:var(--gold);border-bottom:0.5px solid rgba(184,146,58,0.35)}
+.cursor{display:inline-block;width:2px;height:1em;background:var(--gold);margin-left:2px;animation:blink 0.9s step-end infinite;vertical-align:text-bottom;opacity:0}
+.cursor.active{opacity:1}
+@keyframes blink{50%{opacity:0}0%,100%{opacity:1}}
+.thinking-text{font-style:italic;font-size:0.95rem;color:rgba(242,232,217,0.3)}
+.page-footer{margin-top:auto;padding-top:2rem;display:flex;align-items:center;gap:1rem}
+.page-number{font-family:'Cormorant SC',serif;font-size:0.75rem;letter-spacing:0.1em;color:var(--text-dim)}
+.page-footer-rule{flex:1;height:0.5px;background:rgba(255,255,255,0.07)}
+.page-right{padding:3rem 2.5rem 3rem 3rem;display:flex;flex-direction:column;gap:1.25rem}
+.choices-heading{font-family:'IM Fell English',serif;font-style:italic;font-size:1rem;color:rgba(242,232,217,0.4);margin-bottom:0.25rem}
+.choice-card{border:0.5px solid rgba(184,146,58,0.18);border-radius:3px;padding:1.25rem 1.4rem;display:flex;gap:1.1rem;align-items:flex-start;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.018)}
+.choice-card:hover{background:rgba(184,146,58,0.06);border-color:rgba(184,146,58,0.4);transform:translateX(3px)}
+.choice-card.chosen{background:rgba(184,146,58,0.1);border-color:var(--gold)}
+.choice-card.disabled{cursor:not-allowed;opacity:0.55;transform:none}
+.choice-glyph{font-family:'IM Fell English',serif;font-size:1.05rem;color:var(--gold);background:rgba(184,146,58,0.1);border:0.5px solid rgba(184,146,58,0.25);border-radius:2px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.choice-body{flex:1}
+.choice-text{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:rgba(242,232,217,0.92);line-height:1.6}
+.choice-text .vocab-word{font-style:italic;font-weight:600;color:var(--gold);border-bottom:0.5px solid rgba(184,146,58,0.4)}
+.choice-gloss{font-style:italic;font-size:0.95rem;color:var(--sage);margin-top:6px;line-height:1.4}
+.choice-loading{display:flex;flex-direction:column;gap:0.75rem;padding-top:0.5rem}
+.shimmer-line{height:16px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0.04) 25%,rgba(255,255,255,0.08) 50%,rgba(255,255,255,0.04) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+.story-end{text-align:center;padding:2rem 1rem;display:flex;flex-direction:column;align-items:center;gap:1rem}
+.end-ornament{font-family:'IM Fell English',serif;font-size:2rem;color:var(--gold);opacity:0.6}
+.end-title{font-family:'IM Fell English',serif;font-style:italic;font-size:1.6rem;color:var(--vellum)}
+.end-sub{font-style:italic;font-size:1rem;color:var(--text-dim)}
+.end-words{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.new-story-btn{margin-top:0.5rem;padding:0.65rem 1.8rem;background:rgba(184,146,58,0.12);border:0.5px solid rgba(184,146,58,0.4);border-radius:3px;font-family:'IM Fell English',serif;font-style:italic;font-size:1rem;color:var(--gold);letter-spacing:0.04em;transition:background 0.2s}
+.new-story-btn:hover{background:rgba(184,146,58,0.22)}
+.story-error{font-style:italic;color:var(--rose);font-size:0.95rem}
+
+/* Vocab tooltip */
+#vocab-tooltip{position:absolute;display:none;background:rgba(14,12,11,0.95);border:0.5px solid var(--gold);color:var(--gold);padding:6px 14px;border-radius:4px;font-family:'Cormorant SC',sans-serif;font-size:0.85rem;letter-spacing:0.08em;cursor:pointer;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.5);transition:background 0.2s;pointer-events:auto}
+#vocab-tooltip:hover{background:rgba(184,146,58,0.15)}
+#vocab-tooltip.show{display:block;animation:popIn 0.2s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes popIn{from{opacity:0;transform:translateY(5px) scale(0.95) translateX(-50%)}to{opacity:1;transform:translateY(0) scale(1) translateX(-50%)}}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+@media(max-width:1000px){
+  .setup-grid{grid-template-columns:1fr 1fr;gap:1.5rem}
+  .setup-grid .col-right{grid-column:1/-1}
+}
+@media(max-width:700px){
+  .setup-grid{grid-template-columns:1fr}
+  .setup-grid .col-right{grid-column:auto}
+  .setup-wrap{padding:2rem 1.25rem 3rem}
+  .masthead h1{font-size:3rem}
+  .book{grid-template-columns:1fr}
+  .book-gutter{display:none}
+  .page-left{padding:1.75rem 1.25rem}
+  .page-right{padding:1.25rem}
+  .two-col{grid-template-columns:1fr}
+  .auth-modal-box{padding:2rem 1.5rem 1.75rem}
+}
+</style>
+</head>
+<body>
+
+<button id="vocab-tooltip">+ Add to Vocab</button>
+
+<!-- ══ AUTH MODAL ════════════════════════════════════════════════ -->
+<div id="auth-modal">
+  <div class="auth-modal-box">
+    <div class="auth-brand">
+      <h2>Aesop</h2>
+      <p>language woven into living stories</p>
+      <div class="auth-brand-rule"></div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login">Sign In</button>
+      <button class="auth-tab" id="tab-signup">Create Account</button>
+    </div>
+
+    <div class="auth-fields">
+      <div class="field-group">
+        <label class="auth-field-label" for="auth-email">Email</label>
+        <input type="email" class="auth-inp" id="auth-email" placeholder="scholar@library.com" autocomplete="email" />
+      </div>
+      <div class="field-group">
+        <label class="auth-field-label" for="auth-password">Password</label>
+        <input type="password" class="auth-inp" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <div id="auth-confirm-wrap" class="field-group hidden">
+        <label class="auth-field-label" for="auth-confirm">Confirm Password</label>
+        <input type="password" class="auth-inp" id="auth-confirm" placeholder="••••••••" autocomplete="new-password" />
+      </div>
+    </div>
+
+    <div>
+      <div id="auth-error" class="auth-error"></div>
+      <button class="auth-submit" id="auth-submit-btn" style="margin-top:0.5rem">Sign In</button>
+    </div>
+
+    <p class="auth-footer-note">Your account lets you save vocabulary lists and story progress across sessions.</p>
+  </div>
+</div>
+
+<!-- ══ TOP BAR ═══════════════════════════════════════════════════ -->
+<div id="topbar" class="hidden">
+  <span class="topbar-brand">Aesop</span>
+  <div class="topbar-right">
+    <span class="topbar-user" id="topbar-email"></span>
+    <button class="topbar-logout" id="topbar-logout-btn">Sign out</button>
+  </div>
+</div>
+
+<!-- ══ SETUP SCREEN ══════════════════════════════════════════════ -->
+<div id="setup" class="hidden">
+  <div class="setup-wrap">
+
+    <div class="masthead">
+      <div class="masthead-rule"><span class="masthead-ornament">✦ ✦ ✦</span></div>
+      <h1>Aesop</h1>
+      <p class="masthead-sub">language woven into living stories</p>
+    </div>
+
+    <div class="setup-grid">
+
+      <!-- Column 1: Languages + Level + API Key -->
+      <div class="col-left">
+        <div class="setup-card">
+          <h2 class="card-header">Language & Level</h2>
+
+          <div class="field-group">
+            <label class="field-label">Story language</label>
+            <p class="field-hint">The language you are learning</p>
+            <select class="inp" id="target-lang">
+              <option>Spanish</option><option selected>German</option><option>French</option>
+              <option>Italian</option><option>Portuguese</option><option>Japanese</option>
+              <option>Mandarin Chinese</option><option>Korean</option><option>Arabic</option>
+              <option>English</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Your native language</label>
+            <select class="inp" id="native-lang">
+              <option>English</option><option>Spanish</option><option>French</option>
+              <option>Italian</option><option>German</option><option>Portuguese</option>
+              <option>Japanese</option><option>Korean</option><option>Arabic</option>
+            </select>
+          </div>
+
+          <div class="setup-divider"></div>
+
+          <div class="field-group">
+            <label class="field-label">Proficiency level</label>
+            <p class="field-hint">Controls narrative complexity and how deeply words appear in choices</p>
+            <div class="level-pills" style="margin-top:0.25rem">
+              <button class="level-pill active" data-level="beginner">Beginner</button>
+              <button class="level-pill" data-level="intermediate">Intermediate</button>
+              <button class="level-pill" data-level="advanced">Advanced</button>
+            </div>
+          </div>
+
+          <div class="setup-divider"></div>
+
+          <div class="field-group">
+            <label class="field-label">Gemini API Key</label>
+            <p class="field-hint">Stays in this browser session only — never stored or sent anywhere else</p>
+            <input type="password" class="inp" id="api-key" placeholder="AIza… or AQ…" autocomplete="off" />
+            <p class="key-note">Get a key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2: Vocabulary (the wide centre column) -->
+      <div class="col-centre">
+        <div class="setup-card" style="height:100%">
+          <h2 class="card-header">Vocabulary & Expressions</h2>
+
+          <div class="field-group" style="flex:1">
+            <label class="field-label">Words to learn</label>
+            <p class="field-hint">Enter words, idioms, or full expressions — one per line or comma-separated. The AI will weave them naturally into the story and choices.</p>
+            <textarea class="vocab-textarea" id="vocab-textarea" placeholder="serendipity&#10;come hell or high water&#10;der Augenblick&#10;脱線する&#10;&#10;One per line, or separate with commas…" style="min-height:200px;margin-top:0.4rem"></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Parsed words <span id="word-count" style="opacity:0.5;font-weight:300;letter-spacing:0">(0)</span></label>
+            <div class="chips-wrap" id="chips"></div>
+          </div>
+
+          <div class="setup-divider"></div>
+
+          <div class="field-group">
+            <label class="field-label">Atmosphere / Setting <span style="opacity:0.45;font-weight:300"> — optional</span></label>
+            <p class="field-hint">Describe the world your story inhabits, or leave blank for a surprise</p>
+            <textarea class="inp" id="setting" placeholder="A candlelit apothecary in medieval Prague… or leave blank." style="min-height:72px;margin-top:0.25rem"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 3: Summary + Begin -->
+      <div class="col-right">
+        <div class="setup-card">
+          <h2 class="card-header">Ready to begin?</h2>
+
+          <div style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:rgba(242,232,217,0.55);line-height:1.7;font-style:italic">
+            Your story will unfold across up to ten scenes. Vocabulary words will be woven into the narrative and — at intermediate and advanced levels — into the choices themselves, so every decision reinforces what you're learning.
+          </div>
+
+          <div class="setup-divider"></div>
+
+          <!-- Live summary -->
+          <div style="display:flex;flex-direction:column;gap:0.6rem">
+            <div style="display:flex;justify-content:space-between;font-size:0.88rem">
+              <span style="color:var(--text-dim);font-family:'Cormorant SC',serif;letter-spacing:0.08em">Language</span>
+              <span id="summary-lang" style="color:var(--vellum)">German</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.88rem">
+              <span style="color:var(--text-dim);font-family:'Cormorant SC',serif;letter-spacing:0.08em">Level</span>
+              <span id="summary-level" style="color:var(--vellum)">Beginner</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:0.88rem">
+              <span style="color:var(--text-dim);font-family:'Cormorant SC',serif;letter-spacing:0.08em">Words</span>
+              <span id="summary-words" style="color:var(--vellum)">0 entries</span>
+            </div>
+          </div>
+
+          <div class="setup-divider"></div>
+
+          <div id="setup-error" class="setup-error"></div>
+          <button class="begin-btn" id="begin-btn">Weave the first page →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ STORY SCREEN ══════════════════════════════════════════════ -->
+<div id="story" class="hidden">
+  <div class="story-header">
+    <span class="story-brand">Aesop</span>
+    <div class="story-meta" id="story-meta">Chapter I</div>
+    <button class="restart-btn" id="restart-btn">Close the book</button>
+  </div>
+  <div class="word-tracker" id="word-tracker"><span class="tracker-label">words ·</span></div>
+  <div class="book">
+    <div class="page-left" id="page-left"><div class="thinking-text">The story is being written…</div></div>
+    <div class="book-gutter"></div>
+    <div class="page-right" id="page-right">
+      <div class="choice-loading">
+        <div class="shimmer-line" style="width:70%"></div>
+        <div class="shimmer-line" style="width:90%"></div>
+        <div class="shimmer-line" style="width:60%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCRIPTS ═══════════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp }              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAnalytics }               from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+         signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCLAxH6tbIWhIaa9Ah_wNmEfE4T-b3Ba2M",
+  authDomain: "aesop-1a933.firebaseapp.com",
+  projectId: "aesop-1a933",
+  storageBucket: "aesop-1a933.firebasestorage.app",
+  messagingSenderId: "159161013702",
+  appId: "1:159161013702:web:3df4bab84186d1b91c8ec7",
+  measurementId: "G-CBWV00GTK2"
+};
+
+const app  = initializeApp(firebaseConfig);
+try { getAnalytics(app); } catch(e) {}
+const auth = getAuth(app);
+
+/* ── State ──────────────────────────────────────────────────────── */
+const state = {
+  apiKey:'', targetLang:'German', nativeLang:'English',
+  level:'beginner', words:[], setting:'',
+  history:[], scene:0, maxScenes:10, streaming:false, currentUser:null
+};
+
+/* ══════════════════════════════════════════════════════════════════
+   AUTH MODAL
+══════════════════════════════════════════════════════════════════ */
+let isSignup = false;
+
+const tabLogin    = document.getElementById('tab-login');
+const tabSignup   = document.getElementById('tab-signup');
+const submitBtn   = document.getElementById('auth-submit-btn');
+const authError   = document.getElementById('auth-error');
+const confirmWrap = document.getElementById('auth-confirm-wrap');
+const authEmail   = document.getElementById('auth-email');
+const authPass    = document.getElementById('auth-password');
+const authConfirm = document.getElementById('auth-confirm');
+
+function setAuthMode(signup) {
+  isSignup = signup;
+  tabLogin.classList.toggle('active', !signup);
+  tabSignup.classList.toggle('active', signup);
+  submitBtn.textContent = signup ? 'Create Account' : 'Sign In';
+  confirmWrap.classList.toggle('hidden', !signup);
+  authError.textContent = '';
+}
+tabLogin.addEventListener('click',  () => setAuthMode(false));
+tabSignup.addEventListener('click', () => setAuthMode(true));
+
+submitBtn.addEventListener('click', async () => {
+  const email = authEmail.value.trim();
+  const pass  = authPass.value;
+  authError.textContent = '';
+  if (!email || !pass) { authError.textContent = 'Please enter your email and password.'; return; }
+  if (isSignup && pass !== authConfirm.value) { authError.textContent = 'Passwords do not match.'; return; }
+  if (isSignup && pass.length < 6) { authError.textContent = 'Password must be at least 6 characters.'; return; }
+  submitBtn.disabled = true;
+  try {
+    if (isSignup) { await createUserWithEmailAndPassword(auth, email, pass); }
+    else          { await signInWithEmailAndPassword(auth, email, pass); }
+    authEmail.value = ''; authPass.value = ''; authConfirm.value = '';
+  } catch(err) {
+    const msgs = {
+      'auth/user-not-found':      'No account found with that email.',
+      'auth/wrong-password':      'Incorrect password.',
+      'auth/email-already-in-use':'An account with this email already exists.',
+      'auth/invalid-email':       'Please enter a valid email address.',
+      'auth/weak-password':       'Password must be at least 6 characters.',
+      'auth/too-many-requests':   'Too many attempts. Please wait a moment.',
+      'auth/configuration-not-found': 'Auth not configured — enable Email/Password in Firebase Console.',
+    };
+    authError.textContent = msgs[err.code] || err.message.replace('Firebase: ','');
+  }
+  submitBtn.disabled = false;
+});
+
+[authEmail, authPass, authConfirm].forEach(el =>
+  el.addEventListener('keydown', e => { if(e.key==='Enter') submitBtn.click(); })
+);
+
+/* Auth state listener — drives everything */
+onAuthStateChanged(auth, (user) => {
+  state.currentUser = user;
+  if (user) {
+    // Hide modal with fade
+    const modal = document.getElementById('auth-modal');
+    modal.classList.add('fading');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+    // Show topbar + setup
+    document.getElementById('topbar').classList.remove('hidden');
+    document.getElementById('topbar-email').textContent = user.email;
+    document.getElementById('setup').classList.remove('hidden');
+  } else {
+    // Show modal, hide everything else
+    const modal = document.getElementById('auth-modal');
+    modal.classList.remove('hidden','fading');
+    document.getElementById('topbar').classList.add('hidden');
+    document.getElementById('setup').classList.add('hidden');
+    document.getElementById('story').classList.add('hidden');
+  }
+});
+
+/* Logout — topbar button */
+document.getElementById('topbar-logout-btn').addEventListener('click', () => signOut(auth));
+
+/* ══════════════════════════════════════════════════════════════════
+   SETUP INTERACTIONS
+══════════════════════════════════════════════════════════════════ */
+
+/* Level pills */
+document.querySelectorAll('.level-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.level-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.level = btn.dataset.level;
+    document.getElementById('summary-level').textContent = btn.dataset.level.charAt(0).toUpperCase()+btn.dataset.level.slice(1);
+  });
+});
+
+/* Language summary sync */
+document.getElementById('target-lang').addEventListener('change', e => {
+  document.getElementById('summary-lang').textContent = e.target.value;
+});
+
+/* Vocabulary textarea — parse on input */
+const vocabTextarea = document.getElementById('vocab-textarea');
+vocabTextarea.addEventListener('input', parseVocabTextarea);
+
+function parseVocabTextarea() {
+  const raw = vocabTextarea.value;
+  const items = raw
+    .split(/[\n,]+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0)
+    .filter((s, i, arr) => arr.findIndex(x => x.toLowerCase() === s.toLowerCase()) === i);
+  state.words = items;
+  renderChips();
+  document.getElementById('word-count').textContent = `(${items.length})`;
+  document.getElementById('summary-words').textContent = items.length === 0 ? '0 entries' : `${items.length} entr${items.length===1?'y':'ies'}`;
+}
+
+function renderChips() {
+  const wrap = document.getElementById('chips');
+  wrap.innerHTML = state.words.map((w,i) =>
+    `<span class="chip">${escHtml(w)}<span class="chip-remove" data-i="${i}">×</span></span>`
+  ).join('');
+  wrap.querySelectorAll('.chip-remove').forEach(el => {
+    el.addEventListener('click', () => {
+      state.words.splice(+el.dataset.i, 1);
+      // Sync textarea back
+      vocabTextarea.value = state.words.join('\n');
+      renderChips();
+      document.getElementById('word-count').textContent = `(${state.words.length})`;
+      document.getElementById('summary-words').textContent = state.words.length === 0 ? '0 entries' : `${state.words.length} entr${state.words.length===1?'y':'ies'}`;
+    });
+  });
+}
+
+/* Begin */
+document.getElementById('begin-btn').addEventListener('click', beginStory);
+
+function beginStory() {
+  const key = document.getElementById('api-key').value.trim();
+  const errEl = document.getElementById('setup-error');
+  errEl.textContent = '';
+  if (!state.currentUser) { errEl.textContent = 'Please sign in first.'; return; }
+  if (!key) { errEl.textContent = 'A Gemini API key is required.'; return; }
+  if (!key.startsWith('AIza') && !key.startsWith('AQ')) { errEl.textContent = 'That doesn\'t look like a valid Gemini key.'; return; }
+  if (state.words.length === 0) { errEl.textContent = 'Add at least one vocabulary word or expression.'; return; }
+
+  state.apiKey = key;
+  state.targetLang = document.getElementById('target-lang').value;
+  state.nativeLang = document.getElementById('native-lang').value;
+  state.setting    = document.getElementById('setting').value.trim();
+  state.history = []; state.scene = 0;
+
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('story').classList.remove('hidden');
+  buildWordTracker();
+  generateScene();
+}
+
+/* ── Screen helpers ─────────────────────────────────────────────── */
+function showSetupScreen() {
+  document.getElementById('story').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+}
+document.getElementById('restart-btn').addEventListener('click', showSetupScreen);
+
+/* ══════════════════════════════════════════════════════════════════
+   WORD TRACKER & TOOLTIP
+══════════════════════════════════════════════════════════════════ */
+function buildWordTracker() {
+  const tracker = document.getElementById('word-tracker');
+  tracker.innerHTML = '<span class="tracker-label">words ·</span>';
+  state.words.forEach(w => {
+    const span = document.createElement('span');
+    span.className = 'tracker-word';
+    span.textContent = w;
+    span.dataset.word = w.toLowerCase();
+    tracker.appendChild(span);
+  });
+}
+
+function markWordsUsed(usedArr) {
+  const explicitLower = usedArr ? usedArr.map(w => w.toLowerCase()) : [];
+  const currentText = document.getElementById('page-left').textContent.toLowerCase();
+  document.querySelectorAll('.tracker-word').forEach(el => {
+    const w = el.dataset.word;
+    if (explicitLower.some(u => u.includes(w) || w.includes(u)) || currentText.includes(w))
+      el.classList.add('seen');
+  });
+}
+
+const vocabTooltip = document.getElementById('vocab-tooltip');
+let selectedTextToLearn = '';
+
+document.getElementById('page-left').addEventListener('mouseup', handleTextSelection);
+document.getElementById('page-left').addEventListener('touchend', handleTextSelection);
+
+function handleTextSelection() {
+  setTimeout(() => {
+    const sel  = window.getSelection();
+    const text = sel.toString().trim();
+    if (text.length > 0 && text.length < 40) {
+      selectedTextToLearn = text;
+      const rect = sel.getRangeAt(0).getBoundingClientRect();
+      vocabTooltip.style.left      = `${rect.left + rect.width/2 + window.scrollX}px`;
+      vocabTooltip.style.top       = `${rect.top - 40 + window.scrollY}px`;
+      vocabTooltip.style.transform = 'translateX(-50%)';
+      vocabTooltip.classList.add('show');
+      vocabTooltip.textContent = '+ Add to Vocab';
+    } else {
+      vocabTooltip.classList.remove('show');
+    }
+  }, 10);
+}
+
+vocabTooltip.addEventListener('click', e => {
+  e.preventDefault(); e.stopPropagation();
+  if (!selectedTextToLearn) return;
+  if (!state.words.some(w => w.toLowerCase() === selectedTextToLearn.toLowerCase())) {
+    state.words.push(selectedTextToLearn);
+    buildWordTracker(); markWordsUsed();
+    vocabTooltip.textContent = 'Added ✓';
+  } else {
+    vocabTooltip.textContent = 'Already added';
+  }
+  setTimeout(() => { vocabTooltip.classList.remove('show'); window.getSelection().removeAllRanges(); }, 900);
+});
+
+document.addEventListener('mousedown', e => { if(e.target !== vocabTooltip) vocabTooltip.classList.remove('show'); });
+
+/* ══════════════════════════════════════════════════════════════════
+   SYSTEM PROMPT
+══════════════════════════════════════════════════════════════════ */
+function buildSystemPrompt() {
+  const { targetLang, nativeLang, level, words } = state;
+  const wordList = words.join(', ');
+  const levelGuide = {
+    beginner:     `CRITICAL LEVEL RULES: The surrounding narrative and choice strings MUST use simple, entry-level grammar (A1/A2). The ONLY challenging language permitted is the target vocabulary itself. This ensures beginners can fully comprehend the story framework and deduce targets from context.`,
+    intermediate: `Use moderately complex sentences. Vocabulary words appear naturally in the narrative. In at least one choice per scene, use the target vocabulary word directly in a natural sentence.`,
+    advanced:     `Use rich, literary prose with complex syntax. Vocabulary words are woven in seamlessly, sometimes without special emphasis, challenging the reader to recognise them. In choices, use target words naturally and idiomatically — the reader must understand the word to choose wisely.`,
+  }[level];
+
+  return `You are an immersive interactive story engine that teaches target language structures through adaptive contextual fiction.
+
+TARGET LANGUAGE: ${targetLang} — write ALL narrative, dialogue, chapter labels, and choices in ${targetLang}.
+NATIVE LANGUAGE: ${nativeLang} — brief parenthetical gloss lines inside choices only, when genuinely helpful.
+VOCABULARY & EXPRESSIONS TO TEACH: [${wordList}]
+LEVEL: ${level.toUpperCase()} — ${levelGuide}
+
+STRICT DIRECTIVES:
+- If a vocabulary item is a full sentence or clause, extract and use its core idiom or concept naturally — do not copy-paste it verbatim.
+- Take advanced/difficult component words and use them independently across distinct sentence placements.
+- The story has no fixed length. From scene 5 to scene 10 you may dynamically conclude whenever narratively fitting. Set "is_final": true on the concluding scene.
+- Respond with raw valid JSON only. No markdown fences, no extra text.
+
+JSON SCHEMA:
+{
+  "chapter": "short evocative title in ${targetLang}",
+  "narrative": "2–3 paragraphs in ${targetLang}. Place *asterisks* around target vocabulary when they appear.",
+  "words_used": ["list of original vocabulary strings used in this scene"],
+  "choices": [
+    {"id":"I",   "text":"choice in ${targetLang}", "gloss":"optional brief ${nativeLang} gloss"},
+    {"id":"II",  "text":"choice in ${targetLang}", "gloss":"optional brief ${nativeLang} gloss"},
+    {"id":"III", "text":"choice in ${targetLang}", "gloss":"optional brief ${nativeLang} gloss"}
+  ],
+  "is_final": false
+}`;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SCENE GENERATION
+══════════════════════════════════════════════════════════════════ */
+async function generateScene(chosenText = null) {
+  state.streaming = true;
+  state.scene++;
+  document.getElementById('story-meta').textContent = `Chapter ${romanize(state.scene)}  ·  Scene ${state.scene}`;
+
+  const pageLeft = document.getElementById('page-left');
+  pageLeft.innerHTML = `<div class="thinking-text">The ink is still drying…<span class="cursor active"></span></div>`;
+  showChoiceLoading();
+
+  const isHardCeiling = state.scene >= state.maxScenes;
+  const userMsg = state.history.length === 0
+    ? `Begin the narrative. Setting: ${state.setting || 'An evocative and mysterious environment suitable for discovery'}. Targeting: ${state.words.join(', ')}. Draft scene 1.`
+    : `Advance the story. The reader chose: "${chosenText}". ${isHardCeiling ? 'This is the final scene (hard cap). Conclude the story now. Set is_final to true, omit choices.' : 'Write the next scene. You may conclude naturally if the arc is complete.'}`;
+
+  try {
+    const raw = await callGemini(buildSystemPrompt(), state.history, userMsg);
+    state.history.push({ role:'user', content:userMsg });
+    state.history.push({ role:'assistant', content:raw });
+    const scene = parseScene(raw);
+    if (!scene) throw new Error("The model returned an unexpected format.");
+    renderScene(scene, isHardCeiling);
+  } catch(err) {
+    pageLeft.innerHTML = `<p class="story-error">⚠ ${escHtml(err.message)}</p>`;
+    document.getElementById('page-right').innerHTML = `<div class="story-end"><button class="new-story-btn" id="retry-btn">Try again</button></div>`;
+    document.getElementById('retry-btn')?.addEventListener('click', () => location.reload());
+  }
+  state.streaming = false;
+}
+
+function renderScene(scene, isHardCeiling) {
+  const pageLeft  = document.getElementById('page-left');
+  const pageRight = document.getElementById('page-right');
+  pageLeft.innerHTML = `
+    <div class="chapter-label">Chapter ${romanize(state.scene)}</div>
+    <div class="scene-title">${escHtml(scene.chapter || '')}</div>
+    <div class="scene-rule"></div>
+    <div class="narrative-body">${buildNarrativeHTML(scene.narrative || '')}</div>
+    <div class="page-footer">
+      <span class="page-number">${romanize(state.scene)}</span>
+      <div class="page-footer-rule"></div>
+    </div>`;
+  markWordsUsed(scene.words_used);
+  if (isHardCeiling || scene.is_final || !scene.choices?.length) renderEnd(pageRight);
+  else renderChoices(pageRight, scene.choices);
+}
+
+function buildNarrativeHTML(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .split(/\n\n+/).filter(p => p.trim())
+    .map(p => `<p>${p.replace(/\*([^*]+)\*/g,'<em class="vocab-word">$1</em>')}</p>`).join('');
+}
+
+function renderChoices(container, choices) {
+  container.innerHTML = `
+    <div class="choices-heading">— What do you do? —</div>
+    ${choices.map((c,i) => `
+      <div class="choice-card" data-id="${escHtml(c.id)}" data-text="${escHtml(c.text)}">
+        <div class="choice-glyph">${['I','II','III'][i]||c.id}</div>
+        <div class="choice-body">
+          <div class="choice-text">${highlightChoiceVocab(c.text)}</div>
+          ${c.gloss?`<div class="choice-gloss">${escHtml(c.gloss)}</div>`:''}
+        </div>
+      </div>`).join('')}`;
+  container.querySelectorAll('.choice-card').forEach(card => card.addEventListener('click', () => onChoiceClick(card)));
+}
+
+function highlightChoiceVocab(text) {
+  let r = escHtml(text);
+  state.words.forEach(w => {
+    const esc = w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    r = r.replace(new RegExp(`(${esc})`, 'gi'), '<em class="vocab-word">$1</em>');
+  });
+  return r;
+}
+
+function showChoiceLoading() {
+  document.getElementById('page-right').innerHTML = `
+    <div class="choices-heading">— What do you do? —</div>
+    <div class="choice-loading">
+      <div class="shimmer-line" style="width:85%"></div><div class="shimmer-line" style="width:65%"></div>
+      <div class="shimmer-line" style="width:90%"></div><div class="shimmer-line" style="width:70%"></div>
+    </div>`;
+}
+
+function onChoiceClick(card) {
+  if (state.streaming) return;
+  document.querySelectorAll('.choice-card').forEach(c => { c.classList.add('disabled'); c.removeEventListener('click', onChoiceClick); });
+  card.classList.add('chosen');
+  const pageLeft = document.getElementById('page-left');
+  pageLeft.insertAdjacentHTML('beforeend', `<div class="scene-rule" style="margin:0.75rem 0"></div><p class="chapter-label" style="font-style:italic">» ${card.dataset.text}</p>`);
+  setTimeout(() => generateScene(card.dataset.text), 350);
+}
+
+function renderEnd(container) {
+  container.innerHTML = `
+    <div class="story-end">
+      <div class="end-ornament">✦</div>
+      <div class="end-title">Finis.</div>
+      <p class="end-sub">You have reached the end of this story.</p>
+      <div class="end-words">${state.words.map(w=>`<span class="chip">${escHtml(w)}</span>`).join('')}</div>
+      <button class="new-story-btn" id="new-story-btn">Begin another story</button>
+    </div>`;
+  document.getElementById('new-story-btn').addEventListener('click', showSetupScreen);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   GEMINI API
+══════════════════════════════════════════════════════════════════ */
+async function callGemini(system, history, userMsg) {
+  const contents = history.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }]
+  }));
+  contents.push({ role:'user', parts:[{ text:userMsg }] });
+
+  const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'x-goog-api-key': state.apiKey },
+    body: JSON.stringify({
+      contents,
+      systemInstruction: { parts:[{ text:system }] },
+      generationConfig:  { temperature:0.82, maxOutputTokens:2500, responseMimeType:'application/json' }
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({}));
+    const msg = err?.error?.message || `Error ${res.status}`;
+    if (res.status===403) throw new Error('API key rejected — make sure Gemini API is enabled in Google AI Studio.');
+    if (res.status===429) throw new Error('Rate limit reached. Wait a moment and try again.');
+    throw new Error(msg);
+  }
+  return (await res.json()).candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+function parseScene(raw) {
+  try { return JSON.parse(raw.replace(/```json/gi,'').replace(/```/g,'').trim()); }
+  catch { const m = raw.match(/\{[\s\S]*\}/); return m ? JSON.parse(m[0]) : null; }
+}
+
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function romanize(n) {
+  let r='';
+  [1000,900,500,400,100,90,50,40,10,9,5,4,1].forEach((v,i)=>{ while(n>=v){ r+=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'][i]; n-=v; } });
+  return r;
+}
+</script>
+</body>
+</html>

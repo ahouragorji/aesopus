@@ -1,0 +1,33 @@
+mutation SeedDemoData @transaction {
+  user_insertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      username: "demouser1",
+      email: "demo1@example.com"
+    },
+    {
+      id: "550e8400-e29b-41d4-a716-446655440001",
+      username: "demouser2",
+      email: "demo2@example.com"
+    }
+  ])
+  wordList_insertMany(data: [
+    {
+      id: "770e8400-e29b-41d4-a716-446655440000",
+      name: "Common English Words",
+      userId: "550e8400-e29b-41d4-a716-446655440000"
+    }
+  ])
+  wordItem_insertMany(data: [
+    {
+      term: "Ephemeral",
+      definition: "Lasting for a very short time.",
+      wordListId: "770e8400-e29b-41d4-a716-446655440000"
+    },
+    {
+      term: "Serendipity",
+      definition: "The occurrence of events by chance in a happy or beneficial way.",
+      wordListId: "770e8400-e29b-41d4-a716-446655440000"
+    }
+  ])
+}

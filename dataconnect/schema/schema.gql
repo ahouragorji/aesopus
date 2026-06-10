@@ -1,0 +1,36 @@
+type User @table {
+  email: String!
+  username: String!
+  avatarUrl: String
+  languagePreference: String
+}
+
+type WordList @table {
+  name: String!
+  description: String
+  isPublic: Boolean
+  user: User!
+}
+
+type WordItem @table {
+  term: String!
+  definition: String!
+  usageExample: String
+  wordList: WordList!
+}
+
+type Story @table {
+  title: String!
+  content: String!
+  completionStatus: String
+  lastInteractionTimestamp: Timestamp
+  wordList: WordList!
+  user: User!
+}
+
+type Choice @table {
+  promptText: String!
+  resultText: String!
+  leadsToStoryNodeId: UUID
+  story: Story!
+}
