@@ -14,9 +14,9 @@
   --sage:#6A8E7F;--text-dim:#7A6E64;
 }
 html{font-size:16px}
-body{background:var(--ink);color:var(--vellum);font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+body{background:var(--ink);color:var(--vellum);font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;min-height:100vh;overflow-x:hidden}
 button{cursor:pointer;border:none;background:none;font-family:inherit}
-input,textarea,select{font-family:'Cormorant Garamond',Georgia,serif;font-size:1rem;outline:none}
+input,textarea,select{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:1rem;outline:none}
 .hidden{display:none!important}
 
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.6}
@@ -30,7 +30,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .auth-brand p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--dust);margin-top:0.35rem}
 .auth-brand-rule{height:0.5px;background:linear-gradient(90deg,transparent,rgba(184,146,58,0.4),transparent);margin:0.5rem 0 0}
 .auth-tabs{display:flex;border:0.5px solid rgba(184,146,58,0.2);border-radius:3px;overflow:hidden}
-.auth-tab{flex:1;padding:0.6rem;font-family:'Cormorant SC',serif;font-size:0.9rem;letter-spacing:0.08em;color:var(--text-dim);background:transparent;transition:all 0.2s;text-align:center}
+.auth-tab{flex:1;padding:0.6rem;font-family:'Cormorant SC',serif;font-weight:600;font-size:0.9rem;letter-spacing:0.08em;color:var(--text-dim);background:transparent;transition:all 0.2s;text-align:center}
 .auth-tab.active{background:rgba(184,146,58,0.14);color:var(--gold)}
 .auth-fields{display:flex;flex-direction:column;gap:0.85rem}
 .auth-field-label{font-family:'Cormorant SC',serif;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:0.3rem}.auth-inp{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;padding:0.7rem 0.9rem;color:var(--vellum);font-size:1rem;transition:border-color 0.2s}
@@ -49,6 +49,31 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .auth-resend-btn:disabled{opacity:0.5;cursor:not-allowed}
 .auth-footer-note{font-family:'Inter',sans-serif;font-style:italic;font-size:0.78rem;color:rgba(122,110,100,0.65);text-align:center;line-height:1.5}
 
+
+/* ── LEXICON ROW STYLES ── */
+.lexicon-row { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.lexicon-progress-bg { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.lexicon-progress-fill { height: 100%; background: var(--sage); transition: width 0.5s ease-out; }
+
+.icon-btn-add { background: transparent; border: 0.5px solid rgba(184,146,58,0.4); color: var(--gold); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+.icon-btn-add:hover { background: rgba(184,146,58,0.15); transform: scale(1.05); }
+
+.small-start-btn { font-family: 'Cormorant SC', serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; color: var(--ink); background: linear-gradient(135deg, rgba(184,146,58,0.9), rgba(106,142,127,0.7)); border-radius: 2px; padding: 4px 14px; transition: opacity 0.2s; border: none; cursor: pointer; }
+.small-start-btn:hover { opacity: 0.85; }
+.lexicon-header { font-family: 'Cormorant SC', serif; color: var(--gold); font-size: 1.15rem; letter-spacing: 0.05em; display: flex; align-items: baseline; gap: 10px; }
+.lexicon-count { font-family: 'Inter', sans-serif; color: var(--text-dim); font-size: 0.75rem; letter-spacing: 0; font-weight: 500; }
+.lexicon-middle { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.lexicon-pills-wrapper { flex: 1; display: flex; align-items: center; overflow: hidden; }
+.lexicon-pills-mask { display: flex; align-items: center; gap: 8px; mask-image: linear-gradient(to right, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%); padding-right: 2rem; overflow: hidden; white-space: nowrap; }
+.lexicon-pill { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.95rem; color: rgba(242,232,217,0.4); border: 0.5px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 2px 14px; }
+.lexicon-ellipsis { font-family: 'Inter', sans-serif; color: var(--vellum); font-weight: 600; letter-spacing: 2px; margin-left: -10px; z-index: 2; }
+.lexicon-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.lexicon-btn { background: rgba(255,255,255,0.12); border: 0.5px solid rgba(255,255,255,0.05); color: var(--text-dim); width: 28px; height: 26px; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+.lexicon-btn:hover { background: rgba(255,255,255,0.25); color: var(--vellum); }
+.lexicon-btn.dl-btn:hover { background: rgba(106,142,127,0.15); color: var(--sage); border-color: rgba(106,142,127,0.4); transform: translateY(-1px); }
+.lexicon-btn.clear-btn:hover { background: rgba(184,114,90,0.15); color: var(--rose); border-color: rgba(184,114,90,0.4); transform: translateY(-1px); }
+/* .lexicon-progress-bg { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 2px; }
+.lexicon-progress-fill { height: 100%; background: var(--text-dim); transition: width 0.5s ease-out; } */
 /* ── TOP BAR (Merged and Centered) ──────────────────────────────── */
 #topbar {
   position: fixed;
@@ -88,9 +113,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   align-items: center;
   gap: 1rem;
 }
-.restart-btn{font-family:'Cormorant SC',serif;font-size:0.75rem;letter-spacing:0.1em;color:var(--text-dim);border:0.5px solid rgba(255,255,255,0.1);border-radius:2px;padding:4px 12px;transition:color 0.2s,border-color 0.2s}
+.restart-btn { font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-dim); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 2px; padding: 4px 12px; transition: color 0.2s, border-color 0.2s; }
 .restart-btn:hover{color:var(--vellum);border-color:rgba(255,255,255,0.2)}
-.topbar-logout{font-family:'Cormorant SC',serif;font-size:0.72rem;letter-spacing:0.1em;color:var(--text-dim);border:0.5px solid rgba(255,255,255,0.12);border-radius:2px;padding:4px 12px;transition:color 0.2s,border-color 0.2s}
+.topbar-logout { font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--text-dim); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 2px; padding: 4px 12px; transition: color 0.2s, border-color 0.2s; }
 .topbar-logout:hover{color:var(--rose);border-color:rgba(184,114,90,0.4)}
 
 /* ── SETUP SCREEN ───────────────────────────────────────────────── */
@@ -141,14 +166,14 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 
 /* Level pills */
 .level-pills{display:flex;gap:6px}
-.level-pill{flex:1;padding:0.6rem 0.4rem;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;background:transparent;color:var(--text-dim);font-family:'Cormorant SC',serif;font-size:0.88rem;letter-spacing:0.07em;text-align:center;cursor:pointer;transition:all 0.2s}
+.level-pill{flex:1;padding:0.6rem 0.4rem;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;background:transparent;color:var(--text-dim);font-family:'Cormorant SC',serif;font-size:0.88rem;letter-spacing:0.07em;text-align:center;cursor:pointer;transition:all 0.2s}.level-pill{flex:1;padding:0.6rem 0.4rem;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;background:transparent;color:var(--text-dim);font-family:'Cormorant SC',serif;font-weight:600;font-size:0.88rem;letter-spacing:0.07em;text-align:center;cursor:pointer;transition:all 0.2s}
 .level-pill:hover{border-color:rgba(184,146,58,0.45);color:var(--vellum)}
 .level-pill.active{background:rgba(184,146,58,0.16);border-color:var(--gold);color:var(--gold)}
 
 /* API section */
 .api-toggle-row{display:flex;align-items:center;justify-content:space-between}
 .api-provider-tabs{display:flex;gap:4px}
-.api-provider-tab{font-family:'Cormorant SC',serif;font-size:0.72rem;letter-spacing:0.08em;padding:3px 10px;border:0.5px solid rgba(184,146,58,0.2);border-radius:2px;color:var(--text-dim);transition:all 0.15s;cursor:pointer}
+.api-provider-tab{font-family:'Cormorant SC',serif;font-weight:600;font-size:0.72rem;letter-spacing:0.08em;padding:3px 10px;border:0.5px solid rgba(184,146,58,0.2);border-radius:2px;color:var(--text-dim);transition:all 0.15s;cursor:pointer}
 .api-provider-tab.active{background:rgba(184,146,58,0.14);border-color:var(--gold);color:var(--gold)}
 .key-note{font-family:'Inter',sans-serif;font-size:0.73rem;color:rgba(122,110,100,0.65);font-style:italic;line-height:1.5}
 .key-note a{color:var(--sage);text-decoration:none}
@@ -178,7 +203,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .chapter-label{font-family:'Cormorant SC',serif;font-size:0.72rem;letter-spacing:0.18em;color:var(--gold);opacity:0.75}
 .scene-title{font-family:'IM Fell English',serif;font-size:1.55rem;color:var(--vellum);line-height:1.3;font-style:italic}
 .scene-rule{height:0.5px;background:linear-gradient(90deg,rgba(184,146,58,0.355),transparent)}
-.narrative-body{font-family:'Cormorant Garamond',serif;font-size:1.12rem;line-height:1.9;color:rgba(242,232,217,0.82)}
+.narrative-body{font-family:'Cormorant Garamond',serif;font-size:1.12rem;font-weight:500;line-height:1.9;color:rgba(242,232,217,0.82)}
 .narrative-body p{margin-bottom:1.1em}
 .narrative-body p:last-child{margin-bottom:0}
 .narrative-body .vocab-word{font-style:italic;font-weight:500;color:var(--gold);border-bottom:0.5px solid rgba(184,146,58,0.35)}
@@ -197,7 +222,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .choice-card.disabled{cursor:not-allowed;opacity:0.55;transform:none}
 .choice-glyph{font-family:'IM Fell English',serif;font-size:1.05rem;color:var(--gold);background:rgba(184,146,58,0.1);border:0.5px solid rgba(184,146,58,0.25);border-radius:2px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
 .choice-body{flex:1}
-.choice-text{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:rgba(242,232,217,0.92);line-height:1.6}
+.choice-text{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:500;color:rgba(242,232,217,0.92);line-height:1.6}
 .choice-text .vocab-word{font-style:italic;font-weight:600;color:var(--gold);border-bottom:0.5px solid rgba(184,146,58,0.4)}
 .choice-gloss{font-style:italic;font-size:0.95rem;color:var(--sage);margin-top:6px;line-height:1.4}
 .choice-loading{display:flex;flex-direction:column;gap:0.75rem;padding-top:0.5rem}
@@ -276,9 +301,31 @@ select.inp option{background:#1C1917;color:var(--vellum)}
   <div class="story-meta hidden" id="story-meta">Chapter I · Scene 1</div>
   <div class="topbar-right">
     <button class="restart-btn hidden" id="restart-btn">Close the book</button>
+    <button class="restart-btn" id="nav-library-btn">Library</button>
+    <button class="restart-btn" id="nav-setup-btn">New Story</button>
     <button class="topbar-logout" id="topbar-logout-btn">Sign out</button>
   </div>
 </div>
+
+<div id="library-dashboard" class="hidden" style="min-height:100vh; padding-top:80px; max-width:1000px; margin:0 auto; display:flex; flex-direction:column; gap:3rem;">
+  
+  <div class="setup-card">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 0.5px solid rgba(184,146,58,0.25); padding-bottom: 0.5rem;">
+      <h2 style="font-family:'IM Fell English',serif; font-style:italic; font-size:1.1rem; color:var(--gold);">Your Personal Lexicon</h2>
+      <div id="mastered-header-container"></div>
+    </div>
+    <div id="personal-lexicon-container">
+      </div>
+  </div>
+  <div>
+    <h2 style="font-family:'IM Fell English',serif; font-size:2rem; color:var(--gold); margin-bottom:1rem; font-style:italic;">Public Archives</h2>
+    <div id="public-collections-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem;">
+      <!-- JavaScript will inject rows here -->
+    </div>
+  </div>
+
+</div>
+
 
 <div id="setup" class="hidden">
   <div class="setup-wrap">
@@ -292,6 +339,16 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 
       <div class="col-left">
         <div class="setup-card">
+                <!-- <div class="field-group" style="flex:1">
+        <label class="field-label">Upload Vocabulary Bank (.txt)</label>
+        <p class="field-hint">Upload a text file with one word or expression per line. We'll feed them into your stories 30 at a time.</p>
+        
+        <div class="vocab-wrap" style="padding: 1rem; display: flex; flex-direction: column; gap: 1rem; text-align: center;">
+          <input type="file" id="vocab-file-upload" accept=".txt" style="display: none;" />
+          <button id="trigger-upload-btn" class="begin-btn" style="padding: 0.6rem; font-size: 1rem;">Choose .txt File</button>
+          <div id="upload-status" class="vocab-status-msg" style="color: var(--sage);">No file selected</div>
+        </div>
+      </div> -->
           <h2 class="card-header">Language & Level</h2>
           <div class="field-group">
             <label class="field-label">Story language</label>
@@ -342,7 +399,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
           <h2 class="card-header">Vocabulary & Expressions</h2>
           <div class="field-group" style="flex:1">
             <label class="field-label">Words to learn <span style="opacity:0.4;font-weight:300;letter-spacing:0;text-transform:none;font-family:'Inter',sans-serif;font-size:0.7rem">(max 30)</span></label>
-            <p class="field-hint">One per line, or comma-separated. Words, idioms, full expressions — anything you want the story to teach.</p>
+            <p class="field-hint">Type words manually below, <strong>or upload a .txt file</strong> to build your long-term library.</p>
             <div class="vocab-wrap" style="margin-top:0.4rem">
               <textarea class="vocab-textarea" id="vocab-textarea" placeholder="serendipity&#10;come hell or high water&#10;der Augenblick&#10;脱線する&#10;&#10;One per line or comma-separated…"></textarea>
               <div class="vocab-status">
@@ -353,7 +410,20 @@ select.inp option{background:#1C1917;color:var(--vellum)}
                 <span class="vocab-status-count" id="vocab-count">0 / 30</span>
               </div>
             </div>
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 0.6rem;">
+              <span id="upload-file-name" style="font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--text-dim); font-style: italic;"></span>
+              <label for="vocab-file-upload" id="upload-icon-label" style="cursor: pointer; color: var(--gold); transition: color 0.3s; display: flex; align-items: center; opacity: 0.8;" title="Upload .txt file">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </label>
+              <input type="file" id="vocab-file-upload" accept=".txt" style="display: none;" />
+            </div>
+
           </div>
+          
           <div class="setup-divider"></div>
           <div class="field-group">
             <label class="field-label">Atmosphere / Setting <span style="opacity:0.45;font-weight:300"> — optional</span></label>
@@ -414,6 +484,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 </div>
 
 <script type="module">
+  
 import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAnalytics }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 import { getAuth,
@@ -424,6 +495,273 @@ import { getAuth,
          onAuthStateChanged,
          reload as reloadUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, deleteField } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+async function loadLibrary() {
+  if (!state.currentUser) return;
+  const userRef = doc(db, "users", state.currentUser.uid);
+  const userSnap = await getDoc(userRef);
+  const userData = userSnap.data() || {};
+  
+  const learned = userData.learned || [];
+  const unlearned = userData.unlearned || [];
+  const userProgress = userData.publicProgress || {};
+
+  // -- Standardized Row HTML Builder --
+// -- Standardized Row HTML Builder --
+  const buildRowHTML = (title, countText, wordsList, actionBtns, progressBarHTML = '') => {
+    const preview = wordsList.slice(0, 15); 
+    const pills = preview.map(w => `<span class="lexicon-pill">${escHtml(w)}</span>`).join('');
+    return `
+      <div class="lexicon-row" style="margin-top: 0.5rem; margin-bottom: 1rem; padding-bottom: 1.2rem; border-bottom: 0.5px solid rgba(255,255,255,0.1);">
+        <div class="lexicon-header">
+          ${title} <span class="lexicon-count">${countText}</span>
+        </div>
+        <div class="lexicon-middle">
+          <div class="lexicon-pills-wrapper" style="flex: 1; min-width: 0;">
+            <div class="lexicon-pills-mask" style="display: flex; gap: 8px; width: 100%; overflow: hidden; white-space: nowrap; mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%); -webkit-mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%);">
+              ${pills}
+            </div>
+          </div>
+          <div class="lexicon-actions">
+            ${actionBtns}
+          </div>
+        </div>
+        ${progressBarHTML}
+      </div>
+    `;
+  };
+
+  const dlIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>`;
+  const xIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+
+  // 1. Unlearned Row (Download, Clear, Start)
+  const unlearnedBtns = `
+    <button class="lexicon-btn dl-btn" data-type="Unlearned" title="Download .txt">${dlIcon}</button>
+    <button class="lexicon-btn clear-btn" data-type="Unlearned" title="Clear list">${xIcon}</button>
+    <button class="small-start-btn start-unlearned-btn" style="margin-left: 8px;">Start</button>
+  `;
+  let personalHTML = buildRowHTML('Unlearned', `(${unlearned.length})`, unlearned, unlearnedBtns);
+
+  // 2. Mastered Download Tag
+  const masteredContainer = document.getElementById('mastered-header-container');
+  if (learned.length > 0) {
+    masteredContainer.innerHTML = `
+      <button id="download-mastered-tag" title="Download mastered words" style="font-family:'Inter',sans-serif; font-size:0.75rem; font-weight:500; color:var(--text-dim); background:rgba(255,255,255,0.03); border:0.5px solid rgba(255,255,255,0.1); border-radius:20px; padding:4px 12px; cursor:pointer; transition:all 0.2s;">
+        ↓ ${learned.length} item${learned.length === 1 ? '' : 's'} mastered
+      </button>
+    `;
+  } else {
+    masteredContainer.innerHTML = '';
+  }
+
+  // 3. Fetch Public Collections
+  const publicSnap = await getDocs(collection(db, "public_collections"));
+  const grid = document.getElementById('public-collections-grid');
+  grid.innerHTML = '';
+  
+  let addedCollectionsHTML = '';
+
+  publicSnap.forEach(docSnap => {
+    const data = docSnap.data();
+    const colId = docSnap.id;
+    const isAdded = userProgress.hasOwnProperty(colId);
+    const checkpoint = isAdded ? userProgress[colId] : 0;
+    const totalWords = data.words.length;
+    
+    // Add this line right here:
+    const collectionName = data.title || data.name || data.Title || "Untitled Collection";
+    
+    if (isAdded) {
+      // Subscribed Collection
+      const pct = totalWords === 0 ? 0 : Math.round((checkpoint / totalWords) * 100);
+      const progressHTML = `
+        <div class="lexicon-progress-bg">
+          <div class="lexicon-progress-fill" style="width: ${pct}%"></div>
+        </div>`;
+      
+      const addedBtns = `
+        <button class="lexicon-btn dl-public-btn" data-id="${colId}" title="Download .txt">${dlIcon}</button>
+        <button class="lexicon-btn remove-collection-btn" data-id="${colId}" title="Remove collection">${xIcon}</button>
+        <button class="small-start-btn start-collection-btn" data-id="${colId}" data-checkpoint="${checkpoint}" style="margin-left: 8px;">Start</button>
+      `;
+      
+      addedCollectionsHTML += buildRowHTML(escHtml(collectionName), "", data.words, addedBtns, progressHTML);
+    } else {
+      // Unsubscribed Collection
+    
+      // Unsubscribed Collection: Displayed in the Public Archives Grid as a "Note"
+      const previewWords = data.words.slice(0, 7); // Show fewer words for a compact note
+      const previewPills = previewWords.map(w => `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border-color: rgba(184,146,58,0.2); color: var(--text-dim); margin-bottom: 6px; display: inline-block;">${escHtml(w)}</span>`).join('');
+
+      const publicCardHTML = `
+        <div class="setup-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%; border: 0.5px solid rgba(184,146,58,0.15); background: rgba(255,255,255,0.02);">
+          <div>
+            <h3 style="font-family:'IM Fell English',serif; color:var(--vellum); font-size:1.4rem; line-height: 1.2;">${escHtml(collectionName)}</h3>
+            <div class="lexicon-count" style="margin-top: 0.3rem; margin-bottom: 1rem;">(${totalWords} words)</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${previewPills}
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 1.5rem;">
+            <button class="icon-btn-add add-collection-btn" data-id="${colId}" title="Add to Library">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+            <button class="small-start-btn start-public-new-btn" data-id="${colId}" title="Add and Start Learning">Start</button>
+          </div>
+        </div>
+      `;
+      grid.insertAdjacentHTML('beforeend', publicCardHTML);
+    }
+  });
+
+  // Inject Personal Lexicon + Added Collections combined
+  const container = document.getElementById('personal-lexicon-container');
+  container.innerHTML = personalHTML + addedCollectionsHTML;
+
+  // -- Mastered Tag Listener --
+  const masteredTagBtn = document.getElementById('download-mastered-tag');
+  if (masteredTagBtn) {
+    masteredTagBtn.addEventListener('click', () => {
+      triggerTextDownload('Aesop_Mastered_Words.txt', learned);
+    });
+    masteredTagBtn.addEventListener('mouseover', () => {
+      masteredTagBtn.style.color = 'var(--vellum)';
+      masteredTagBtn.style.background = 'rgba(255,255,255,0.08)';
+    });
+    masteredTagBtn.addEventListener('mouseout', () => {
+      masteredTagBtn.style.color = 'var(--text-dim)';
+      masteredTagBtn.style.background = 'rgba(255,255,255,0.03)';
+    });
+  }
+
+  // -- Standard Listeners for Personal Unlearned/Mastered Rows --
+  container.querySelectorAll('.dl-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.type;
+      const dataToDownload = type === 'Unlearned' ? unlearned : learned;
+      triggerTextDownload(`Aesop_${type}_Words.txt`, dataToDownload);
+    });
+  });
+
+  container.querySelectorAll('.clear-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const type = btn.dataset.type;
+      if(confirm(`Are you sure you want to permanently clear your ${type} list?`)) {
+        const updateObj = type === 'Unlearned' ? { unlearned: [] } : { learned: [] };
+        await updateDoc(userRef, updateObj);
+        loadLibrary();
+      }
+    });
+  });
+container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+       state.activePublicCollection = null;
+       
+       // Slice the first 30 words from your personal unlearned array
+       const nextWords = unlearned.slice(0, 30);
+       
+       // Auto-populate the text box and update the counter
+       const vocabTextarea = document.getElementById('vocab-textarea');
+       vocabTextarea.value = nextWords.join('\n');
+       parseVocabTextarea();
+       
+       // Manually switch views to bypass the 'New Story' wipe-clean logic
+       document.getElementById('library-dashboard').classList.add('hidden');
+       document.getElementById('story').classList.add('hidden');
+       document.getElementById('setup').classList.remove('hidden');
+       document.getElementById('story-meta').classList.add('hidden');
+       document.getElementById('restart-btn').classList.add('hidden');
+    });
+  });
+
+  attachCollectionListeners();
+}function attachCollectionListeners() {
+
+  // Add & Start a Public Collection instantly (from the Note card)
+  document.querySelectorAll('.start-public-new-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const colId = e.target.dataset.id;
+      
+      // 1. Add it to personal collections at checkpoint 0
+      const userRef = doc(db, "users", state.currentUser.uid);
+      await updateDoc(userRef, { [`publicProgress.${colId}`]: 0 });
+      
+      // 2. Fetch the words
+      const colSnap = await getDoc(doc(db, "public_collections", colId));
+      const allWords = colSnap.data().words;
+      const nextWords = allWords.slice(0, 30); // Grab the first 30
+      
+      state.words = nextWords;
+      state.activePublicCollection = colId;
+      
+      // 3. Populate text area and move straight to Setup
+      const vocabTextarea = document.getElementById('vocab-textarea');
+      vocabTextarea.value = nextWords.join('\n');
+      parseVocabTextarea(); 
+      
+      document.getElementById('library-dashboard').classList.add('hidden');
+      document.getElementById('setup').classList.remove('hidden');
+    });
+  });
+  // Add a Public Collection (+)
+  document.querySelectorAll('.add-collection-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const colId = e.currentTarget.dataset.id;
+      const userRef = doc(db, "users", state.currentUser.uid);
+      await updateDoc(userRef, { [`publicProgress.${colId}`]: 0 });
+      loadLibrary(); 
+    });
+  });
+
+  // Download an Added Collection
+  document.querySelectorAll('.dl-public-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const colId = e.currentTarget.dataset.id;
+      const colSnap = await getDoc(doc(db, "public_collections", colId));
+      if (colSnap.exists()) {
+         triggerTextDownload(`Aesop_${colSnap.data().title.replace(/\s+/g, '_')}.txt`, colSnap.data().words);
+      }
+    });
+  });
+
+  // Remove an Added Collection (X)
+  document.querySelectorAll('.remove-collection-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const colId = e.currentTarget.dataset.id;
+      if(confirm('Remove this collection from your library?')) {
+         const userRef = doc(db, "users", state.currentUser.uid);
+         await updateDoc(userRef, { [`publicProgress.${colId}`]: deleteField() });
+         loadLibrary();
+      }
+    });
+  });
+
+  // Start an Added Collection
+  document.querySelectorAll('.start-collection-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const colId = e.target.dataset.id;
+      const checkpoint = parseInt(e.target.dataset.checkpoint);
+      
+      const colSnap = await getDoc(doc(db, "public_collections", colId));
+      const allWords = colSnap.data().words;
+      
+      const nextWords = allWords.slice(checkpoint, checkpoint + 30);
+      state.words = nextWords;
+      state.activePublicCollection = colId;
+      
+      // Auto-Populate the Setup Textarea
+      const vocabTextarea = document.getElementById('vocab-textarea');
+      vocabTextarea.value = nextWords.join('\n');
+      parseVocabTextarea(); 
+      
+      // Move to Setup screen
+      document.getElementById('library-dashboard').classList.add('hidden');
+      document.getElementById('setup').classList.remove('hidden');
+    });
+  });
+}
 /* ── Firebase ──────────────────────────────────────────────────── */
 const firebaseConfig = {
   apiKey: "AIzaSyCLAxH6tbIWhIaa9Ah_wNmEfE4T-b3Ba2M",
@@ -434,7 +772,10 @@ const firebaseConfig = {
   appId: "1:159161013702:web:3df4bab84186d1b91c8ec7",
   measurementId: "G-CBWV00GTK2"
 };
+
 const app  = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
 try { getAnalytics(app); } catch(e) {}
 const auth = getAuth(app);
 
@@ -445,7 +786,8 @@ const state = {
   level:'beginner', words:[], setting:'',
   scene:0, maxScenes:10, streaming:false, currentUser:null,
   wordsSeenSet: new Set(), // tracks which words have been seen across scenes
-  rollingSummary: ''
+  rollingSummary: '',
+  uploadedWords: [] // <-- NEW: Holds file words until the user clicks "Weave"
 };
 const MAX_WORDS = 30;
 
@@ -490,6 +832,56 @@ document.getElementById('auth-back-btn').addEventListener('click', () => {
   formWrap.classList.remove('hidden');
   setAuthMode(false);
   if (pendingUser) { signOut(auth); pendingUser = null; }
+});
+document.getElementById('vocab-file-upload').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const fileNameDisplay = document.getElementById('upload-file-name');
+  const uploadIcon = document.getElementById('upload-icon-label');
+
+  fileNameDisplay.textContent = "Reading...";
+  fileNameDisplay.style.color = "var(--text-dim)";
+  uploadIcon.style.color = "var(--gold)"; // Reset to gold while loading
+
+  const reader = new FileReader();
+  
+  // Note: removed "async" from here because we aren't talking to the database anymore
+  reader.onload = (event) => {
+    const text = event.target.result;
+    
+    // Split by newlines or commas, trim spaces, and remove empty lines
+    let newWords = text.split(/\r?\n|,/)
+                         .map(w => w.trim())
+                         .filter(w => w.length > 0);
+    
+    if (newWords.length === 0) {
+      fileNameDisplay.textContent = "File is empty";
+      fileNameDisplay.style.color = "var(--rose)";
+      state.uploadedWords = []; // Clear state if file is empty
+      return;
+    }
+
+    // Apply the 100-line file limit
+    if (newWords.length > 100) {
+      newWords = newWords.slice(0, 100);
+    }
+
+    // Hold the words in temporary state instead of saving to the database
+    state.uploadedWords = newWords;
+      
+    // Update UI to green and show the file name with a ready state
+    fileNameDisplay.textContent = file.name + " (Ready)";
+    fileNameDisplay.style.color = "var(--sage)";
+    uploadIcon.style.color = "var(--sage)";
+    uploadIcon.style.opacity = "1";
+      
+    // Clear the manual text box
+    document.getElementById('vocab-textarea').value = '';
+    parseVocabTextarea(); 
+  };
+  
+  reader.readAsText(file);
 });
 
 const resendBtn = document.getElementById('auth-resend-btn');
@@ -563,6 +955,7 @@ submitBtn.addEventListener('click', async () => {
   el.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.click(); })
 );
 
+
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     await reloadUser(user);
@@ -579,6 +972,9 @@ onAuthStateChanged(auth, async (user) => {
     
     document.getElementById('topbar').classList.remove('hidden');
     document.getElementById('setup').classList.remove('hidden');
+    document.getElementById('library-dashboard').classList.add('hidden');
+
+    loadLibrary();
   } else {
     state.currentUser = null;
     const modal = document.getElementById('auth-modal');
@@ -587,10 +983,32 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('topbar').classList.add('hidden');
     document.getElementById('setup').classList.add('hidden');
     document.getElementById('story').classList.add('hidden');
+    document.getElementById('library-dashboard').classList.add('hidden');
   }
 });
-
 document.getElementById('topbar-logout-btn').addEventListener('click', () => signOut(auth));
+document.getElementById('nav-library-btn').addEventListener('click', () => {
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('story').classList.add('hidden');
+  document.getElementById('library-dashboard').classList.remove('hidden');
+  loadLibrary();
+});
+document.getElementById('nav-setup-btn').addEventListener('click', () => {
+  // 1. Switch the main views
+  document.getElementById('library-dashboard').classList.add('hidden');
+  document.getElementById('story').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+  
+  // 2. Hide story metadata from the topbar (if user was mid-story)
+  document.getElementById('story-meta').classList.add('hidden');
+  document.getElementById('restart-btn').classList.add('hidden');
+  
+  // 3. Reset the text box and clear active collection tracking
+  state.activePublicCollection = null;
+  document.getElementById('vocab-textarea').value = '';
+  parseVocabTextarea();
+});
+
 
 /* ════════════════════════════════════════════════════════════════
    API PROVIDER TOGGLE
@@ -695,19 +1113,63 @@ function updateSummaryWords() {
 }
 
 document.getElementById('begin-btn').addEventListener('click', beginStory);
-
-function beginStory() {
+async function beginStory() {
   const userKey = document.getElementById('api-key').value.trim();
   const errEl = document.getElementById('setup-error');
   errEl.textContent = '';
-  if (!state.currentUser) { errEl.textContent = 'Please sign in first.'; return; }
-  if (state.words.length === 0) { errEl.textContent = 'Add at least one vocabulary word or expression.'; return; }
+  
+  if (!state.currentUser) { 
+    errEl.textContent = 'Please sign in first.'; 
+    return; 
+  }
 
- if (userKey) {
-  if (state.provider === 'gemini' && !userKey.startsWith('AIza') && !userKey.startsWith('AQ')) {
-    errEl.textContent = "That doesn't look like a valid Gemini key (should start with AIza… or AQ…).";
+  // 1. Grab manual words from the text area
+  const manualInput = document.getElementById('vocab-textarea').value.trim();
+  let manualWords = [];
+  if (manualInput.length > 0) {
+    manualWords = manualInput.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
+  }
+
+  // 2. Fetch existing words from Firestore and merge EVERYTHING
+  try {
+    const userRef = doc(db, "users", state.currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    
+    let unlearnedPool = [];
+    if (userSnap.exists()) {
+      unlearnedPool = userSnap.data().unlearned || [];
+    }
+    
+    // Combine manual words, uploaded words, and the database pool, removing duplicates
+    const combinedPool = [...new Set([...manualWords, ...state.uploadedWords, ...unlearnedPool])];
+    
+    if (combinedPool.length === 0) {
+      errEl.textContent = 'Your vocabulary bank is empty. Enter words manually or upload a .txt file.';
+      return;
+    }
+    
+    // Save the combined pool back to Firestore NOW that the user has confirmed
+    await setDoc(userRef, { unlearned: combinedPool }, { merge: true });
+    
+    // Clear the uploaded state so it doesn't accidentally trigger again if they restart the book
+    state.uploadedWords = [];
+    
+    // CHUNKING: Take only the first 30 words for this learning session
+    state.words = combinedPool.slice(0, 30);
+    
+  } catch (err) {
+    console.error("Error fetching vocab:", err);
+    errEl.textContent = 'Could not load your vocabulary. Check your connection.';
     return;
   }
+  
+
+  // API key logic...
+  if (userKey) {
+    if (state.provider === 'gemini' && !userKey.startsWith('AIza') && !userKey.startsWith('AQ')) {
+      errEl.textContent = "That doesn't look like a valid Gemini key (should start with AIza… or AQ…).";
+      return;
+    }
     if (state.provider === 'openai' && !userKey.startsWith('sk-')) {
       errEl.textContent = "That doesn't look like a valid OpenAI key (should start with sk-…).";
       return;
@@ -724,18 +1186,14 @@ function beginStory() {
   state.rollingSummary = '';
   state.wordsSeenSet = new Set();
 
-  // Transition layouts
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('story').classList.remove('hidden');
-  
-  // Show header content states
   document.getElementById('story-meta').classList.remove('hidden');
   document.getElementById('restart-btn').classList.remove('hidden');
-  
+  state.activePublicCollection = null;
   buildWordTracker();
   generateScene();
 }
-
 function showSetupScreen() {
   document.getElementById('story').classList.add('hidden');
   document.getElementById('setup').classList.remove('hidden');
@@ -760,16 +1218,32 @@ function buildWordTracker() {
     tracker.appendChild(span);
   });
 
-  tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+ tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
+    btn.addEventListener('click', async (e) => { // <-- added async here
       e.stopPropagation();
       const targetIdx = parseInt(btn.dataset.index);
+      
+      // The Firestore logic goes HERE
+      const wordToMarkLearned = state.words[targetIdx];
       state.words.splice(targetIdx, 1); 
-      buildWordTracker(); 
-      markWordsUsed(); 
-    });
-  });
-}
+
+      if (state.currentUser) {
+        const userRef = doc(db, "users", state.currentUser.uid);
+        
+        if (state.activePublicCollection) {
+          // THE BYPASS: If they are in a public collection, just increment the checkpoint
+          await updateDoc(userRef, {
+            [`publicProgress.${state.activePublicCollection}`]: increment(1)
+          });
+        } else {
+          // PERSONAL: Move word from unlearned to learned
+          await updateDoc(userRef, {
+            unlearned: arrayRemove(wordToMarkLearned),
+            learned: arrayUnion(wordToMarkLearned)
+          });
+        }
+      }});
+  });}
 
 function markWordsUsed(usedArr) {
   // Accumulate seen words persistently across scenes
@@ -917,6 +1391,22 @@ async function generateScene(chosenText = null) {
   }
   state.streaming = false;
 }
+
+// function handleFileUpload(file) {
+//   const reader = new FileReader();
+//   reader.onload = async (e) => {
+//     const text = e.target.result;
+//     // Split by newlines or commas, trim whitespace, remove empty strings
+//     const newWords = text.split(/[\n,]+/).map(w => w.trim()).filter(w => w);
+    
+//     // Save to Firestore using arrayUnion to avoid duplicates
+//     const userRef = doc(db, "users", state.currentUser.uid);
+//     await updateDoc(userRef, {
+//       unlearned: arrayUnion(...newWords)
+//     });
+//   };
+//   reader.readAsText(file);
+// }
 
 function renderScene(scene, isHardCeiling) {
   const pageLeft  = document.getElementById('page-left');
@@ -1100,6 +1590,23 @@ async function callAI(system, userMsg) {
   }
 }
 
+
+function triggerTextDownload(filename, wordsArray) {
+  if (!wordsArray || wordsArray.length === 0) return;
+  const textContent = wordsArray.join('\n');
+  const blob = new Blob([textContent], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  
+  // Cleanup
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 /* ── Helpers ─────────────────────────────────────────────────── */
 function parseScene(raw) {
   try { return JSON.parse(raw.replace(/```json/gi,'').replace(/```/g,'').trim()); }
