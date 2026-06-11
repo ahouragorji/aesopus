@@ -33,9 +33,18 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .auth-tab{flex:1;padding:0.6rem;font-family:'Cormorant SC',serif;font-weight:600;font-size:0.9rem;letter-spacing:0.08em;color:var(--text-dim);background:transparent;transition:all 0.2s;text-align:center}
 .auth-tab.active{background:rgba(184,146,58,0.14);color:var(--gold)}
 .auth-fields{display:flex;flex-direction:column;gap:0.85rem}
-.auth-field-label{font-family:'Cormorant SC',serif;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:0.3rem}.auth-inp{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;padding:0.7rem 0.9rem;color:var(--vellum);font-size:1rem;transition:border-color 0.2s}
+.auth-field-label{font-family:'Cormorant SC',serif;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:0.3rem}
+
+/* Inputs & Placeholders */
+.auth-inp { width:100%; background:transparent; border:0.5px solid rgba(184,146,58,0.22); border-radius:3px; padding:0.7rem 0.9rem; color:var(--vellum); font-size:1rem; transition:border-color 0.2s }
 .auth-inp:focus{border-color:rgba(184,146,58,0.55)}
 .auth-inp::placeholder{color:rgba(242,232,217,0.25);font-style:italic}
+.inp { width:100%; background:transparent; border:0.5px solid rgba(184,146,58,0.22); border-radius:3px; padding:0.7rem 0.9rem; color:var(--vellum); font-size:1rem; transition:border-color 0.2s, background 0.2s }
+.inp:focus{border-color:rgba(184,146,58,0.55);background:rgba(255,255,255,0.02)}
+.inp::placeholder{color:rgba(242,232,217,0.12);font-style:italic}
+
+input:focus::placeholder, textarea:focus::placeholder { color: transparent !important; }
+
 .auth-error{font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--rose);min-height:1rem;text-align:center}
 .auth-info{font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--sage);min-height:1rem;text-align:center;line-height:1.5}
 .auth-submit{width:100%;padding:0.85rem;background:linear-gradient(135deg,rgba(184,146,58,0.9),rgba(106,142,127,0.7));border-radius:3px;font-family:'IM Fell English',serif;font-size:1.15rem;color:var(--ink);letter-spacing:0.06em;transition:opacity 0.2s,transform 0.1s}
@@ -49,7 +58,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .auth-resend-btn:disabled{opacity:0.5;cursor:not-allowed}
 .auth-footer-note{font-family:'Inter',sans-serif;font-style:italic;font-size:0.78rem;color:rgba(122,110,100,0.65);text-align:center;line-height:1.5}
 
-
 /* ── LEXICON ROW STYLES ── */
 .lexicon-row { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
 #personal-lexicon-container .lexicon-row { margin-top: 0.5rem; margin-bottom: 1.2rem; padding-bottom: 1.2rem; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
@@ -57,8 +65,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .lexicon-progress-bg { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
 .lexicon-progress-fill { height: 100%; background: var(--sage); transition: width 0.5s ease-out; }
 
-.icon-btn-add { background: transparent; border: 0.5px solid rgba(184,146,58,0.4); color: var(--gold); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-.icon-btn-add:hover { background: rgba(184,146,58,0.15); transform: scale(1.05); }
+/* Fixed Icon Alignments & Hovers */
+.icon-btn-add { background: transparent; border: 0.5px solid rgba(184,146,58,0.4); color: var(--gold); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 0; margin: 0; }
+.icon-btn-add:hover { background: rgba(184,146,58,0.15); }
+.lexicon-btn { background: transparent; border: 0.5px solid transparent; color: var(--text-dim); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; padding: 0; margin: 0; }
+.lexicon-btn svg { display: block; margin: auto; }
+.lexicon-btn:hover { background: rgba(255,255,255,0.1); color: var(--vellum); border-color: rgba(255,255,255,0.2); }
+.lexicon-btn.dl-btn:hover, .lexicon-btn.dl-public-btn:hover { background: rgba(106,142,127,0.15); color: var(--sage); border-color: rgba(106,142,127,0.4); }
+.lexicon-btn.clear-btn:hover, .lexicon-btn.remove-collection-btn:hover { background: rgba(184,114,90,0.15); color: var(--rose); border-color: rgba(184,114,90,0.4); }
 
 .small-start-btn { font-family: 'Cormorant SC', serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; color: var(--ink); background: linear-gradient(135deg, rgba(184,146,58,0.9), rgba(106,142,127,0.7)); border-radius: 2px; padding: 4px 14px; transition: opacity 0.2s; border: none; cursor: pointer; }
 .small-start-btn:hover { opacity: 0.85; }
@@ -69,14 +83,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .lexicon-pills-mask { display: flex; align-items: center; gap: 8px; mask-image: linear-gradient(to right, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%); padding-right: 2rem; overflow: hidden; white-space: nowrap; }
 .lexicon-pill { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.95rem; color: rgba(242,232,217,0.4); border: 0.5px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 2px 14px; }
 .lexicon-ellipsis { font-family: 'Inter', sans-serif; color: var(--vellum); font-weight: 600; letter-spacing: 2px; margin-left: -10px; z-index: 2; }
-.lexicon-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.lexicon-btn { background: rgba(255,255,255,0.12); border: 0.5px solid rgba(255,255,255,0.05); color: var(--text-dim); width: 28px; height: 26px; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
-.lexicon-btn:hover { background: rgba(255,255,255,0.25); color: var(--vellum); }
-.lexicon-btn.dl-btn:hover { background: rgba(106,142,127,0.15); color: var(--sage); border-color: rgba(106,142,127,0.4); transform: translateY(-1px); }
-.lexicon-btn.clear-btn:hover { background: rgba(184,114,90,0.15); color: var(--rose); border-color: rgba(184,114,90,0.4); transform: translateY(-1px); }
-/* .lexicon-progress-bg { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 2px; }
-.lexicon-progress-fill { height: 100%; background: var(--text-dim); transition: width 0.5s ease-out; } */
-/* ── TOP BAR (Merged and Centered) ──────────────────────────────── */
+.lexicon-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+
+/* ── TOP BAR ──────────────────────────────── */
 #topbar {
   position: fixed;
   top: 0;
@@ -115,8 +124,16 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   align-items: center;
   gap: 1rem;
 }
-.restart-btn { font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-dim); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 2px; padding: 4px 12px; transition: color 0.2s, border-color 0.2s; }
+.restart-btn { font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-dim); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 2px; padding: 4px 12px; transition: color 0.2s, border-color 0.2s, background 0.2s; }
 .restart-btn:hover{color:var(--vellum);border-color:rgba(255,255,255,0.2)}
+
+/* Active Nav State */
+.restart-btn.active-nav {
+  color: var(--gold);
+  border-color: rgba(184,146,58,0.4);
+  background: rgba(184,146,58,0.08);
+}
+
 .topbar-logout { font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--text-dim); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 2px; padding: 4px 12px; transition: color 0.2s, border-color 0.2s; }
 .topbar-logout:hover{color:var(--rose);border-color:rgba(184,114,90,0.4)}
 
@@ -136,16 +153,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .field-label{font-family:'Cormorant SC',serif;font-size:0.72rem;font-weight:600;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase}
 .field-hint{font-family:'Inter',sans-serif;font-size:0.78rem;line-height:1.45;color:rgba(242,232,217,0.45)}
 .setup-divider{height:0.5px;background:linear-gradient(90deg,transparent,rgba(184,146,58,0.2),transparent)}
-.inp{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;padding:0.7rem 0.9rem;color:var(--vellum);font-size:1rem;transition:border-color 0.2s,background 0.2s}
-.inp:focus{border-color:rgba(184,146,58,0.55);background:rgba(255,255,255,0.05)}
-.inp::placeholder{color:rgba(242,232,217,0.28);font-style:italic}
+
 textarea.inp{resize:vertical;line-height:1.65}
 select.inp{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8923A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.9rem center;padding-right:2.5rem;cursor:pointer}
 select.inp option{background:#1C1917;color:var(--vellum)}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
 
 /* Vocab textarea wrapper */
-.vocab-wrap{position:relative;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;overflow:hidden;background:rgba(255,255,255,0.03);transition:border-color 0.2s}
+.vocab-wrap{position:relative;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;overflow:hidden;background:transparent;transition:border-color 0.2s}
 .vocab-wrap:focus-within{border-color:rgba(184,146,58,0.55)}
 .vocab-textarea{width:100%;background:transparent;border:none;padding:0.8rem 0.9rem 2.5rem 0.9rem;color:var(--vellum);font-size:0.98rem;line-height:1.7;resize:vertical;min-height:200px}
 
@@ -154,9 +169,12 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .vocab-textarea::-webkit-scrollbar-track{background:rgba(0,0,0,0.15)}
 .vocab-textarea::-webkit-scrollbar-thumb{background:rgba(184,146,58,0.25);border-radius:4px}
 .vocab-textarea::-webkit-scrollbar-thumb:hover{background:rgba(184,146,58,0.45)}
-
+.vocab-textarea::placeholder {
+  color: rgba(242, 232, 217, 0.12); /* Matches the high transparency of the other inputs */
+  font-style: italic;
+}
 /* Fixed transparent background overlay */
-.vocab-status{position:absolute;bottom:0;left:0;right:0;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;border-top:0.5px solid rgba(184,146,58,0.15);background:linear-gradient(to bottom, #1e1c19, #16140f)}
+.vocab-status{position:absolute;bottom:0;left:0;right:0;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;border-top:0.5px solid rgba(184,146,58,0.15);background:linear-gradient(to bottom, rgba(30,28,25,0.9), rgba(22,20,15,0.95))}
 .vocab-status-left{display:flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;font-size:0.72rem;line-height:1}
 .vocab-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background 0.3s}
 .dot-idle{background:#5a544e} 
@@ -166,9 +184,11 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .vocab-status-msg{color:rgba(242,232,217,0.45);transition:color 0.3s;display:inline-block;line-height:1}
 .vocab-status-count{font-family:'Inter',sans-serif;font-size:0.72rem;color:rgba(242,232,217,0.3);line-height:1}
 
+
 /* Level pills */
 .level-pills{display:flex;gap:6px}
-.level-pill{flex:1;padding:0.6rem 0.4rem;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;background:transparent;color:var(--text-dim);font-family:'Cormorant SC',serif;font-size:0.88rem;letter-spacing:0.07em;text-align:center;cursor:pointer;transition:all 0.2s}.level-pill{flex:1;padding:0.6rem 0.4rem;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;background:transparent;color:var(--text-dim);font-family:'Cormorant SC',serif;font-weight:600;font-size:0.88rem;letter-spacing:0.07em;text-align:center;cursor:pointer;transition:all 0.2s}
+.level-pill{flex:1;padding:0.3rem 0.4rem;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;background:transparent;color:var(--text-dim);font-family:'Cormorant SC',serif;font-weight:600;font-size:0.88rem;letter-spacing:0.07em;text-align:center;cursor:pointer;transition:all 0.2s}
+
 .level-pill:hover{border-color:rgba(184,146,58,0.45);color:var(--vellum)}
 .level-pill.active{background:rgba(184,146,58,0.16);border-color:var(--gold);color:var(--gold)}
 
@@ -373,7 +393,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
   <div class="topbar-right">
     <button class="restart-btn hidden" id="restart-btn">Close the book</button>
     <button class="restart-btn" id="nav-library-btn">Library</button>
-    <button class="restart-btn" id="nav-setup-btn">New Story</button>
+    <button class="restart-btn active-nav" id="nav-setup-btn">New Story</button>
     <button class="topbar-logout" id="topbar-logout-btn">Sign out</button>
   </div>
 </div>
@@ -391,8 +411,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
   <div>
     <h2 style="font-family:'IM Fell English',serif; font-size:2rem; color:var(--gold); margin-bottom:1rem; font-style:italic;">Public Archives</h2>
     <div id="public-collections-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem;">
-      <!-- JavaScript will inject rows here -->
-    </div>
+      </div>
   </div>
 
 </div>
@@ -410,16 +429,6 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 
       <div class="col-left">
         <div class="setup-card">
-                <!-- <div class="field-group" style="flex:1">
-        <label class="field-label">Upload Vocabulary Bank (.txt)</label>
-        <p class="field-hint">Upload a text file with one word or expression per line. We'll feed them into your stories 30 at a time.</p>
-        
-        <div class="vocab-wrap" style="padding: 1rem; display: flex; flex-direction: column; gap: 1rem; text-align: center;">
-          <input type="file" id="vocab-file-upload" accept=".txt" style="display: none;" />
-          <button id="trigger-upload-btn" class="begin-btn" style="padding: 0.6rem; font-size: 1rem;">Choose .txt File</button>
-          <div id="upload-status" class="vocab-status-msg" style="color: var(--sage);">No file selected</div>
-        </div>
-      </div> -->
           <h2 class="card-header">Language & Level</h2>
           <div class="field-group">
             <label class="field-label">Story language</label>
@@ -470,8 +479,8 @@ select.inp option{background:#1C1917;color:var(--vellum)}
           <h2 class="card-header">Vocabulary & Expressions</h2>
           <div class="field-group" style="flex:1">
             <label class="field-label">Words to learn <span style="opacity:0.4;font-weight:300;letter-spacing:0;text-transform:none;font-family:'Inter',sans-serif;font-size:0.7rem">(max 30)</span></label>
-              <p class="field-hint" id="vocab-hint">Type words manually below, <strong>or upload a .txt file</strong> to build your long-term library.</p>            <div class="vocab-wrap" style="margin-top:0.4rem">
-              <textarea class="vocab-textarea" id="vocab-textarea" placeholder="serendipity&#10;come hell or high water&#10;der Augenblick&#10;脱線する&#10;&#10;One per line or comma-separated…"></textarea>
+              <p class="field-hint" id="vocab-hint">Type words manually below, or upload a .txt file to build your long-term library.</p>            <div class="vocab-wrap" style="margin-top:0.4rem">
+              <textarea class="vocab-textarea" id="vocab-textarea" placeholder="serendipity&#10;come hell or high water&#10;der Augenblick&#10;&#10;One per line or comma-separated…"></textarea>
               <div class="vocab-status">
                 <div class="vocab-status-left">
                   <div class="vocab-status-dot dot-idle" id="vocab-dot"></div>
@@ -728,6 +737,9 @@ async function loadLibrary() {
   });
 container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+       document.getElementById('nav-setup-btn').classList.add('active-nav');
+       document.getElementById('nav-library-btn').classList.remove('active-nav');
+
        state.activePublicCollection = null;
        toggleVocabLock(false); // UNLOCK
        
@@ -750,6 +762,9 @@ container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
   // Add & Start a Public Collection instantly (from the Note card)
   document.querySelectorAll('.start-public-new-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      document.getElementById('nav-setup-btn').classList.add('active-nav');
+      document.getElementById('nav-library-btn').classList.remove('active-nav');
+      
       const colId = e.target.dataset.id;
       
       // 1. Add it to personal collections at checkpoint 0
@@ -812,6 +827,9 @@ container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
   // Start an Added Collection
   document.querySelectorAll('.start-collection-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      document.getElementById('nav-setup-btn').classList.add('active-nav');
+      document.getElementById('nav-library-btn').classList.remove('active-nav');
+
       const colId = e.currentTarget.dataset.id;
       const checkpoint = parseInt(e.currentTarget.dataset.checkpoint);
      const colSnap = await getDoc(doc(db, "public_collections", colId));
@@ -1047,6 +1065,9 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('setup').classList.remove('hidden');
     document.getElementById('library-dashboard').classList.add('hidden');
 
+    document.getElementById('nav-setup-btn').classList.add('active-nav');
+    document.getElementById('nav-library-btn').classList.remove('active-nav');
+
     loadLibrary();
   } else {
     state.currentUser = null;
@@ -1074,6 +1095,8 @@ document.getElementById('nav-library-btn').addEventListener('click', () => {
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('story').classList.add('hidden');
   document.getElementById('library-dashboard').classList.remove('hidden');
+  document.getElementById('nav-library-btn').classList.add('active-nav');
+  document.getElementById('nav-setup-btn').classList.remove('active-nav');
   loadLibrary();
 });
 document.getElementById('nav-setup-btn').addEventListener('click', () => {
@@ -1283,6 +1306,10 @@ async function beginStory() {
 function showSetupScreen() {
   document.getElementById('story').classList.add('hidden');
   document.getElementById('setup').classList.remove('hidden');
+
+  document.getElementById('nav-setup-btn').classList.add('active-nav');
+  document.getElementById('nav-library-btn').classList.remove('active-nav');
+
   state.wordsSeenSet = new Set();
   state.activePublicCollection = null; // clear so the next session starts fresh
   toggleVocabLock(false);
