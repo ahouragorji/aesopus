@@ -158,11 +158,17 @@ textarea.inp{resize:vertical;line-height:1.65}
 select.inp{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8923A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.9rem center;padding-right:2.5rem;cursor:pointer}
 select.inp option{background:#1C1917;color:var(--vellum)}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
+.col-left,.col-centre,.col-right{min-width:0}
 
 /* Vocab textarea wrapper */
 .vocab-wrap{position:relative;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;overflow:hidden;background:transparent;transition:border-color 0.2s}
 .vocab-wrap:focus-within{border-color:rgba(184,146,58,0.55)}
 .vocab-textarea{width:100%;background:transparent;border:none;padding:0.8rem 0.9rem 2.5rem 0.9rem;color:var(--vellum);font-size:0.98rem;line-height:1.7;resize:vertical;min-height:200px}
+.generate-btn{font-family:'Cormorant SC',serif;font-weight:700;font-size:0.75rem;letter-spacing:0.09em;color:var(--sage);border:0.5px solid rgba(106,142,127,0.35);border-radius:2px;padding:4px 12px;transition:all 0.2s;background:transparent;cursor:pointer;white-space:nowrap}
+.generate-btn:hover:not(:disabled){background:rgba(106,142,127,0.12);border-color:rgba(106,142,127,0.6);color:var(--vellum)}
+.generate-btn:disabled{opacity:0.35;cursor:not-allowed}
+.generate-btn.used{opacity:0.3;cursor:not-allowed;color:var(--text-dim);border-color:rgba(255,255,255,0.1)}
+.generate-btn.loading{opacity:0.6}
 
 /* Custom scrollbar */
 .vocab-textarea::-webkit-scrollbar{width:8px}
@@ -452,6 +458,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
       <option value="german">German</option>
       <option value="spanish">Spanish</option>
       <option value="french">French</option>
+      <option value="farsi">Farsi</option>
       </select>
     <select id="filter-level" class="filter-select">
       <option value="all">All Levels</option>
@@ -489,6 +496,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
             <p class="field-hint">The language you are learning</p>
             <select class="inp" id="target-lang">
               <option>Spanish</option><option selected>German</option><option>French</option>
+              <option>Farsi</option>
               <option>Italian</option><option>Portuguese</option><option>Japanese</option>
               <option>Mandarin Chinese</option><option>Korean</option><option>Arabic</option>
               <option>English</option>
@@ -499,6 +507,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
             <select class="inp" id="native-lang">
               <option>English</option><option>Spanish</option><option>French</option>
               <option>Italian</option><option>German</option><option>Portuguese</option>
+              <option>Farsi</option>
               <option>Japanese</option><option>Korean</option><option>Arabic</option>
             </select>
           </div>
@@ -543,7 +552,9 @@ select.inp option{background:#1C1917;color:var(--vellum)}
                 <span class="vocab-status-count" id="vocab-count">0 / 30</span>
               </div>
             </div>
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 0.6rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 0.6rem;">
+              <button id="generate-wordlist-btn" class="generate-btn" title="Generate a wordlist from your idea or translate a foreign list">✦ Generate Wordlist</button>
+              <div style="display:flex;align-items:center;gap:8px;">
               <span id="upload-file-name" style="font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--text-dim); font-style: italic;"></span>
               <label for="vocab-file-upload" id="upload-icon-label" style="cursor: pointer; color: var(--gold); transition: color 0.3s; display: flex; align-items: center; opacity: 0.8;" title="Upload .txt file">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -553,6 +564,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
                 </svg>
               </label>
               <input type="file" id="vocab-file-upload" accept=".txt" style="display: none;" />
+              </div>
             </div>
 
           </div>
@@ -992,12 +1004,14 @@ const auth = getAuth(app);
 /* ── App state ─────────────────────────────────────────────────── */
 const state = {
   apiKey:'', provider:'gemini',
-  targetLang:'German', nativeLang:'English',
+  targetLang:'English', nativeLang:'English',
   level:'beginner', words:[], setting:'',
   scene:0, maxScenes:10, streaming:false, currentUser:null,
   wordsSeenSet: new Set(), // tracks which words have been seen across scenes
   rollingSummary: '',
-  uploadedWords: [] // <-- NEW: Holds file words until the user clicks "Weave"
+  uploadedWords: [], // <-- Holds file words until the user clicks "Weave"
+  activePublicCollection: null, // <-- tracks if user is playing a public collection
+  generateUsed: false  // <-- one-time generate button limit
 };
 const MAX_WORDS = 30;
 
@@ -1092,6 +1106,89 @@ document.getElementById('vocab-file-upload').addEventListener('change', (e) => {
   };
   
   reader.readAsText(file);
+});
+
+/* ════════════════════════════════════════════════════════════════
+   GENERATE WORDLIST (AI-powered, one-time per session)
+════════════════════════════════════════════════════════════════ */
+document.getElementById('generate-wordlist-btn').addEventListener('click', async () => {
+  if (state.generateUsed) return; // hard block after first use
+
+  const btn = document.getElementById('generate-wordlist-btn');
+  const ta  = document.getElementById('vocab-textarea');
+  const targetLang = document.getElementById('target-lang').value;
+  const nativeLang = document.getElementById('native-lang').value;
+  const currentText = ta.value.trim();
+
+  if (!currentText) {
+    setVocabStatus('warn', 'Type an idea or paste a foreign-language list first', 0);
+    return;
+  }
+
+  const systemPrompt = `You are a vocabulary list generator for a language learning app called Aesop.
+The learner's target language is ${targetLang} and their native language is ${nativeLang}.
+
+You will receive either:
+(A) A general learning topic or idea written in ${nativeLang} (e.g. "I want to learn how to cook" or "kitchen vocabulary").
+(B) A list of words already in a language other than ${targetLang} that the user wants translated into ${targetLang}.
+
+Your task:
+- If (A): generate a focused list of 15-25 useful ${targetLang} vocabulary words or short phrases related to that topic.
+- If (B): translate every word/phrase in the list into ${targetLang}.
+
+STRICT OUTPUT FORMAT - respond with ONLY a plain newline-separated word list, one entry per line.
+No numbering, no bullet points, no extra text, no explanations, no markdown.
+Each line is a single ${targetLang} word or short phrase.
+Do not include any line that is not a vocabulary item.`;
+
+  // Lock button
+  state.generateUsed = true;
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.textContent = '\u2736 Generating\u2026';
+  setVocabStatus('idle', 'asking the AI\u2026', 0);
+
+  try {
+    const raw = await callAI(systemPrompt, currentText);
+
+    // Parse lines, strip any accidental bullets/numbers/whitespace
+    const lines = raw
+      .split(/\r?\n/)
+      .map(l => l.replace(/^[\s\-\*\d\.\)]+/, '').trim())
+      .filter(l => l.length > 0 && l.length < 80);
+
+    if (lines.length === 0) throw new Error('The AI returned an empty list — try again.');
+
+    // Place generated list in textarea for user to review/edit
+    ta.value = lines.join('\n');
+    parseVocabTextarea();
+
+    // Save to Firebase personal queue immediately
+    if (state.currentUser && !state.activePublicCollection) {
+      try {
+        const userRef = doc(db, "users", state.currentUser.uid);
+        const snap = await getDoc(userRef);
+        const existing = snap.exists() ? (snap.data().unlearned || []) : [];
+        const merged = [...new Set([...lines, ...existing])];
+        await setDoc(userRef, { unlearned: merged }, { merge: true });
+      } catch(saveErr) {
+        console.warn('Could not auto-save generated list to Firebase:', saveErr);
+      }
+    }
+
+    btn.classList.remove('loading');
+    btn.classList.add('used');
+    btn.textContent = '\u2736 Generate Wordlist';
+    btn.title = 'Already used \u2014 you can still edit the list below';
+
+  } catch(err) {
+    // Unlock on failure so user can retry
+    state.generateUsed = false;
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.textContent = '\u2736 Generate Wordlist';
+    setVocabStatus('err', 'AI error \u2014 ' + err.message.slice(0, 60), state.words.length);
+  }
 });
 
 const resendBtn = document.getElementById('auth-resend-btn');
@@ -1224,6 +1321,13 @@ document.getElementById('nav-setup-btn').addEventListener('click', () => {
   showSetupScreen();
   document.getElementById('vocab-textarea').value = '';
   parseVocabTextarea();
+  // Reset generate button for new session
+  state.generateUsed = false;
+  const genBtn = document.getElementById('generate-wordlist-btn');
+  genBtn.disabled = false;
+  genBtn.classList.remove('used', 'loading');
+  genBtn.textContent = '\u2736 Generate Wordlist';
+  genBtn.title = 'Generate a wordlist from your idea or translate a foreign list';
 });
 
 
@@ -1432,6 +1536,16 @@ function showSetupScreen() {
   state.wordsSeenSet = new Set();
   state.activePublicCollection = null; // clear so the next session starts fresh
   toggleVocabLock(false);
+
+  // Reset generate button for new session
+  state.generateUsed = false;
+  const genBtn = document.getElementById('generate-wordlist-btn');
+  if (genBtn) {
+    genBtn.disabled = false;
+    genBtn.classList.remove('used', 'loading');
+    genBtn.textContent = '\u2736 Generate Wordlist';
+    genBtn.title = 'Generate a wordlist from your idea or translate a foreign list';
+  }
   
   // Revert header content states
   document.getElementById('story-meta').classList.add('hidden');
@@ -1890,19 +2004,22 @@ function toggleVocabLock(isLocked, collectionName = "") {
   const ta = document.getElementById('vocab-textarea');
   const uploadLbl = document.getElementById('upload-icon-label');
   const uploadInp = document.getElementById('vocab-file-upload');
-  const hint = document.getElementById('vocab-hint'); 
+  const hint = document.getElementById('vocab-hint');
+  const genBtn = document.getElementById('generate-wordlist-btn');
 
   if (isLocked) {
     ta.readOnly = true;
     ta.style.opacity = '0.5';
     if (uploadLbl) uploadLbl.style.display = 'none';
     if (uploadInp) uploadInp.disabled = true;
+    if (genBtn) { genBtn.disabled = true; genBtn.classList.add('used'); }
     if (hint) hint.innerHTML = `<span style="color:var(--gold)">🔒 Playing Public Archive:</span> <em>${escHtml(collectionName)}</em>.<br>Words are locked for this session.`;
   } else {
     ta.readOnly = false;
     ta.style.opacity = '1';
     if (uploadLbl) uploadLbl.style.display = 'flex';
     if (uploadInp) uploadInp.disabled = false;
+    if (genBtn && !state.generateUsed) { genBtn.disabled = false; genBtn.classList.remove('used'); }
     if (hint) hint.innerHTML = `Type words manually below, <strong>or upload a .txt file</strong> to build your long-term library.`;
   }
 }
