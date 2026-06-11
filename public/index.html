@@ -134,8 +134,14 @@ input:focus::placeholder, textarea:focus::placeholder { color: transparent !impo
   background: rgba(184,146,58,0.08);
 }
 
-.topbar-logout { font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--text-dim); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 2px; padding: 4px 12px; transition: color 0.2s, border-color 0.2s; }
-.topbar-logout:hover{color:var(--rose);border-color:rgba(184,114,90,0.4)}
+.topbar-logout { width:30px; height:30px; border-radius:50%; border:0.5px solid transparent; color:var(--text-dim); display:flex; align-items:center; justify-content:center; transition:color 0.2s, border-color 0.2s, background 0.2s; flex-shrink:0; }
+.topbar-logout:hover{ color:var(--rose); border-color:rgba(184,114,90,0.35); background:rgba(184,114,90,0.08); }
+.auth-forgot-btn { font-family:'Inter',sans-serif; font-size:0.78rem; color:var(--text-dim); background:none; border:none; cursor:pointer; text-align:right; align-self:flex-end; margin-top:-0.2rem; transition:color 0.2s; text-decoration:underline; text-decoration-color:transparent; }
+.auth-forgot-btn:hover { color:var(--sage); text-decoration-color:rgba(106,142,127,0.5); }
+.auth-reset-wrap { display:flex; flex-direction:column; align-items:center; gap:1rem; padding:0.5rem 0; text-align:center; }
+.auth-reset-icon { font-size:2rem; opacity:0.65; }
+.auth-reset-title { font-family:'IM Fell English',serif; font-size:1.3rem; color:var(--gold); }
+.auth-reset-body { font-family:'Inter',sans-serif; font-size:0.82rem; color:rgba(242,232,217,0.6); line-height:1.6; }
 
 /* ── SETUP SCREEN ───────────────────────────────────────────────── */
 #setup{min-height:100vh;padding-top:46px;display:flex;align-items:flex-start;justify-content:center;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(184,146,58,0.08) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(106,142,127,0.06) 0%,transparent 50%),var(--ink)}
@@ -322,6 +328,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
   .story-meta{position:static;transform:none;flex:1;text-align:center;font-size:0.7rem;letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .topbar-right{gap:0.4rem}
   .restart-btn,.topbar-logout{font-size:0.68rem;padding:3px 7px;letter-spacing:0.06em}
+  .topbar-logout{padding:0;width:28px;height:28px}
 
   /* Auth modal */
   .auth-modal-box{padding:1.75rem 1.25rem 1.5rem}
@@ -372,6 +379,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 @media(max-width:380px){
   .topbar-brand{display:none}
   .restart-btn,.topbar-logout{font-size:0.63rem;padding:3px 6px}
+  .topbar-logout{padding:0;width:26px;height:26px}
   .masthead h1{font-size:2.2rem}
   .setup-card{padding:1.5rem 1rem}
   .page-left,.page-right{padding:1.1rem 0.8rem}
@@ -409,9 +417,22 @@ select.inp option{background:#1C1917;color:var(--vellum)}
           <label class="auth-field-label" for="auth-confirm">Confirm Password</label>
           <input type="password" class="auth-inp" id="auth-confirm" placeholder="••••••••" autocomplete="new-password"/>
         </div>
+        <button class="auth-forgot-btn" id="auth-forgot-btn" type="button">Forgot password?</button>
       </div>
       <div id="auth-error" class="auth-error" style="margin-top:0.6rem"></div>
       <button class="auth-submit" id="auth-submit-btn" style="margin-top:0.6rem">Sign In</button>
+    </div>
+
+    <div id="auth-reset-wrap" class="hidden">
+      <div class="auth-reset-wrap">
+        <div class="auth-reset-icon">🗝</div>
+        <div class="auth-reset-title">Reset your password</div>
+        <p class="auth-reset-body">Enter the email address tied to your account and we'll send you a reset link.</p>
+        <input type="email" class="auth-inp" id="auth-reset-email" placeholder="scholar@library.com" autocomplete="email" style="width:100%;margin-top:0.25rem"/>
+        <div id="auth-reset-msg" class="auth-info" style="min-height:1rem"></div>
+        <button class="auth-submit" id="auth-reset-send-btn">Send reset link</button>
+        <button class="auth-submit" id="auth-reset-back-btn" style="background:rgba(255,255,255,0.06);color:var(--vellum);margin-top:0.25rem">Back to Sign In</button>
+      </div>
     </div>
 
     <div id="auth-verify-wrap" class="hidden">
@@ -436,7 +457,9 @@ select.inp option{background:#1C1917;color:var(--vellum)}
     <button class="restart-btn hidden" id="restart-btn">Close the book</button>
     <button class="restart-btn" id="nav-library-btn">Library</button>
     <button class="restart-btn active-nav" id="nav-setup-btn">New Story</button>
-    <button class="topbar-logout" id="topbar-logout-btn">Sign out</button>
+    <button class="topbar-logout" id="topbar-logout-btn" title="Sign out" aria-label="Sign out">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
   </div>
 </div>
 
@@ -636,6 +659,7 @@ import { getAuth,
          createUserWithEmailAndPassword,
          signInWithEmailAndPassword,
          sendEmailVerification,
+         sendPasswordResetEmail,
          signOut,
          onAuthStateChanged,
          reload as reloadUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1039,6 +1063,7 @@ function setAuthMode(signup) {
   tabSignup.classList.toggle('active', signup);
   submitBtn.textContent = signup ? 'Create Account' : 'Sign In';
   confirmWrap.classList.toggle('hidden', !signup);
+  document.getElementById('auth-forgot-btn').classList.toggle('hidden', signup);
   authError.textContent = '';
 }
 tabLogin.addEventListener('click',  () => setAuthMode(false));
@@ -1056,6 +1081,61 @@ document.getElementById('auth-back-btn').addEventListener('click', () => {
   formWrap.classList.remove('hidden');
   setAuthMode(false);
   if (pendingUser) { signOut(auth); pendingUser = null; }
+});
+
+/* ── FORGOT PASSWORD ──────────────────────────────────────────── */
+const resetWrap = document.getElementById('auth-reset-wrap');
+
+function showResetScreen() {
+  formWrap.classList.add('hidden');
+  verifyWrap.classList.add('hidden');
+  resetWrap.classList.remove('hidden');
+  document.getElementById('auth-reset-email').value = authEmail.value.trim();
+  document.getElementById('auth-reset-msg').textContent = '';
+  document.getElementById('auth-reset-send-btn').disabled = false;
+  document.getElementById('auth-reset-send-btn').textContent = 'Send reset link';
+}
+
+function hideResetScreen() {
+  resetWrap.classList.add('hidden');
+  formWrap.classList.remove('hidden');
+  setAuthMode(false);
+}
+
+document.getElementById('auth-forgot-btn').addEventListener('click', showResetScreen);
+document.getElementById('auth-reset-back-btn').addEventListener('click', hideResetScreen);
+
+document.getElementById('auth-reset-send-btn').addEventListener('click', async () => {
+  const email = document.getElementById('auth-reset-email').value.trim();
+  const msgEl = document.getElementById('auth-reset-msg');
+  const sendBtn = document.getElementById('auth-reset-send-btn');
+
+  if (!email) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = 'Please enter your email address.'; return; }
+
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Sending…';
+  msgEl.textContent = '';
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    msgEl.style.color = 'var(--sage)';
+    msgEl.textContent = 'Reset link sent — check your inbox (and spam folder).';
+    sendBtn.textContent = 'Sent ✓';
+  } catch(err) {
+    const msgs = {
+      'auth/user-not-found':  'No account found with that email.',
+      'auth/invalid-email':   'Please enter a valid email address.',
+      'auth/too-many-requests': 'Too many attempts. Please wait a moment.',
+    };
+    msgEl.style.color = 'var(--rose)';
+    msgEl.textContent = msgs[err.code] || err.message.replace('Firebase: ', '');
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send reset link';
+  }
+});
+
+document.getElementById('auth-reset-email').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('auth-reset-send-btn').click();
 });
 document.getElementById('vocab-file-upload').addEventListener('change', (e) => {
   const file = e.target.files[0];
@@ -1289,6 +1369,7 @@ onAuthStateChanged(auth, async (user) => {
     state.currentUser = null;
     const modal = document.getElementById('auth-modal');
     if (!verifyWrap.classList.contains('hidden')) return;
+    if (!resetWrap.classList.contains('hidden')) return;
     
     modal.classList.remove('hidden','fading');
     document.getElementById('topbar').classList.add('hidden');
