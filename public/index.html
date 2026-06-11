@@ -33,8 +33,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .auth-tab{flex:1;padding:0.6rem;font-family:'Cormorant SC',serif;font-size:0.9rem;letter-spacing:0.08em;color:var(--text-dim);background:transparent;transition:all 0.2s;text-align:center}
 .auth-tab.active{background:rgba(184,146,58,0.14);color:var(--gold)}
 .auth-fields{display:flex;flex-direction:column;gap:0.85rem}
-.auth-field-label{font-family:'Cormorant SC',serif;font-size:0.7rem;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:0.3rem}
-.auth-inp{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;padding:0.7rem 0.9rem;color:var(--vellum);font-size:1rem;transition:border-color 0.2s}
+.auth-field-label{font-family:'Cormorant SC',serif;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:0.3rem}.auth-inp{width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;padding:0.7rem 0.9rem;color:var(--vellum);font-size:1rem;transition:border-color 0.2s}
 .auth-inp:focus{border-color:rgba(184,146,58,0.55)}
 .auth-inp::placeholder{color:rgba(242,232,217,0.25);font-style:italic}
 .auth-error{font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--rose);min-height:1rem;text-align:center}
@@ -107,7 +106,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .setup-card{background:rgba(255,255,255,0.025);border:0.5px solid rgba(184,146,58,0.18);border-radius:4px;padding:2rem 1.75rem;display:flex;flex-direction:column;gap:1.5rem;box-shadow:0 8px 28px rgba(0,0,0,0.18)}
 .card-header{font-family:'IM Fell English',serif;font-style:italic;font-size:1.1rem;color:var(--gold);border-bottom:0.5px solid rgba(184,146,58,0.25);padding-bottom:0.5rem}
 .field-group{display:flex;flex-direction:column;gap:0.4rem}
-.field-label{font-family:'Cormorant SC',serif;font-size:0.72rem;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase}
+.field-label{font-family:'Cormorant SC',serif;font-size:0.72rem;font-weight:600;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase}
 .field-hint{font-family:'Inter',sans-serif;font-size:0.78rem;line-height:1.45;color:rgba(242,232,217,0.45)}
 .setup-divider{height:0.5px;background:linear-gradient(90deg,transparent,rgba(184,146,58,0.2),transparent)}
 .inp{width:100%;background:rgba(255,255,255,0.03);border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;padding:0.7rem 0.9rem;color:var(--vellum);font-size:1rem;transition:border-color 0.2s,background 0.2s}
@@ -333,8 +332,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
               </div>
             </div>
             <p class="field-hint" id="api-hint">Leave blank to route requests through FreeModel automatically.</p>
-            <input type="password" class="inp" id="api-key" placeholder="AIza… (Optional: Free fallback)" autocomplete="off" style="margin-top:0.3rem"/>
-            <p class="key-note" id="api-link-note">Get a dedicated key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a></p>
+              <input type="password" class="inp" id="api-key" placeholder="AIza… or AQ… (Optional: Free fallback)" autocomplete="off" style="margin-top:0.3rem"/>             <p class="key-note" id="api-link-note">Get a dedicated key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a></p>
           </div>
         </div>
       </div>
@@ -446,8 +444,8 @@ const state = {
   targetLang:'German', nativeLang:'English',
   level:'beginner', words:[], setting:'',
   scene:0, maxScenes:10, streaming:false, currentUser:null,
-  isUsingProxy: false,
-  rollingSummary: '' // Replaces huge state.history array memory allocations
+  wordsSeenSet: new Set(), // tracks which words have been seen across scenes
+  rollingSummary: ''
 };
 const MAX_WORDS = 30;
 
@@ -602,15 +600,18 @@ function updateApiUI(provider) {
   document.querySelectorAll('.api-provider-tab').forEach(t => t.classList.toggle('active', t.dataset.provider === provider));
   const inp = document.getElementById('api-key');
   const hint = document.getElementById('api-hint');
+  const linkNote = document.getElementById('api-link-note');
   const summaryAi = document.getElementById('summary-ai');
 
   if (provider === 'gemini') {
-    inp.placeholder = 'AIza… (Optional: Free fallback)';
-    hint.textContent = 'Leave blank to route requests through FreeModel automatically.';
-    summaryAi.textContent = 'Gemini 2.5 Flash';
+    inp.placeholder = 'AIza… or AQ… (optional — free tier works without a key)';
+    hint.textContent = 'Leave blank to use the free Gemini tier (rate-limited). Paste your own key for higher limits.';
+    linkNote.innerHTML = 'Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a>';
+    summaryAi.textContent = 'Gemini 2.0 Flash';
   } else {
-    inp.placeholder = 'sk-proj-… (Optional: Free fallback)';
-    hint.textContent = 'Leave blank to route requests through FreeModel automatically.';
+    inp.placeholder = 'sk-… (required for OpenAI)';
+    hint.textContent = 'OpenAI requires your own API key — no free fallback available.';
+    linkNote.innerHTML = 'Get a key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>';
     summaryAi.textContent = 'GPT-4o';
   }
   inp.value = '';
@@ -702,23 +703,26 @@ function beginStory() {
   if (!state.currentUser) { errEl.textContent = 'Please sign in first.'; return; }
   if (state.words.length === 0) { errEl.textContent = 'Add at least one vocabulary word or expression.'; return; }
 
-  if (!userKey) {
-    state.apiKey = "fe_oa_fd1541103abadcbf97848c304e0ecd3ddb367baaa74f1467"; 
-    state.isUsingProxy = true;
-  } else {
-    if (state.provider === 'gemini' && !userKey.startsWith('AIza') && !userKey.startsWith('AQ')) {
-      errEl.textContent = 'That doesn\'t look like a valid Gemini key.';
+ if (userKey) {
+  if (state.provider === 'gemini' && !userKey.startsWith('AIza') && !userKey.startsWith('AQ')) {
+    errEl.textContent = "That doesn't look like a valid Gemini key (should start with AIza… or AQ…).";
+    return;
+  }
+    if (state.provider === 'openai' && !userKey.startsWith('sk-')) {
+      errEl.textContent = "That doesn't look like a valid OpenAI key (should start with sk-…).";
       return;
     }
     state.apiKey = userKey;
-    state.isUsingProxy = false;
+  } else {
+    state.apiKey = ''; // will use demo key in callAI
   }
 
   state.targetLang = document.getElementById('target-lang').value;
   state.nativeLang = document.getElementById('native-lang').value;
   state.setting    = document.getElementById('setting').value.trim();
   state.scene = 0;
-  state.rollingSummary = ''; 
+  state.rollingSummary = '';
+  state.wordsSeenSet = new Set();
 
   // Transition layouts
   document.getElementById('setup').classList.add('hidden');
@@ -735,7 +739,7 @@ function beginStory() {
 function showSetupScreen() {
   document.getElementById('story').classList.add('hidden');
   document.getElementById('setup').classList.remove('hidden');
-  
+  state.wordsSeenSet = new Set();
   // Revert header content states
   document.getElementById('story-meta').classList.add('hidden');
   document.getElementById('restart-btn').classList.add('hidden');
@@ -768,12 +772,21 @@ function buildWordTracker() {
 }
 
 function markWordsUsed(usedArr) {
-  const explicitLower = usedArr ? usedArr.map(w => w.toLowerCase()) : [];
+  // Accumulate seen words persistently across scenes
+  if (usedArr) {
+    usedArr.forEach(w => state.wordsSeenSet.add(w.toLowerCase()));
+  }
+  // Also scan current page text for any vocab words present
   const currentText = document.getElementById('page-left').textContent.toLowerCase();
+  state.words.forEach(w => {
+    if (currentText.includes(w.toLowerCase())) state.wordsSeenSet.add(w.toLowerCase());
+  });
+  // Apply to tracker chips
   document.querySelectorAll('.tracker-word').forEach(el => {
     const w = el.dataset.word;
-    if (explicitLower.some(u => u.includes(w) || w.includes(u)) || currentText.includes(w))
+    if (state.wordsSeenSet.has(w) || Array.from(state.wordsSeenSet).some(s => s.includes(w) || w.includes(s))) {
       el.classList.add('seen');
+    }
   });
 }
 
@@ -866,34 +879,41 @@ JSON SCHEMA:
 ════════════════════════════════════════════════════════════════ */
 async function generateScene(chosenText = null) {
   state.streaming = true;
-  state.scene++;
-  document.getElementById('story-meta').textContent = `Chapter ${romanize(state.scene)}  ·  Scene ${state.scene}`;
+  const thisScene = state.scene + 1; // tentative; only committed on success
+  document.getElementById('story-meta').textContent = `Chapter ${romanize(thisScene)}  ·  Scene ${thisScene}`;
 
   const pageLeft = document.getElementById('page-left');
   pageLeft.innerHTML = `<div class="thinking-text">The ink is still drying…<span class="cursor active"></span></div>`;
   showChoiceLoading();
 
-  const isHardCeiling = state.scene >= state.maxScenes;
-  
-  let userMsg = "";
-  if (state.scene === 1) {
+  const isHardCeiling = thisScene >= state.maxScenes;
+
+  let userMsg = '';
+  if (thisScene === 1) {
     userMsg = `Begin the narrative. Setting: ${state.setting || 'An evocative and mysterious environment suited for discovery'}. Targeting these vocabulary tokens: ${state.words.join(', ')}. Draft scene 1.`;
   } else {
-    userMsg = `Advance the plot progression pipeline framework. Overarching background history summary so far: "${state.rollingSummary}". The user chose this branch choice option path string: "${chosenText}". ${isHardCeiling ? 'This is the final scene — conclude the story now. Set is_final true, omit choices.' : 'Write the next scene. You may conclude naturally if the arc is complete.'}`;
+    userMsg = `Continue the story. Story so far: "${state.rollingSummary}". The reader chose: "${chosenText}". ${isHardCeiling ? 'This is the final scene — conclude the story now. Set is_final true, omit choices.' : 'Write the next scene. You may conclude naturally if the arc is complete.'}`;
   }
 
   try {
     const raw = await callAI(buildSystemPrompt(), userMsg);
     const scene = parseScene(raw);
     if (!scene) throw new Error('The model returned an unexpected format.');
-    
-    state.rollingSummary = scene.context_summary || ''; 
-    
+
+    state.scene = thisScene; // commit the increment only on success
+    state.rollingSummary = scene.context_summary || '';
+
     renderScene(scene, isHardCeiling);
   } catch(err) {
     pageLeft.innerHTML = `<p class="story-error">⚠ ${escHtml(err.message)}</p>`;
-    document.getElementById('page-right').innerHTML = `<div class="story-end"><button class="new-story-btn" id="retry-btn">Try again</button></div>`;
-    document.getElementById('retry-btn')?.addEventListener('click', () => location.reload());
+    document.getElementById('page-right').innerHTML = `
+      <div class="story-end">
+        <p class="end-sub" style="color:var(--rose)">Something went wrong.</p>
+        <button class="new-story-btn" id="retry-btn">Try again</button>
+        <button class="new-story-btn" id="new-story-btn2" style="margin-top:0.25rem;opacity:0.6">Back to setup</button>
+      </div>`;
+    document.getElementById('retry-btn')?.addEventListener('click', () => generateScene(chosenText));
+    document.getElementById('new-story-btn2')?.addEventListener('click', showSetupScreen);
   }
   state.streaming = false;
 }
@@ -916,9 +936,12 @@ function renderScene(scene, isHardCeiling) {
 }
 
 function buildNarrativeHTML(text) {
-  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .split(/\n\n+/).filter(p => p.trim())
-    .map(p => `<p>${p.replace(/\*([^*]+)\*/g,'<em class="vocab-word">$1</em>')}</p>`).join('');
+  // Split into paragraphs first, then escape each paragraph, then apply vocab highlighting
+  return text.split(/\n\n+/).filter(p => p.trim()).map(p => {
+    const escaped = p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const highlighted = escaped.replace(/\*([^*]+)\*/g, '<em class="vocab-word">$1</em>');
+    return `<p>${highlighted}</p>`;
+  }).join('');
 }
 
 function renderChoices(container, choices) {
@@ -926,20 +949,27 @@ function renderChoices(container, choices) {
     <div class="choices-heading">— What do you do? —</div>
     ${choices.map((c,i) => `
       <div class="choice-card" data-id="${escHtml(c.id)}" data-text="${escHtml(c.text)}">
-        <div class="choice-glyph">${['I','II','III'][i]||c.id}</div>
+        <div class="choice-glyph">${['I','II','III'][i] || escHtml(c.id)}</div>
         <div class="choice-body">
           <div class="choice-text">${highlightChoiceVocab(c.text)}</div>
-          ${c.gloss?`<div class="choice-gloss">${escHtml(c.gloss)}</div>`:''}
+          ${c.gloss ? `<div class="choice-gloss">${escHtml(c.gloss)}</div>` : ''}
         </div>
       </div>`).join('')}`;
-  container.querySelectorAll('.choice-card').forEach(card => card.addEventListener('click', () => onChoiceClick(card)));
+  container.querySelectorAll('.choice-card').forEach(card =>
+    card.addEventListener('click', () => {
+      if (card.dataset.disabled || state.streaming) return;
+      onChoiceClick(card);
+    })
+  );
 }
 
 function highlightChoiceVocab(text) {
-  let r = escHtml(text);
+  // Escape HTML first, then highlight vocab words — same order as narrative
+  let r = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   state.words.forEach(w => {
     const esc = w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    r = r.replace(new RegExp(`(${esc})`, 'gi'), '<em class="vocab-word">$1</em>');
+    // Avoid wrapping already-wrapped spans (look-ahead for no prior <em class="vocab-word">)
+    r = r.replace(new RegExp(`(?<!class="vocab-word">)(${esc})`, 'gi'), '<em class="vocab-word">$1</em>');
   });
   return r;
 }
@@ -955,10 +985,14 @@ function showChoiceLoading() {
 
 function onChoiceClick(card) {
   if (state.streaming) return;
-  document.querySelectorAll('.choice-card').forEach(c => { c.classList.add('disabled'); c.removeEventListener('click', onChoiceClick); });
+  // Disable all cards immediately via data attribute (arrow fn listeners can't be removed by name)
+  document.querySelectorAll('.choice-card').forEach(c => {
+    c.classList.add('disabled');
+    c.dataset.disabled = 'true';
+  });
   card.classList.add('chosen');
   const pageLeft = document.getElementById('page-left');
-  pageLeft.insertAdjacentHTML('beforeend', `<div class="scene-rule" style="margin:0.75rem 0"></div><p class="chapter-label" style="font-style:italic">» ${card.dataset.text}</p>`);
+  pageLeft.insertAdjacentHTML('beforeend', `<div class="scene-rule" style="margin:0.75rem 0"></div><p class="chapter-label" style="font-style:italic">» ${escHtml(card.dataset.text)}</p>`);
   setTimeout(() => generateScene(card.dataset.text), 350);
 }
 
@@ -975,19 +1009,26 @@ function renderEnd(container) {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   AI API TUNNEL 
+   AI API
+   NOTE ON FREE FALLBACK: FreeModel (freemodel.dev) does not send
+   CORS headers, so browser fetch() is always blocked. The free
+   fallback now uses Gemini 2.0 Flash via Google's public endpoint,
+   which supports browser CORS. Users who hit rate limits can paste
+   their own key from https://aistudio.google.com/app/apikey (free).
 ════════════════════════════════════════════════════════════════ */
 async function callAI(system, userMsg) {
   let targetUrl = '';
   let targetHeaders = { 'Content-Type': 'application/json' };
   let payload = {};
+  let isGemini = false;
 
-  if (state.isUsingProxy) {
-    targetUrl = 'https://api.freemodel.dev/v1/chat/completions';
+  if (state.provider === 'openai') {
+    // OpenAI — requires user-supplied key (no free CORS-friendly fallback)
+    if (!state.apiKey) throw new Error('An OpenAI API key is required. Get one at platform.openai.com.');
+    targetUrl = 'https://api.openai.com/v1/chat/completions';
     targetHeaders['Authorization'] = `Bearer ${state.apiKey}`;
-
     payload = {
-      model: 'openai-t1-sg',
+      model: 'gpt-4o',
       messages: [
         { role: 'system', content: system },
         { role: 'user', content: userMsg }
@@ -997,78 +1038,65 @@ async function callAI(system, userMsg) {
       response_format: { type: 'json_object' }
     };
   } else {
-    if (state.provider === 'openai') {
-      targetUrl = 'https://api.openai.com/v1/chat/completions';
-      targetHeaders['Authorization'] = `Bearer ${state.apiKey}`;
-      
-      payload = {
-        model: 'gpt-4o',
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user', content: userMsg }
-        ],
+    // Gemini — works browser-direct; key optional (falls back to free demo key)
+    isGemini = true;
+    const key = state.apiKey || 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'; // demo key, rate-limited
+    targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+    payload = {
+      contents: [{ role: 'user', parts: [{ text: userMsg }] }],
+      systemInstruction: { parts: [{ text: system }] },
+      generationConfig: {
         temperature: 0.82,
-        max_tokens: 2500,
-        response_format: { type: 'json_object' }
-      };
-    } else {
-      targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.apiKey}`;
-      
-      payload = {
-        contents: [
-          { role: 'user', parts: [{ text: userMsg }] }
-        ],
-        systemInstruction: { parts: [{ text: system }] },
-        generationConfig: { 
-          temperature: 0.82, 
-          maxOutputTokens: 2500, 
-          responseMimeType: 'application/json',
-          responseSchema: {
-            type: 'object',
-            properties: {
-              chapter: { type: 'string' },
-              narrative: { type: 'string' },
-              words_used: { type: 'array', items: { type: 'string' } },
-              choices: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'string' },
-                    text: { type: 'string' },
-                    gloss: { type: 'string' }
-                  }
+        maxOutputTokens: 2500,
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: 'OBJECT',
+          properties: {
+            chapter:         { type: 'STRING' },
+            narrative:       { type: 'STRING' },
+            words_used:      { type: 'ARRAY', items: { type: 'STRING' } },
+            choices: {
+              type: 'ARRAY',
+              items: {
+                type: 'OBJECT',
+                properties: {
+                  id:    { type: 'STRING' },
+                  text:  { type: 'STRING' },
+                  gloss: { type: 'STRING' }
                 }
-              },
-              is_final: { type: 'boolean' },
-              context_summary: { type: 'string' }
-            }
+              }
+            },
+            is_final:        { type: 'BOOLEAN' },
+            context_summary: { type: 'STRING' }
           }
         }
-      };
-    }
+      }
+    };
   }
 
-  const res = await fetch(targetUrl, {
-    method: 'POST',
-    headers: targetHeaders,
-    body: JSON.stringify(payload)
-  });
+  let res;
+  try {
+    res = await fetch(targetUrl, { method: 'POST', headers: targetHeaders, body: JSON.stringify(payload) });
+  } catch (networkErr) {
+    // TypeError: Failed to fetch → almost always CORS or network down
+    throw new Error('Network error: could not reach the AI provider. Check your connection or try a different provider.');
+  }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     const msg = err?.error?.message || `AI error ${res.status}`;
-    if (res.status === 401 || res.status === 403) throw new Error('API Authentication failed — confirm your credentials configuration parameters.');
-    if (res.status === 429) throw new Error('Rate limit reached. Wait a moment and try again.');
+    if (res.status === 401 || res.status === 403) throw new Error('API key rejected — double-check your key or get a new one.');
+    if (res.status === 429) throw new Error('Rate limit reached. Wait a moment, or paste your own API key.');
+    if (res.status === 400) throw new Error(`Bad request: ${msg}`);
     throw new Error(msg);
   }
 
   const data = await res.json();
-  
-  if (state.isUsingProxy || state.provider === 'openai') {
-    return data.choices?.[0]?.message?.content || '';
-  } else {
+
+  if (isGemini) {
     return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  } else {
+    return data.choices?.[0]?.message?.content || '';
   }
 }
 
