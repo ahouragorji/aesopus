@@ -192,6 +192,42 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .level-pill:hover{border-color:rgba(184,146,58,0.45);color:var(--vellum)}
 .level-pill.active{background:rgba(184,146,58,0.16);border-color:var(--gold);color:var(--gold)}
 
+
+
+/* -- ARCHIVE FILTERS & TAGS -- */
+.filter-select {
+  background: transparent;
+  border: 0.5px solid rgba(184,146,58,0.25);
+  color: var(--text-dim);
+  font-family: 'Cormorant SC', serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  padding: 4px 24px 4px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6E64' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: all 0.2s;
+}
+.filter-select:hover { border-color: rgba(184,146,58,0.5); color: var(--vellum); }
+.filter-select option { background: #1C1917; color: var(--vellum); }
+.archive-tag {
+  font-family: 'Cormorant SC', serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(184,146,58,0.8); /* Elegant soft gold */
+  background: rgba(184,146,58,0.03);
+  border: 0.5px solid rgba(184,146,58,0.25);
+  padding: 1px 6px 0px 6px; /* Tighter padding, slightly offset for the font baseline */
+  border-radius: 2px; /* Matches the sharp, bookish aesthetic of your buttons */
+  white-space: nowrap; /* Ensures the tag text never breaks into two lines */
+}
+
 /* API section */
 .api-toggle-row{display:flex;align-items:center;justify-content:space-between}
 .api-provider-tabs{display:flex;gap:4px}
@@ -408,7 +444,26 @@ select.inp option{background:#1C1917;color:var(--vellum)}
     </div>
 </div>
   <div>
-    <h2 style="font-family:'IM Fell English',serif; font-size:2rem; color:var(--gold); margin-bottom:1rem; font-style:italic;">Public Archives</h2>
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
+  <h2 style="font-family:'IM Fell English',serif; font-size:2rem; color:var(--gold); font-style:italic;">Public Archives</h2>
+  <div style="display: flex; gap: 0.75rem; margin-bottom: 0.3rem;">
+    <select id="filter-language" class="filter-select">
+      <option value="all">All Languages</option>
+      <option value="german">German</option>
+      <option value="spanish">Spanish</option>
+      <option value="french">French</option>
+      </select>
+    <select id="filter-level" class="filter-select">
+      <option value="all">All Levels</option>
+      <option value="a1">A1</option>
+      <option value="a2">A2</option>
+      <option value="b1">B1</option>
+      <option value="b2">B2</option>
+      <option value="c1">C1</option>
+      <option value="c2">C2</option>
+    </select>
+  </div>
+</div>
     <div id="public-collections-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem;">
       </div>
   </div>
@@ -674,24 +729,42 @@ async function loadLibrary() {
         } else {
       // Unsubscribed Collection
     
-      // Unsubscribed Collection: Displayed in the Public Archives Grid as a "Note"
-      const previewWords = data.words.slice(0, 7); // Show fewer words for a compact note
-      const previewPills = previewWords.map(w => `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border-color: rgba(184,146,58,0.2); color: var(--text-dim); margin-bottom: 6px; display: inline-block;">${escHtml(w)}</span>`).join('');
+// Unsubscribed Collection: Displayed in the Public Archives Grid as a "Note"
+      const previewWords = data.words.slice(0, 35); // Pull enough words to fill the space
+      // Removed margin-bottom since the parent's "gap" property will handle spacing
+      const previewPills = previewWords.map(w => `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border-color: rgba(184,146,58,0.2); color: var(--text-dim); display: inline-block;">${escHtml(w)}</span>`).join('');
+
+     
+       // Extract tags (defaulting if they don't exist in older database entries)
+      const langTag = data.language || 'Unknown';
+      const levelTag = data.level || 'Unrated';
+      
+      // Build the HTML for the tags ONLY if they have real values
+      const langTagHTML = langTag !== 'Unknown' ? `<span class="archive-tag">${escHtml(langTag)}</span>` : '';
+      const levelTagHTML = levelTag !== 'Unrated' ? `<span class="archive-tag">${escHtml(levelTag)}</span>` : '';
+      const optTagHTML = data.optionalTag ? `<span class="archive-tag">${escHtml(data.optionalTag)}</span>` : '';
 
       const publicCardHTML = `
-        <div class="setup-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%; border: 0.5px solid rgba(184,146,58,0.15); background: rgba(255,255,255,0.02);">
+        <div class="setup-card public-collection-card" data-language="${langTag.toLowerCase()}" data-level="${levelTag.toLowerCase()}" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%; border: 0.5px solid rgba(184,146,58,0.15); background: rgba(255,255,255,0.02);">
           <div>
             <h3 style="font-family:'IM Fell English',serif; color:var(--vellum); font-size:1.4rem; line-height: 1.2;">${escHtml(collectionName)}</h3>
             <div class="lexicon-count" style="margin-top: 0.3rem; margin-bottom: 1rem;">(${totalWords} words)</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 110px; overflow: hidden; mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);">
               ${previewPills}
             </div>
           </div>
-          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 1.5rem;">
-            <button class="icon-btn-add add-collection-btn" data-id="${colId}" title="Add to Library">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            </button>
-            <button class="small-start-btn start-public-new-btn" data-id="${colId}" title="Add and Start Learning">Start</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              ${langTagHTML}
+              ${levelTagHTML}
+              ${optTagHTML}
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="icon-btn-add add-collection-btn" data-id="${colId}" title="Add to Library">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+              <button class="small-start-btn start-public-new-btn" data-id="${colId}" title="Add and Start Learning">Start</button>
+            </div>
           </div>
         </div>
       `;
@@ -782,7 +855,28 @@ container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
   });
 
   attachCollectionListeners();
-}function attachCollectionListeners() {
+}
+/* ── PUBLIC ARCHIVES FILTERING ── */
+function filterArchives() {
+  const langFilter = document.getElementById('filter-language').value.toLowerCase();
+  const levelFilter = document.getElementById('filter-level').value.toLowerCase();
+  
+  document.querySelectorAll('.public-collection-card').forEach(card => {
+    const cardLang = card.getAttribute('data-language');
+    const cardLevel = card.getAttribute('data-level');
+    
+    const matchesLang = langFilter === 'all' || cardLang === langFilter;
+    const matchesLevel = levelFilter === 'all' || cardLevel === levelFilter;
+    
+    // The setup-card class uses flexbox, so we restore it to 'flex' when showing
+    card.style.display = (matchesLang && matchesLevel) ? 'flex' : 'none';
+  });
+}
+
+document.getElementById('filter-language').addEventListener('change', filterArchives);
+document.getElementById('filter-level').addEventListener('change', filterArchives);
+
+function attachCollectionListeners() {
 
   // Add & Start a Public Collection instantly (from the Note card)
   document.querySelectorAll('.start-public-new-btn').forEach(btn => {
