@@ -52,6 +52,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 /* ── LEXICON ROW STYLES ── */
 .lexicon-row { margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
+#personal-lexicon-container .lexicon-row { margin-top: 0.5rem; margin-bottom: 1.2rem; padding-bottom: 1.2rem; border-bottom: 0.5px solid rgba(255,255,255,0.1); }
+#personal-lexicon-container .lexicon-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0.5rem; }
 .lexicon-progress-bg { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
 .lexicon-progress-fill { height: 100%; background: var(--sage); transition: width 0.5s ease-out; }
 
@@ -242,8 +244,77 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 #vocab-tooltip.show{display:block;animation:popIn 0.2s cubic-bezier(0.175,0.885,0.32,1.275)}
 @keyframes popIn{from{opacity:0;transform:translateY(5px) scale(0.95) translateX(-50%)}to{opacity:1;transform:translateY(0) scale(1) translateX(-50%)}}
 
-@media(max-width:1000px){.setup-grid{grid-template-columns:1fr 1fr;gap:1.5rem}.setup-grid .col-right{grid-column:1/-1}}
-@media(max-width:700px){.setup-grid{grid-template-columns:1fr}.setup-grid .col-right{grid-column:auto}.setup-wrap{padding:2rem 1.25rem 3rem}.masthead h1{font-size:3rem}.book{grid-template-columns:1fr}.book-gutter{display:none}.page-left{padding:1.75rem 1.25rem}.page-right{padding:1.25rem}.two-col{grid-template-columns:1fr}.auth-modal-box{padding:2rem 1.5rem 1.75rem}}
+/* ── RESPONSIVE ───────────────────────────────────────────────── */
+
+/* Tablet: collapse 3-col setup to 2-col */
+@media(max-width:1000px){
+  .setup-grid{grid-template-columns:1fr 1fr;gap:1.5rem}
+  .setup-grid .col-right{grid-column:1/-1}
+}
+
+/* Mobile */
+@media(max-width:700px){
+  /* Topbar */
+  #topbar{padding:0 0.9rem;gap:0.5rem}
+  .topbar-brand{font-size:1rem}
+  .story-meta{position:static;transform:none;flex:1;text-align:center;font-size:0.7rem;letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar-right{gap:0.4rem}
+  .restart-btn,.topbar-logout{font-size:0.68rem;padding:3px 7px;letter-spacing:0.06em}
+
+  /* Auth modal */
+  .auth-modal-box{padding:1.75rem 1.25rem 1.5rem}
+  .auth-brand h2{font-size:2.2rem}
+
+  /* Library */
+  #library-dashboard{padding:70px 1rem 3rem!important;gap:2rem!important}
+  #public-collections-grid{grid-template-columns:1fr!important}
+  .lexicon-middle{flex-wrap:wrap;gap:0.6rem}
+  .lexicon-pills-wrapper{min-width:0;width:100%}
+  .lexicon-actions{width:100%;justify-content:flex-end}
+
+  /* Setup */
+  .setup-wrap{padding:1.75rem 1rem 3rem}
+  .masthead h1{font-size:2.6rem}
+  .masthead-sub{font-size:1rem}
+  .setup-grid{grid-template-columns:1fr}
+  .setup-grid .col-right{grid-column:auto}
+  .two-col{grid-template-columns:1fr}
+  .level-pills{flex-wrap:wrap}
+  .level-pill{flex:1 1 calc(33% - 6px);padding:0.55rem 0.3rem;font-size:0.82rem}
+  .vocab-textarea{min-height:160px}
+
+  /* Story: stack pages, hide gutter */
+  .book{grid-template-columns:1fr}
+  .book-gutter{display:none}
+  .page-left{padding:1.5rem 1.1rem 1rem;gap:1rem;border-bottom:0.5px solid rgba(184,146,58,0.12)}
+  .page-right{padding:1.25rem 1.1rem 2rem;gap:1rem}
+  .scene-title{font-size:1.3rem}
+  .narrative-body{font-size:1.05rem;line-height:1.8}
+  .choice-card{padding:1rem 1.1rem;gap:0.8rem}
+  .choice-text{font-size:1.1rem}
+
+  /* Word tracker: scrollable single row */
+  .word-tracker{padding:0.35rem 1rem;gap:5px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .word-tracker::-webkit-scrollbar{display:none}
+  .tracker-word{font-size:0.82rem;padding:2px 8px;white-space:nowrap}
+
+  /* Tooltip */
+  #vocab-tooltip{font-size:0.8rem;padding:5px 11px}
+
+  /* Story end */
+  .story-end{padding:1.25rem 0.5rem}
+  .end-title{font-size:1.35rem}
+}
+
+/* Very small phones */
+@media(max-width:380px){
+  .topbar-brand{display:none}
+  .restart-btn,.topbar-logout{font-size:0.63rem;padding:3px 6px}
+  .masthead h1{font-size:2.2rem}
+  .setup-card{padding:1.5rem 1rem}
+  .page-left,.page-right{padding:1.1rem 0.8rem}
+  .choice-card{padding:0.85rem 0.9rem}
+}
 </style>
 </head>
 <body>
@@ -399,8 +470,7 @@ select.inp option{background:#1C1917;color:var(--vellum)}
           <h2 class="card-header">Vocabulary & Expressions</h2>
           <div class="field-group" style="flex:1">
             <label class="field-label">Words to learn <span style="opacity:0.4;font-weight:300;letter-spacing:0;text-transform:none;font-family:'Inter',sans-serif;font-size:0.7rem">(max 30)</span></label>
-            <p class="field-hint">Type words manually below, <strong>or upload a .txt file</strong> to build your long-term library.</p>
-            <div class="vocab-wrap" style="margin-top:0.4rem">
+              <p class="field-hint" id="vocab-hint">Type words manually below, <strong>or upload a .txt file</strong> to build your long-term library.</p>            <div class="vocab-wrap" style="margin-top:0.4rem">
               <textarea class="vocab-textarea" id="vocab-textarea" placeholder="serendipity&#10;come hell or high water&#10;der Augenblick&#10;脱線する&#10;&#10;One per line or comma-separated…"></textarea>
               <div class="vocab-status">
                 <div class="vocab-status-left">
@@ -509,12 +579,13 @@ async function loadLibrary() {
   const userProgress = userData.publicProgress || {};
 
   // -- Standardized Row HTML Builder --
-// -- Standardized Row HTML Builder --
+
+  // -- Standardized Row HTML Builder --
   const buildRowHTML = (title, countText, wordsList, actionBtns, progressBarHTML = '') => {
     const preview = wordsList.slice(0, 15); 
     const pills = preview.map(w => `<span class="lexicon-pill">${escHtml(w)}</span>`).join('');
     return `
-      <div class="lexicon-row" style="margin-top: 0.5rem; margin-bottom: 1rem; padding-bottom: 1.2rem; border-bottom: 0.5px solid rgba(255,255,255,0.1);">
+      <div class="lexicon-row">
         <div class="lexicon-header">
           ${title} <span class="lexicon-count">${countText}</span>
         </div>
@@ -536,13 +607,13 @@ async function loadLibrary() {
   const dlIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>`;
   const xIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
-  // 1. Unlearned Row (Download, Clear, Start)
+  // 1. Personal Queue Row (Download, Clear, Start)
   const unlearnedBtns = `
-    <button class="lexicon-btn dl-btn" data-type="Unlearned" title="Download .txt">${dlIcon}</button>
-    <button class="lexicon-btn clear-btn" data-type="Unlearned" title="Clear list">${xIcon}</button>
+    <button class="lexicon-btn dl-btn" data-type="Personal Queue" title="Download .txt">${dlIcon}</button>
+    <button class="lexicon-btn clear-btn" data-type="Personal Queue" title="Clear list">${xIcon}</button>
     <button class="small-start-btn start-unlearned-btn" style="margin-left: 8px;">Start</button>
   `;
-  let personalHTML = buildRowHTML('Unlearned', `(${unlearned.length})`, unlearned, unlearnedBtns);
+  let personalHTML = buildRowHTML('Personal Queue', `(${unlearned.length})`, unlearned, unlearnedBtns);
 
   // 2. Mastered Download Tag
   const masteredContainer = document.getElementById('mastered-header-container');
@@ -587,8 +658,8 @@ async function loadLibrary() {
         <button class="small-start-btn start-collection-btn" data-id="${colId}" data-checkpoint="${checkpoint}" style="margin-left: 8px;">Start</button>
       `;
       
-      addedCollectionsHTML += buildRowHTML(escHtml(collectionName), "", data.words, addedBtns, progressHTML);
-    } else {
+        addedCollectionsHTML += buildRowHTML(escHtml(collectionName), `(${checkpoint}/${totalWords})`, data.words, addedBtns, progressHTML);
+        } else {
       // Unsubscribed Collection
     
       // Unsubscribed Collection: Displayed in the Public Archives Grid as a "Note"
@@ -640,16 +711,16 @@ async function loadLibrary() {
   container.querySelectorAll('.dl-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.dataset.type;
-      const dataToDownload = type === 'Unlearned' ? unlearned : learned;
-      triggerTextDownload(`Aesop_${type}_Words.txt`, dataToDownload);
+      const dataToDownload = type === 'Personal Queue' ? unlearned : learned; // Updated name
+      triggerTextDownload(`Aesop_${type.replace(' ', '_')}_Words.txt`, dataToDownload);
     });
   });
 
   container.querySelectorAll('.clear-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const type = btn.dataset.type;
-      if(confirm(`Are you sure you want to permanently clear your ${type} list?`)) {
-        const updateObj = type === 'Unlearned' ? { unlearned: [] } : { learned: [] };
+      if(confirm(`Are you sure you want to permanently clear your ${type}?`)) {
+        const updateObj = type === 'Personal Queue' ? { unlearned: [] } : { learned: [] }; // Updated mapping
         await updateDoc(userRef, updateObj);
         loadLibrary();
       }
@@ -658,16 +729,13 @@ async function loadLibrary() {
 container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
     btn.addEventListener('click', () => {
        state.activePublicCollection = null;
+       toggleVocabLock(false); // UNLOCK
        
-       // Slice the first 30 words from your personal unlearned array
        const nextWords = unlearned.slice(0, 30);
-       
-       // Auto-populate the text box and update the counter
        const vocabTextarea = document.getElementById('vocab-textarea');
        vocabTextarea.value = nextWords.join('\n');
        parseVocabTextarea();
        
-       // Manually switch views to bypass the 'New Story' wipe-clean logic
        document.getElementById('library-dashboard').classList.add('hidden');
        document.getElementById('story').classList.add('hidden');
        document.getElementById('setup').classList.remove('hidden');
@@ -689,13 +757,16 @@ container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
       await updateDoc(userRef, { [`publicProgress.${colId}`]: 0 });
       
       // 2. Fetch the words
+      // 2. Fetch the words
       const colSnap = await getDoc(doc(db, "public_collections", colId));
       const allWords = colSnap.data().words;
-      const nextWords = allWords.slice(0, 30); // Grab the first 30
+      const colName = colSnap.data().title || colSnap.data().name || "Collection";
+      const nextWords = allWords.slice(0, 30);
       
       state.words = nextWords;
       state.activePublicCollection = colId;
-      
+      toggleVocabLock(true, colName); // LOCK
+
       // 3. Populate text area and move straight to Setup
       const vocabTextarea = document.getElementById('vocab-textarea');
       vocabTextarea.value = nextWords.join('\n');
@@ -741,16 +812,18 @@ container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
   // Start an Added Collection
   document.querySelectorAll('.start-collection-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
-      const colId = e.target.dataset.id;
-      const checkpoint = parseInt(e.target.dataset.checkpoint);
-      
-      const colSnap = await getDoc(doc(db, "public_collections", colId));
+      const colId = e.currentTarget.dataset.id;
+      const checkpoint = parseInt(e.currentTarget.dataset.checkpoint);
+     const colSnap = await getDoc(doc(db, "public_collections", colId));
       const allWords = colSnap.data().words;
+      const colName = colSnap.data().title || colSnap.data().name || "Collection";
       
       const nextWords = allWords.slice(checkpoint, checkpoint + 30);
       state.words = nextWords;
       state.activePublicCollection = colId;
-      
+      toggleVocabLock(true, colName); // LOCK
+
+
       // Auto-Populate the Setup Textarea
       const vocabTextarea = document.getElementById('vocab-textarea');
       vocabTextarea.value = nextWords.join('\n');
@@ -979,12 +1052,22 @@ onAuthStateChanged(auth, async (user) => {
     state.currentUser = null;
     const modal = document.getElementById('auth-modal');
     if (!verifyWrap.classList.contains('hidden')) return;
+    
     modal.classList.remove('hidden','fading');
     document.getElementById('topbar').classList.add('hidden');
     document.getElementById('setup').classList.add('hidden');
     document.getElementById('story').classList.add('hidden');
     document.getElementById('library-dashboard').classList.add('hidden');
+    
+    // Reset story UI state so it's completely clean for the next login
+    document.getElementById('story-meta').classList.add('hidden');
+    document.getElementById('restart-btn').classList.add('hidden');
+    document.getElementById('nav-library-btn').classList.remove('hidden');
+    document.getElementById('nav-setup-btn').classList.remove('hidden');
+    state.wordsSeenSet = new Set();
+    state.scene = 0;
   }
+
 });
 document.getElementById('topbar-logout-btn').addEventListener('click', () => signOut(auth));
 document.getElementById('nav-library-btn').addEventListener('click', () => {
@@ -994,17 +1077,9 @@ document.getElementById('nav-library-btn').addEventListener('click', () => {
   loadLibrary();
 });
 document.getElementById('nav-setup-btn').addEventListener('click', () => {
-  // 1. Switch the main views
   document.getElementById('library-dashboard').classList.add('hidden');
   document.getElementById('story').classList.add('hidden');
-  document.getElementById('setup').classList.remove('hidden');
-  
-  // 2. Hide story metadata from the topbar (if user was mid-story)
-  document.getElementById('story-meta').classList.add('hidden');
-  document.getElementById('restart-btn').classList.add('hidden');
-  
-  // 3. Reset the text box and clear active collection tracking
-  state.activePublicCollection = null;
+  showSetupScreen();
   document.getElementById('vocab-textarea').value = '';
   parseVocabTextarea();
 });
@@ -1124,45 +1199,47 @@ async function beginStory() {
   }
 
   // 1. Grab manual words from the text area
+
   const manualInput = document.getElementById('vocab-textarea').value.trim();
   let manualWords = [];
   if (manualInput.length > 0) {
     manualWords = manualInput.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
   }
 
-  // 2. Fetch existing words from Firestore and merge EVERYTHING
-  try {
-    const userRef = doc(db, "users", state.currentUser.uid);
-    const userSnap = await getDoc(userRef);
-    
-    let unlearnedPool = [];
-    if (userSnap.exists()) {
-      unlearnedPool = userSnap.data().unlearned || [];
-    }
-    
-    // Combine manual words, uploaded words, and the database pool, removing duplicates
-    const combinedPool = [...new Set([...manualWords, ...state.uploadedWords, ...unlearnedPool])];
-    
-    if (combinedPool.length === 0) {
-      errEl.textContent = 'Your vocabulary bank is empty. Enter words manually or upload a .txt file.';
+  // 2. Fork the logic based on the session type
+  if (state.activePublicCollection) {
+    // PUBLIC ARCHIVE ROUTE: Do not save to personal database
+    if (manualWords.length === 0) {
+      errEl.textContent = 'No words found in this collection.';
       return;
     }
-    
-    // Save the combined pool back to Firestore NOW that the user has confirmed
-    await setDoc(userRef, { unlearned: combinedPool }, { merge: true });
-    
-    // Clear the uploaded state so it doesn't accidentally trigger again if they restart the book
-    state.uploadedWords = [];
-    
-    // CHUNKING: Take only the first 30 words for this learning session
-    state.words = combinedPool.slice(0, 30);
-    
-  } catch (err) {
-    console.error("Error fetching vocab:", err);
-    errEl.textContent = 'Could not load your vocabulary. Check your connection.';
-    return;
+    state.words = manualWords.slice(0, 30);
+  } else {
+    // PERSONAL QUEUE ROUTE: Merge and save to database
+    try {
+      const userRef = doc(db, "users", state.currentUser.uid);
+      const userSnap = await getDoc(userRef);
+      let unlearnedPool = userSnap.exists() ? (userSnap.data().unlearned || []) : [];
+      
+      const combinedPool = [...new Set([...manualWords, ...state.uploadedWords, ...unlearnedPool])];
+      
+      if (combinedPool.length === 0) {
+        errEl.textContent = 'Your personal queue is empty. Enter words manually or upload a .txt file.';
+        return;
+      }
+      
+      await setDoc(userRef, { unlearned: combinedPool }, { merge: true });
+      state.uploadedWords = [];
+      state.words = combinedPool.slice(0, 30);
+      
+    } catch (err) {
+      console.error("Error fetching vocab:", err);
+      errEl.textContent = 'Could not load your vocabulary. Check your connection.';
+      return;
+    }
   }
-  
+
+  // API key logic...
 
   // API key logic...
   if (userKey) {
@@ -1189,8 +1266,17 @@ async function beginStory() {
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('story').classList.remove('hidden');
   document.getElementById('story-meta').classList.remove('hidden');
+  
+  // Show 'Close the book', hide main navigation
   document.getElementById('restart-btn').classList.remove('hidden');
-  state.activePublicCollection = null;
+  document.getElementById('nav-library-btn').classList.add('hidden');
+  document.getElementById('nav-setup-btn').classList.add('hidden');
+  
+  // NOTE: do NOT reset state.activePublicCollection here — it was set by the
+  // collection start handler and must remain set so word-removal can increment
+  // the checkpoint in Firestore. It is cleared when the user closes the book
+  // (restart-btn / nav-setup-btn / nav-library-btn) or explicitly starts a
+  // personal-queue session.
   buildWordTracker();
   generateScene();
 }
@@ -1198,9 +1284,16 @@ function showSetupScreen() {
   document.getElementById('story').classList.add('hidden');
   document.getElementById('setup').classList.remove('hidden');
   state.wordsSeenSet = new Set();
+  state.activePublicCollection = null; // clear so the next session starts fresh
+  toggleVocabLock(false);
+  
   // Revert header content states
   document.getElementById('story-meta').classList.add('hidden');
   document.getElementById('restart-btn').classList.add('hidden');
+  
+  // Bring back main navigation
+  document.getElementById('nav-library-btn').classList.remove('hidden');
+  document.getElementById('nav-setup-btn').classList.remove('hidden');
 }
 document.getElementById('restart-btn').addEventListener('click', showSetupScreen);
 
@@ -1217,21 +1310,28 @@ function buildWordTracker() {
     span.dataset.word = w.toLowerCase();
     tracker.appendChild(span);
   });
-
- tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
-    btn.addEventListener('click', async (e) => { // <-- added async here
+tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
+    btn.addEventListener('click', async (e) => { 
       e.stopPropagation();
       const targetIdx = parseInt(btn.dataset.index);
       
-      // The Firestore logic goes HERE
       const wordToMarkLearned = state.words[targetIdx];
+      
+      // 1. Remove from the local array
       state.words.splice(targetIdx, 1); 
+      
+      // 2. Rebuild the UI instantly to remove the pill and fix index numbers
+      buildWordTracker();
+      
+      // 3. Re-apply the gold highlighting to words the user has already seen
+      markWordsUsed();
 
+      // 4. Save to the database
       if (state.currentUser) {
         const userRef = doc(db, "users", state.currentUser.uid);
         
         if (state.activePublicCollection) {
-          // THE BYPASS: If they are in a public collection, just increment the checkpoint
+          // PUBLIC COLLECTION: increment the checkpoint for this collection
           await updateDoc(userRef, {
             [`publicProgress.${state.activePublicCollection}`]: increment(1)
           });
@@ -1242,8 +1342,12 @@ function buildWordTracker() {
             learned: arrayUnion(wordToMarkLearned)
           });
         }
-      }});
-  });}
+        // Refresh the library so the progress bar reflects the new state
+        loadLibrary();
+      }
+  });
+  });
+}
 
 function markWordsUsed(usedArr) {
   // Accumulate seen words persistently across scenes
@@ -1288,16 +1392,28 @@ function handleTextSelection() {
   }, 10);
 }
 
-vocabTooltip.addEventListener('click', e => {
+vocabTooltip.addEventListener('click', async e => { // <-- Note the 'async' here
   e.preventDefault(); e.stopPropagation();
   if (!selectedTextToLearn) return;
+  
   if (!state.words.some(w => w.toLowerCase() === selectedTextToLearn.toLowerCase())) {
+    // 1. Add to the current reading session UI
     state.words.push(selectedTextToLearn);
-    buildWordTracker(); markWordsUsed();
+    buildWordTracker(); 
+    markWordsUsed();
     vocabTooltip.textContent = 'Added ✓';
+    
+    // 2. Save it permanently to the database
+    if (state.currentUser) {
+      const userRef = doc(db, "users", state.currentUser.uid);
+      await updateDoc(userRef, {
+        unlearned: arrayUnion(selectedTextToLearn)
+      });
+    }
   } else {
     vocabTooltip.textContent = 'Already added';
   }
+  
   setTimeout(() => { vocabTooltip.classList.remove('show'); window.getSelection().removeAllRanges(); }, 900);
 });
 
@@ -1454,12 +1570,18 @@ function renderChoices(container, choices) {
 }
 
 function highlightChoiceVocab(text) {
-  // Escape HTML first, then highlight vocab words — same order as narrative
+  // Escape HTML first
   let r = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  state.words.forEach(w => {
+  // Sort by length descending so longer phrases are matched before sub-words
+  const sorted = [...state.words].sort((a, b) => b.length - a.length);
+  sorted.forEach((w, i) => {
     const esc = w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    // Avoid wrapping already-wrapped spans (look-ahead for no prior <em class="vocab-word">)
-    r = r.replace(new RegExp(`(?<!class="vocab-word">)(${esc})`, 'gi'), '<em class="vocab-word">$1</em>');
+    // Use a placeholder to avoid double-wrapping on overlapping matches
+    r = r.replace(new RegExp(`(${esc})`, 'gi'), `\x00vocab${i}\x00`);
+  });
+  // Replace placeholders with the actual markup
+  sorted.forEach((w, i) => {
+    r = r.split(`\x00vocab${i}\x00`).join(`<em class="vocab-word">${escHtml(w)}</em>`);
   });
   return r;
 }
@@ -1617,6 +1739,26 @@ function romanize(n) {
   let r='';
   [1000,900,500,400,100,90,50,40,10,9,5,4,1].forEach((v,i)=>{while(n>=v){r+=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'][i];n-=v;}});
   return r;
+}
+function toggleVocabLock(isLocked, collectionName = "") {
+  const ta = document.getElementById('vocab-textarea');
+  const uploadLbl = document.getElementById('upload-icon-label');
+  const uploadInp = document.getElementById('vocab-file-upload');
+  const hint = document.getElementById('vocab-hint'); 
+
+  if (isLocked) {
+    ta.readOnly = true;
+    ta.style.opacity = '0.5';
+    if (uploadLbl) uploadLbl.style.display = 'none';
+    if (uploadInp) uploadInp.disabled = true;
+    if (hint) hint.innerHTML = `<span style="color:var(--gold)">🔒 Playing Public Archive:</span> <em>${escHtml(collectionName)}</em>.<br>Words are locked for this session.`;
+  } else {
+    ta.readOnly = false;
+    ta.style.opacity = '1';
+    if (uploadLbl) uploadLbl.style.display = 'flex';
+    if (uploadInp) uploadInp.disabled = false;
+    if (hint) hint.innerHTML = `Type words manually below, <strong>or upload a .txt file</strong> to build your long-term library.`;
+  }
 }
 </script>
 </body>
