@@ -400,14 +400,13 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 
 <div id="library-dashboard" class="hidden" style="min-height:100vh; padding-top:80px; max-width:1000px; margin:0 auto; display:flex; flex-direction:column; gap:3rem;">
   
-  <div class="setup-card">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 0.5px solid rgba(184,146,58,0.25); padding-bottom: 0.5rem;">
-      <h2 style="font-family:'IM Fell English',serif; font-style:italic; font-size:1.1rem; color:var(--gold);">Your Personal Lexicon</h2>
-      <div id="mastered-header-container"></div>
-    </div>
-    <div id="personal-lexicon-container">
-      </div>
+  <div class="setup-card" id="personal-lexicon-card">
+<div id="lexicon-header-wrap" style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 0.5px solid rgba(184,146,58,0.25); padding-bottom: 0.5rem;">    <h2 style="font-family:'IM Fell English',serif; font-style:italic; font-size:1.1rem; color:var(--gold);">Your Personal Lexicon</h2>
+    <div id="mastered-header-container"></div>
   </div>
+  <div id="personal-lexicon-container">
+    </div>
+</div>
   <div>
     <h2 style="font-family:'IM Fell English',serif; font-size:2rem; color:var(--gold); margin-bottom:1rem; font-style:italic;">Public Archives</h2>
     <div id="public-collections-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem;">
@@ -617,12 +616,15 @@ async function loadLibrary() {
   const xIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
   // 1. Personal Queue Row (Download, Clear, Start)
-  const unlearnedBtns = `
-    <button class="lexicon-btn dl-btn" data-type="Personal Queue" title="Download .txt">${dlIcon}</button>
-    <button class="lexicon-btn clear-btn" data-type="Personal Queue" title="Clear list">${xIcon}</button>
-    <button class="small-start-btn start-unlearned-btn" style="margin-left: 8px;">Start</button>
-  `;
-  let personalHTML = buildRowHTML('Personal Queue', `(${unlearned.length})`, unlearned, unlearnedBtns);
+  let personalHTML = '';
+  if (unlearned.length > 0) {
+    const unlearnedBtns = `
+      <button class="lexicon-btn dl-btn" data-type="Personal Queue" title="Download .txt">${dlIcon}</button>
+      <button class="lexicon-btn clear-btn" data-type="Personal Queue" title="Clear list">${xIcon}</button>
+      <button class="small-start-btn start-unlearned-btn" style="margin-left: 8px;">Start</button>
+    `;
+    personalHTML = buildRowHTML('Personal Queue', `(${unlearned.length})`, unlearned, unlearnedBtns);
+  }
 
   // 2. Mastered Download Tag
   const masteredContainer = document.getElementById('mastered-header-container');
@@ -642,6 +644,7 @@ async function loadLibrary() {
   grid.innerHTML = '';
   
   let addedCollectionsHTML = '';
+
 
   publicSnap.forEach(docSnap => {
     const data = docSnap.data();
@@ -695,11 +698,33 @@ async function loadLibrary() {
       grid.insertAdjacentHTML('beforeend', publicCardHTML);
     }
   });
-
-  // Inject Personal Lexicon + Added Collections combined
+// Inject Personal Lexicon + Added Collections combined
   const container = document.getElementById('personal-lexicon-container');
   container.innerHTML = personalHTML + addedCollectionsHTML;
 
+  // 4. Toggle Visibility of the Entire Personal Lexicon Section
+  const personalCard = document.getElementById('personal-lexicon-card');
+  const hasActiveContent = unlearned.length > 0 || learned.length > 0 || addedCollectionsHTML.length > 0;
+  
+  if (hasActiveContent) {
+    personalCard.classList.remove('hidden');
+  } else {
+    personalCard.classList.add('hidden');
+  }
+ 
+  // 5. Clean up the border and spacing if the container below the title is empty
+  const headerWrap = document.getElementById('lexicon-header-wrap');
+  const lexiconContainer = document.getElementById('personal-lexicon-container');
+  
+  if (unlearned.length === 0 && addedCollectionsHTML.length === 0) {
+    headerWrap.style.borderBottom = 'none';
+    headerWrap.style.paddingBottom = '0';
+    lexiconContainer.style.display = 'none'; // Removes the awkward blank gap
+  } else {
+    headerWrap.style.borderBottom = '0.5px solid rgba(184,146,58,0.25)';
+    headerWrap.style.paddingBottom = '0.5rem';
+    lexiconContainer.style.display = 'block';
+  }
   // -- Mastered Tag Listener --
   const masteredTagBtn = document.getElementById('download-mastered-tag');
   if (masteredTagBtn) {
