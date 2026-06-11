@@ -67,7 +67,8 @@ input:focus::placeholder, textarea:focus::placeholder { color: transparent !impo
 
 /* Fixed Icon Alignments & Hovers */
 .icon-btn-add { background: transparent; border: 0.5px solid rgba(184,146,58,0.4); color: var(--gold); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 0; margin: 0; }
-.icon-btn-add:hover { background: rgba(184,146,58,0.15); }
+.icon-btn-add:hover:not(:disabled) { background: rgba(184,146,58,0.15); }
+.icon-btn-add:disabled { opacity: 0.4; cursor: not-allowed; }
 .lexicon-btn { background: transparent; border: 0.5px solid transparent; color: var(--text-dim); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; padding: 0; margin: 0; }
 .lexicon-btn svg { display: block; margin: auto; }
 .lexicon-btn:hover { background: rgba(255,255,255,0.1); color: var(--vellum); border-color: rgba(255,255,255,0.2); }
@@ -920,13 +921,19 @@ function attachCollectionListeners() {
       document.getElementById('nav-setup-btn').classList.add('active-nav');
       document.getElementById('nav-library-btn').classList.remove('active-nav');
       
-      const colId = e.target.dataset.id;
+      const colId = e.currentTarget.dataset.id;
       
-      // 1. Add it to personal collections at checkpoint 0
+      // 1. Add it to personal collections at checkpoint 0.
+      //    Two-step: ensure doc exists first, then set the specific field,
+      //    so we don't overwrite other publicProgress keys on existing users.
       const userRef = doc(db, "users", state.currentUser.uid);
-      await updateDoc(userRef, { [`publicProgress.${colId}`]: 0 });
+      try {
+        await setDoc(userRef, {}, { merge: true });
+        await updateDoc(userRef, { [`publicProgress.${colId}`]: 0 });
+      } catch(e2) {
+        console.error('Could not save collection start:', e2);
+      }
       
-      // 2. Fetch the words
       // 2. Fetch the words
       const colSnap = await getDoc(doc(db, "public_collections", colId));
       const allWords = colSnap.data().words;
@@ -951,8 +958,25 @@ function attachCollectionListeners() {
     btn.addEventListener('click', async (e) => {
       const colId = e.currentTarget.dataset.id;
       const userRef = doc(db, "users", state.currentUser.uid);
-      await updateDoc(userRef, { [`publicProgress.${colId}`]: 0 });
-      loadLibrary(); 
+
+      // Visual loading state
+      btn.disabled = true;
+      const originalContent = btn.innerHTML;
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22" opacity=".4"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76" opacity=".8"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07" opacity=".3"/><line x1="2" y1="12" x2="6" y2="12" opacity=".6"/><line x1="18" y1="12" x2="22" y2="12" opacity=".2"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24" opacity=".5"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93" opacity=".1"/></svg>`;
+
+      try {
+        // Two-step write: ensure doc exists, then set the specific field with dot-notation.
+        // This correctly deep-merges without overwriting other publicProgress keys,
+        // and works for brand-new users who have no Firestore document yet.
+        await setDoc(userRef, {}, { merge: true });
+        await updateDoc(userRef, { [`publicProgress.${colId}`]: 0 });
+      } catch(err) {
+        console.error('Could not add collection:', err);
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+        return;
+      }
+      loadLibrary();
     });
   });
 
