@@ -26,6 +26,9 @@ input,textarea,select{font-family:'Cormorant Garamond',Georgia,serif;font-weight
 
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.6}
 
+
+
+
 /* ── AUTH MODAL ─────────────────────────────────────────────────── */
 #auth-modal{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;background:rgba(10,9,8,0.88);backdrop-filter:blur(6px);padding:1.5rem;transition:opacity 0.3s}
 #auth-modal.fading{opacity:0;pointer-events:none}
@@ -98,6 +101,10 @@ input:focus::placeholder, textarea:focus::placeholder { color: transparent !impo
 #personal-lexicon-container .lexicon-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0.5rem; }
 .lexicon-progress-bg { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
 .lexicon-progress-fill { height: 100%; background: var(--sage); transition: width 0.5s ease-out; }
+
+
+
+
 
 /* Fixed Icon Alignments & Hovers */
 .icon-btn-add { background: transparent; border: 0.5px solid rgba(184,146,58,0.4); color: var(--gold); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 0; margin: 0; }
@@ -455,6 +462,35 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   .lexicon-pills-wrapper{min-width:0;width:100%}
   .lexicon-actions{width:100%;justify-content:flex-end}
 
+
+  /* ── LOADER ─────────────────────────────────────────────────── */
+.library-loader-wrap {
+  grid-column: 1 / -1; /* Forces it to span the entire width of the grid */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  gap: 1rem;
+  color: var(--gold);
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(184, 146, 58, 0.15);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { 
+  100% { transform: rotate(360deg); } 
+}
   /* Setup */
   .setup-wrap{padding:1.75rem 1rem 3rem}
   .masthead h1{font-size:2.6rem}
@@ -620,7 +656,11 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   </div>
 </div>
     <div id="public-collections-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem;">
+      <div class="library-loader-wrap" id="library-loader">
+        <div class="spinner"></div>
+        <span>Unearthing archives...</span>
       </div>
+    </div>
   </div>
 
 </div>
@@ -1071,38 +1111,35 @@ function filterArchives() {
 
 document.getElementById('filter-language').addEventListener('change', filterArchives);
 document.getElementById('filter-level').addEventListener('change', filterArchives);
-
 function attachCollectionListeners() {
 
-  // Add & Start a Public Collection instantly (from the Note card)
+  // 1. Add & Start a Public Collection instantly (from the Note card)
   document.querySelectorAll('.start-public-new-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       document.getElementById('nav-setup-btn').classList.add('active-nav');
       document.getElementById('nav-library-btn').classList.remove('active-nav');
       
       const colId = e.currentTarget.dataset.id;
-      
-      // 1. Add it to personal collections at checkpoint 0.
-      //    Two-step: ensure doc exists first, then set the specific field,
-      //    so we don't overwrite other publicProgress keys on existing users.
       const userRef = doc(db, "users", state.currentUser.uid);
-      try {
-        await setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true });
-      } catch(e2) {
-        console.error('Could not save collection start:', e2);
-      }
       
-      // 2. Fetch the words
-      const colSnap = await getDoc(doc(db, "public_collections", colId));
-      const allWords = colSnap.data().words;
-      const colName = colSnap.data().title || colSnap.data().name || "Collection";
+      // OPTIMISTIC UI: Save locally immediately
+      if (!state.userData.publicProgress) state.userData.publicProgress = {};
+      state.userData.publicProgress[colId] = 0;
+      
+      // Background save to database (no await blocking the UI)
+      setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true }).catch(err => console.error(err));
+      
+      // ZERO-LATENCY READ: Grab words from the local cache instead of the network
+      const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
+      const allWords = cachedCol.data.words;
+      const colName = cachedCol.data.title || cachedCol.data.name || "Collection";
       const nextWords = allWords.slice(0, 30);
       
       state.words = nextWords;
       state.activePublicCollection = colId;
       toggleVocabLock(true, colName); // LOCK
 
-      // 3. Populate text area and move straight to Setup
+      // Populate text area and move straight to Setup
       const vocabTextarea = document.getElementById('vocab-textarea');
       vocabTextarea.value = nextWords.join('\n');
       parseVocabTextarea(); 
@@ -1111,56 +1148,67 @@ function attachCollectionListeners() {
       document.getElementById('setup').classList.remove('hidden');
     });
   });
-  // Add a Public Collection (+)
+
+  // 2. Add a Public Collection (+)
   document.querySelectorAll('.add-collection-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const colId = e.currentTarget.dataset.id;
       const userRef = doc(db, "users", state.currentUser.uid);
 
-      // Visual loading state
-      btn.disabled = true;
-      const originalContent = btn.innerHTML;
-      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22" opacity=".4"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76" opacity=".8"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07" opacity=".3"/><line x1="2" y1="12" x2="6" y2="12" opacity=".6"/><line x1="18" y1="12" x2="22" y2="12" opacity=".2"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24" opacity=".5"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93" opacity=".1"/></svg>`;
+      // OPTIMISTIC UI: Update local state and redraw instantly
+      if (!state.userData.publicProgress) state.userData.publicProgress = {};
+      state.userData.publicProgress[colId] = 0;
+      renderLibraryFromCache(); 
 
+      // Send to database in the background
       try {
-        // Two-step write: ensure doc exists, then set the specific field with dot-notation.
-        // This correctly deep-merges without overwriting other publicProgress keys,
-        // and works for brand-new users who have no Firestore document yet.
         await setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true });
       } catch(err) {
         console.error('Could not add collection:', err);
-        btn.innerHTML = originalContent;
-        btn.disabled = false;
-        return;
+        // REVERT if the network fails
+        delete state.userData.publicProgress[colId];
+        renderLibraryFromCache();
       }
-
     });
   });
 
-  // Download an Added Collection
+  // 3. Download an Added Collection
   document.querySelectorAll('.dl-public-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const colId = e.currentTarget.dataset.id;
-      const colSnap = await getDoc(doc(db, "public_collections", colId));
-      if (colSnap.exists()) {
-         triggerTextDownload(`Aesop_${colSnap.data().title.replace(/\s+/g, '_')}.txt`, colSnap.data().words);
+      // ZERO-LATENCY READ: Download from cache!
+      const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
+      if (cachedCol) {
+         triggerTextDownload(`Aesopus_${cachedCol.data.title.replace(/\s+/g, '_')}.txt`, cachedCol.data.words);
       }
     });
   });
 
-  // Remove an Added Collection (X)
+  // 4. Remove an Added Collection (X)
   document.querySelectorAll('.remove-collection-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const colId = e.currentTarget.dataset.id;
       if(confirm('Remove this collection from your library?')) {
          const userRef = doc(db, "users", state.currentUser.uid);
-         await updateDoc(userRef, { [`publicProgress.${colId}`]: deleteField() });
+         
+         // OPTIMISTIC UI: Remove locally and redraw instantly
+         const previousProgress = state.userData.publicProgress[colId];
+         delete state.userData.publicProgress[colId];
+         renderLibraryFromCache();
 
+         // Background delete
+         try {
+           await updateDoc(userRef, { [`publicProgress.${colId}`]: deleteField() });
+         } catch (err) {
+           // REVERT if the network fails
+           state.userData.publicProgress[colId] = previousProgress;
+           renderLibraryFromCache();
+         }
       }
     });
   });
 
-  // Start an Added Collection
+  // 5. Start an Added Collection
   document.querySelectorAll('.start-collection-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       document.getElementById('nav-setup-btn').classList.add('active-nav');
@@ -1168,15 +1216,16 @@ function attachCollectionListeners() {
 
       const colId = e.currentTarget.dataset.id;
       const checkpoint = parseInt(e.currentTarget.dataset.checkpoint);
-     const colSnap = await getDoc(doc(db, "public_collections", colId));
-      const allWords = colSnap.data().words;
-      const colName = colSnap.data().title || colSnap.data().name || "Collection";
+      
+      // ZERO-LATENCY READ: Grab words from the local cache
+      const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
+      const allWords = cachedCol.data.words;
+      const colName = cachedCol.data.title || cachedCol.data.name || "Collection";
       
       const nextWords = allWords.slice(checkpoint, checkpoint + 30);
       state.words = nextWords;
       state.activePublicCollection = colId;
       toggleVocabLock(true, colName); // LOCK
-
 
       // Auto-Populate the Setup Textarea
       const vocabTextarea = document.getElementById('vocab-textarea');
