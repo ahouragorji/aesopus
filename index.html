@@ -758,20 +758,17 @@ import { getAuth,
          onAuthStateChanged,
          reload as reloadUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, deleteField } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
+         
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, deleteField, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-async function loadLibrary() {
+async function renderLibraryFromCache() {
   if (!state.currentUser) return;
-  const userRef = doc(db, "users", state.currentUser.uid);
-  const userSnap = await getDoc(userRef);
-  const userData = userSnap.data() || {};
   
+  // 1. Read from our local cache instead of making a Firebase request
+  const userData = state.userData || {};
   const learned = userData.learned || [];
   const unlearned = userData.unlearned || [];
   const userProgress = userData.publicProgress || {};
-
-  // -- Standardized Row HTML Builder --
 
   // -- Standardized Row HTML Builder --
   const buildRowHTML = (title, countText, wordsList, actionBtns, progressBarHTML = '') => {
@@ -800,7 +797,7 @@ async function loadLibrary() {
   const dlIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>`;
   const xIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
-  // 1. Personal Queue Row (Download, Clear, Start)
+  // 2. Personal Queue Row 
   let personalHTML = '';
   if (unlearned.length > 0) {
     const unlearnedBtns = `
@@ -811,7 +808,7 @@ async function loadLibrary() {
     personalHTML = buildRowHTML('Personal Queue', `(${unlearned.length})`, unlearned, unlearnedBtns);
   }
 
-  // 2. Mastered Download Tag
+  // 3. Mastered Download Tag
   const masteredContainer = document.getElementById('mastered-header-container');
   if (learned.length > 0) {
     masteredContainer.innerHTML = `
@@ -823,26 +820,29 @@ async function loadLibrary() {
     masteredContainer.innerHTML = '';
   }
 
-  // 3. Fetch Public Collections
-  const publicSnap = await getDocs(collection(db, "public_collections"));
+  // 4. Fetch Public Collections ONCE and cache them
+  if (!state.publicCollectionsCache) {
+    const publicSnap = await getDocs(collection(db, "public_collections"));
+    state.publicCollectionsCache = [];
+    publicSnap.forEach(docSnap => {
+      state.publicCollectionsCache.push({ id: docSnap.id, data: docSnap.data() });
+    });
+  }
+
   const grid = document.getElementById('public-collections-grid');
   grid.innerHTML = '';
-  
   let addedCollectionsHTML = '';
 
-
-  publicSnap.forEach(docSnap => {
-    const data = docSnap.data();
-    const colId = docSnap.id;
+  state.publicCollectionsCache.forEach(col => {
+    const data = col.data;
+    const colId = col.id;
     const isAdded = userProgress.hasOwnProperty(colId);
     const checkpoint = isAdded ? userProgress[colId] : 0;
     const totalWords = data.words.length;
-    
-    // Add this line right here:
     const collectionName = data.title || data.name || data.Title || "Untitled Collection";
     
     if (isAdded) {
-      // Subscribed Collection
+      // Subscribed Collection HTML
       const pct = totalWords === 0 ? 0 : Math.round((checkpoint / totalWords) * 100);
       const progressHTML = `
         <div class="lexicon-progress-bg">
@@ -855,21 +855,14 @@ async function loadLibrary() {
         <button class="small-start-btn start-collection-btn" data-id="${colId}" data-checkpoint="${checkpoint}" style="margin-left: 8px;">Start</button>
       `;
       
-        addedCollectionsHTML += buildRowHTML(escHtml(collectionName), `(${checkpoint}/${totalWords})`, data.words, addedBtns, progressHTML);
-        } else {
-      // Unsubscribed Collection
-    
-// Unsubscribed Collection: Displayed in the Public Archives Grid as a "Note"
-      const previewWords = data.words.slice(0, 35); // Pull enough words to fill the space
-      // Removed margin-bottom since the parent's "gap" property will handle spacing
+      addedCollectionsHTML += buildRowHTML(escHtml(collectionName), `(${checkpoint}/${totalWords})`, data.words, addedBtns, progressHTML);
+    } else {
+      // Unsubscribed Collection Note HTML
+      const previewWords = data.words.slice(0, 35);
       const previewPills = previewWords.map(w => `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border-color: rgba(184,146,58,0.2); color: var(--text-dim); display: inline-block;">${escHtml(w)}</span>`).join('');
 
-     
-       // Extract tags (defaulting if they don't exist in older database entries)
       const langTag = data.language || 'Unknown';
       const levelTag = data.level || 'Unrated';
-      
-      // Build the HTML for the tags ONLY if they have real values
       const langTagHTML = langTag !== 'Unknown' ? `<span class="archive-tag">${escHtml(langTag)}</span>` : '';
       const levelTagHTML = levelTag !== 'Unrated' ? `<span class="archive-tag">${escHtml(levelTag)}</span>` : '';
       const optTagHTML = data.optionalTag ? `<span class="archive-tag">${escHtml(data.optionalTag)}</span>` : '';
@@ -901,11 +894,12 @@ async function loadLibrary() {
       grid.insertAdjacentHTML('beforeend', publicCardHTML);
     }
   });
-// Inject Personal Lexicon + Added Collections combined
+
+  // 5. Inject Personal Lexicon + Added Collections combined
   const container = document.getElementById('personal-lexicon-container');
   container.innerHTML = personalHTML + addedCollectionsHTML;
 
-  // 4. Toggle Visibility of the Entire Personal Lexicon Section
+  // 6. Toggle Visibility of the Entire Personal Lexicon Section
   const personalCard = document.getElementById('personal-lexicon-card');
   const hasActiveContent = unlearned.length > 0 || learned.length > 0 || addedCollectionsHTML.length > 0;
   
@@ -915,20 +909,33 @@ async function loadLibrary() {
     personalCard.classList.add('hidden');
   }
  
-  // 5. Clean up the border and spacing if the container below the title is empty
+  // 7. Clean up the border and spacing if the container below the title is empty
   const headerWrap = document.getElementById('lexicon-header-wrap');
   const lexiconContainer = document.getElementById('personal-lexicon-container');
   
   if (unlearned.length === 0 && addedCollectionsHTML.length === 0) {
     headerWrap.style.borderBottom = 'none';
     headerWrap.style.paddingBottom = '0';
-    lexiconContainer.style.display = 'none'; // Removes the awkward blank gap
+    lexiconContainer.style.display = 'none'; 
   } else {
     headerWrap.style.borderBottom = '0.5px solid rgba(184,146,58,0.25)';
     headerWrap.style.paddingBottom = '0.5rem';
     lexiconContainer.style.display = 'block';
   }
-  // -- Mastered Tag Listener --
+
+  // 8. Reattach all listeners to the freshly rendered HTML
+  attachPersonalListeners(learned, unlearned);
+  attachCollectionListeners();
+  
+  // Re-apply any active filters
+  filterArchives();
+}
+
+function attachPersonalListeners(learned, unlearned) {
+  const container = document.getElementById('personal-lexicon-container');
+  const userRef = doc(db, "users", state.currentUser.uid);
+
+  // Mastered Tag Download
   const masteredTagBtn = document.getElementById('download-mastered-tag');
   if (masteredTagBtn) {
     masteredTagBtn.addEventListener('click', () => {
@@ -944,32 +951,35 @@ async function loadLibrary() {
     });
   }
 
-  // -- Standard Listeners for Personal Unlearned/Mastered Rows --
+  // Download Row
   container.querySelectorAll('.dl-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.dataset.type;
-      const dataToDownload = type === 'Personal Queue' ? unlearned : learned; // Updated name
+      const dataToDownload = type === 'Personal Queue' ? unlearned : learned;
       triggerTextDownload(`Aesop_${type.replace(' ', '_')}_Words.txt`, dataToDownload);
     });
   });
 
+  // Clear Row
   container.querySelectorAll('.clear-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const type = btn.dataset.type;
       if(confirm(`Are you sure you want to permanently clear your ${type}?`)) {
-        const updateObj = type === 'Personal Queue' ? { unlearned: [] } : { learned: [] }; // Updated mapping
+        const updateObj = type === 'Personal Queue' ? { unlearned: [] } : { learned: [] }; 
         await updateDoc(userRef, updateObj);
-        loadLibrary();
+        // The onSnapshot listener will detect this change automatically and re-render!
       }
     });
   });
-container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
+
+  // Start Personal Queue
+  container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
     btn.addEventListener('click', () => {
        document.getElementById('nav-setup-btn').classList.add('active-nav');
        document.getElementById('nav-library-btn').classList.remove('active-nav');
 
        state.activePublicCollection = null;
-       toggleVocabLock(false); // UNLOCK
+       toggleVocabLock(false);
        
        const nextWords = unlearned.slice(0, 30);
        const vocabTextarea = document.getElementById('vocab-textarea');
@@ -982,24 +992,6 @@ container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
        document.getElementById('story-meta').classList.add('hidden');
        document.getElementById('restart-btn').classList.add('hidden');
     });
-  });
-
-  attachCollectionListeners();
-}
-/* ── PUBLIC ARCHIVES FILTERING ── */
-function filterArchives() {
-  const langFilter = document.getElementById('filter-language').value.toLowerCase();
-  const levelFilter = document.getElementById('filter-level').value.toLowerCase();
-  
-  document.querySelectorAll('.public-collection-card').forEach(card => {
-    const cardLang = card.getAttribute('data-language');
-    const cardLevel = card.getAttribute('data-level');
-    
-    const matchesLang = langFilter === 'all' || cardLang === langFilter;
-    const matchesLevel = levelFilter === 'all' || cardLevel === levelFilter;
-    
-    // The setup-card class uses flexbox, so we restore it to 'flex' when showing
-    card.style.display = (matchesLang && matchesLevel) ? 'flex' : 'none';
   });
 }
 
@@ -1021,8 +1013,7 @@ function attachCollectionListeners() {
       //    so we don't overwrite other publicProgress keys on existing users.
       const userRef = doc(db, "users", state.currentUser.uid);
       try {
-        await setDoc(userRef, {}, { merge: true });
-        await updateDoc(userRef, { [`publicProgress.${colId}`]: 0 });
+        await setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true });
       } catch(e2) {
         console.error('Could not save collection start:', e2);
       }
@@ -1061,15 +1052,14 @@ function attachCollectionListeners() {
         // Two-step write: ensure doc exists, then set the specific field with dot-notation.
         // This correctly deep-merges without overwriting other publicProgress keys,
         // and works for brand-new users who have no Firestore document yet.
-        await setDoc(userRef, {}, { merge: true });
-        await updateDoc(userRef, { [`publicProgress.${colId}`]: 0 });
+        await setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true });
       } catch(err) {
         console.error('Could not add collection:', err);
         btn.innerHTML = originalContent;
         btn.disabled = false;
         return;
       }
-      loadLibrary();
+      renderLibraryFromCache();
     });
   });
 
@@ -1091,7 +1081,7 @@ function attachCollectionListeners() {
       if(confirm('Remove this collection from your library?')) {
          const userRef = doc(db, "users", state.currentUser.uid);
          await updateDoc(userRef, { [`publicProgress.${colId}`]: deleteField() });
-         loadLibrary();
+         renderLibraryFromCache();
       }
     });
   });
@@ -1148,11 +1138,13 @@ const state = {
   targetLang:'English', nativeLang:'English',
   level:'beginner', words:[], setting:'',
   scene:0, maxScenes:10, streaming:false, currentUser:null,
-  wordsSeenSet: new Set(), // tracks which words have been seen across scenes
+  wordsSeenSet: new Set(),
   rollingSummary: '',
-  uploadedWords: [], // <-- Holds file words until the user clicks "Weave"
-  activePublicCollection: null, // <-- tracks if user is playing a public collection
-  generateUsed: false  // <-- one-time generate button limit
+  uploadedWords: [], 
+  activePublicCollection: null, 
+  generateUsed: false,
+  userData: {},               // <-- Add this
+  publicCollectionsCache: null // <-- Add this
 };
 const MAX_WORDS = 30;
 
@@ -1346,7 +1338,7 @@ Do not include any line that is not a vocabulary item.`;
   setVocabStatus('idle', 'asking the AI\u2026', 0);
 
   try {
-    const raw = await callAI(systemPrompt, currentText);
+    const raw = await callAI(systemPrompt, currentText, 150, true);
 
     // Parse lines, strip any accidental bullets/numbers/whitespace
     const lines = raw
@@ -1459,7 +1451,6 @@ submitBtn.addEventListener('click', async () => {
   el.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.click(); })
 );
 
-
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     await reloadUser(user);
@@ -1470,6 +1461,7 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
     state.currentUser = user;
+
     const modal = document.getElementById('auth-modal');
     modal.classList.add('fading');
     setTimeout(() => modal.classList.add('hidden'), 300);
@@ -1481,7 +1473,19 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('nav-setup-btn').classList.add('active-nav');
     document.getElementById('nav-library-btn').classList.remove('active-nav');
 
-    loadLibrary();
+    // ── THE BIG CHANGE IS HERE ──
+    // Instead of renderLibraryFromCache(), we attach a real-time listener ONCE.
+    const userRef = doc(db, "users", user.uid);
+    onSnapshot(userRef, (docSnap) => {
+      // Save the latest data into our local state
+      state.userData = docSnap.data() || {};
+      
+      // Call a purely visual function to draw the screen using state.userData 
+      // (This prevents us from getting charged for database reads on every UI update)
+      renderLibraryFromCache(); 
+    });
+    // ────────────────────────────
+
   } else {
     state.currentUser = null;
     const modal = document.getElementById('auth-modal');
@@ -1502,7 +1506,6 @@ onAuthStateChanged(auth, async (user) => {
     state.wordsSeenSet = new Set();
     state.scene = 0;
   }
-
 });
 document.getElementById('topbar-logout-btn').addEventListener('click', () => signOut(auth));
 document.getElementById('nav-library-btn').addEventListener('click', () => {
@@ -1511,7 +1514,7 @@ document.getElementById('nav-library-btn').addEventListener('click', () => {
   document.getElementById('library-dashboard').classList.remove('hidden');
   document.getElementById('nav-library-btn').classList.add('active-nav');
   document.getElementById('nav-setup-btn').classList.remove('active-nav');
-  loadLibrary();
+  renderLibraryFromCache();
 });
 document.getElementById('nav-setup-btn').addEventListener('click', () => {
   document.getElementById('library-dashboard').classList.add('hidden');
@@ -1562,7 +1565,7 @@ function updateApiUI(provider) {
     summaryAi.textContent = 'Gemini 2.0 Flash';
   } else {
     inp.placeholder = 'sk-… (required for OpenAI)';
-    hint.textContent = 'It is great if you use your own OpenAI key for best performance, but it is not required. I have my own personal one, but please don not use it up :>';
+    hint.textContent = 'It is great if you use your own OpenAI key for best performance, but it is not required.';
     linkNote.innerHTML = 'Get a key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>';
     summaryAi.textContent = 'GPT-4o';
   }
@@ -1820,7 +1823,7 @@ tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
           });
         }
         // Refresh the library so the progress bar reflects the new state
-        loadLibrary();
+        renderLibraryFromCache();
       }
   });
   });
@@ -2097,72 +2100,7 @@ function renderEnd(container) {
   document.getElementById('new-story-btn').addEventListener('click', showSetupScreen);
 }
 
-/* ════════════════════════════════════════════════════════════════
-   AI API
-   NOTE ON FREE FALLBACK: FreeModel (freemodel.dev) does not send
-   CORS headers, so browser fetch() is always blocked. The free
-   fallback now uses Gemini 2.0 Flash via Google's public endpoint,
-   which supports browser CORS. Users who hit rate limits can paste
-   their own key from https://aistudio.google.com/app/apikey (free).
-════════════════════════════════════════════════════════════════ */
-// async function callAI(system, userMsg) {
-//   let targetUrl = '';
-//   let targetHeaders = { 'Content-Type': 'application/json' };
-//   let payload = {};
-//   let isGemini = false;
-
-//   if (state.provider === 'openai') {
-//     // OpenAI — requires user-supplied key (no free CORS-friendly fallback)
-//     if (!state.apiKey) throw new Error('An OpenAI API key is required. Get one at platform.openai.com.');
-//     targetUrl = 'https://api.openai.com/v1/chat/completions';
-//     targetHeaders['Authorization'] = `Bearer ${state.apiKey}`;
-//     payload = {
-//       model: 'gpt-4o',
-//       messages: [
-//         { role: 'system', content: system },
-//         { role: 'user', content: userMsg }
-//       ],
-//       temperature: 0.82,
-//       max_tokens: 2500,
-//       response_format: { type: 'json_object' }
-//     };
-//   } else {
-//     // Gemini — works browser-direct; key optional (falls back to free demo key)
-//     isGemini = true;
-//     const key = state.apiKey || 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'; // demo key, rate-limited
-//     targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
-//     payload = {
-//       contents: [{ role: 'user', parts: [{ text: userMsg }] }],
-//       systemInstruction: { parts: [{ text: system }] },
-//       generationConfig: {
-//         temperature: 0.82,
-//         maxOutputTokens: 2500,
-//         responseMimeType: 'application/json',
-//         responseSchema: {
-//           type: 'OBJECT',
-//           properties: {
-//             chapter:         { type: 'STRING' },
-//             narrative:       { type: 'STRING' },
-//             words_used:      { type: 'ARRAY', items: { type: 'STRING' } },
-//             choices: {
-//               type: 'ARRAY',
-//               items: {
-//                 type: 'OBJECT',
-//                 properties: {
-//                   id:    { type: 'STRING' },
-//                   text:  { type: 'STRING' },
-//                   gloss: { type: 'STRING' }
-//                 }
-//               }
-//             },
-//             is_final:        { type: 'BOOLEAN' },
-//             context_summary: { type: 'STRING' }
-//           }
-//         }
-//       }
-//     };
-//   }
-async function callAI(system, userMsg) {
+async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
   // Get Firebase ID token using the modular SDK
   const idToken = await auth.currentUser.getIdToken();
 
@@ -2176,7 +2114,7 @@ async function callAI(system, userMsg) {
       systemInstruction: { parts: [{ text: system }] },
       generationConfig: {
         temperature: 0.82,
-        maxOutputTokens: 600
+        maxOutputTokens: maxTokens
       }
     };
 
@@ -2213,7 +2151,7 @@ async function callAI(system, userMsg) {
         { role: 'user',   content: userMsg }
       ],
       temperature: 0.82,
-      max_tokens: 600
+      max_tokens: maxTokens
     };
     
     // Only force OpenAI into strict JSON mode if the prompt actually asks for it
@@ -2230,7 +2168,7 @@ async function callAI(system, userMsg) {
         'Content-Type': 'application/json',
         'x-firebase-token': idToken
       },
-      body: JSON.stringify({ provider: state.provider, payload })
+      body: JSON.stringify({ provider: state.provider, payload, isWordlist })
     });
   } catch (networkErr) {
     throw new Error('Network error: could not reach the AI provider. Check your connection.');
