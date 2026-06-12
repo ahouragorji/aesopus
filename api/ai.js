@@ -2,9 +2,20 @@
 import admin from 'firebase-admin';
 
 if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT))
-  });
+  try {
+    // 1. Parse the environment variable
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    
+    // 2. Force Vercel to read the literal newlines correctly
+    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
+    
+    // 3. Initialize
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+  } catch (error) {
+    console.error("Firebase Init Error: Check your FIREBASE_SERVICE_ACCOUNT JSON formatting.");
+  }
 }
 
 export default async function handler(req, res) {

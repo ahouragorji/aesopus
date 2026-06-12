@@ -1557,12 +1557,12 @@ function updateApiUI(provider) {
 
   if (provider === 'gemini') {
     inp.placeholder = 'AIza… or AQ… (optional — free tier works without a key)';
-    hint.textContent = 'Leave blank to use the free Gemini tier (rate-limited). Paste your own key for higher limits.';
+    hint.textContent = 'Nah you gotta have your own key for this one, if you don\'t, try chatgpt.';
     linkNote.innerHTML = 'Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a>';
     summaryAi.textContent = 'Gemini 2.0 Flash';
   } else {
     inp.placeholder = 'sk-… (required for OpenAI)';
-    hint.textContent = 'OpenAI requires your own API key — no free fallback available.';
+    hint.textContent = 'It is great if you use your own OpenAI key for best performance, but it is not required. I have my own personal one, but please don not use it up :>';
     linkNote.innerHTML = 'Get a key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>';
     summaryAi.textContent = 'GPT-4o';
   }
@@ -1570,11 +1570,13 @@ function updateApiUI(provider) {
 }
 
 // Single click on the toggle flips between providers
+// Single click on the toggle flips between providers
 document.getElementById('provider-toggle-wrap').addEventListener('click', () => {
-  updateApiUI(state.provider === 'gemini' ? 'openai' : 'openai');
+  updateApiUI(state.provider === 'gemini' ? 'openai' : 'gemini');
 });
 
-updateApiUI('gemini');
+// Set OpenAI as the default on page load
+updateApiUI('openai');
 
 /* ════════════════════════════════════════════════════════════════
    SETUP INTERACTIONS
