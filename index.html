@@ -558,10 +558,15 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   <div style="display: flex; gap: 0.75rem; margin-bottom: 0.3rem;">
     <select id="filter-language" class="filter-select">
       <option value="all">All Languages</option>
-      <option value="german">German</option>
-      <option value="spanish">Spanish</option>
-      <option value="french">French</option>
-      <option value="farsi">Farsi</option>
+      <option value="english">English</option>
+                <option value="german">German</option>
+                <option value="spanish">Spanish</option>
+                <option value="french">French</option>
+                <option value="farsi">Farsi</option>
+                <option value="russian">Russian</option>
+                <option value="chinese">Chinese</option>
+                <option value="italian">Italian</option>
+                <option value="arabic">Arabic</option>
       </select>
     <select id="filter-level" class="filter-select">
       <option value="all">All Levels</option>
@@ -596,20 +601,30 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
           <div class="field-group">
             <label class="field-label">Story language</label>
             <select class="inp" id="target-lang">
-              <option>Spanish</option><option selected>German</option><option>French</option>
-              <option>Farsi</option>
-              <option>Italian</option><option>Portuguese</option><option>Japanese</option>
-              <option>Mandarin Chinese</option><option>Korean</option><option>Arabic</option>
-              <option>English</option>
+              <option value="english">English</option>
+                <option value="german">German</option>
+                <option value="spanish">Spanish</option>
+                <option value="french">French</option>
+                <option value="farsi">Farsi</option>
+                <option value="russian">Russian</option>
+                <option value="chinese">Chinese</option>
+                <option value="italian">Italian</option>
+                <option value="arabic">Arabic</option>
             </select>
           </div>
           <div class="field-group">
             <label class="field-label">Your native language</label>
             <select class="inp" id="native-lang">
-              <option>English</option><option>Spanish</option><option>French</option>
-              <option>Italian</option><option>German</option><option>Portuguese</option>
-              <option>Farsi</option>
-              <option>Japanese</option><option>Korean</option><option>Arabic</option>
+               <option value="english">English</option>
+                <option value="german">German</option>
+                <option value="spanish">Spanish</option>
+                <option value="french">French</option>
+                <option value="farsi">Farsi</option>
+                <option value="russian">Russian</option>
+                <option value="chinese">Chinese</option>
+                <option value="italian">Italian</option>
+                <option value="arabic">Arabic</option>
+
             </select>
           </div>
           <div class="setup-divider"></div>
@@ -705,7 +720,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
           <div style="display:flex;flex-direction:column;gap:0.6rem">
             <div style="display:flex;justify-content:space-between;font-size:0.88rem">
               <span style="color:var(--text-dim);font-family:'Cormorant SC',serif;letter-spacing:0.08em">Language</span>
-              <span id="summary-lang" style="color:var(--vellum)">German</span>
+              <span id="summary-lang" style="color:var(--vellum)">English</span>
             </div>
             <div style="display:flex;justify-content:space-between;font-size:0.88rem">
               <span style="color:var(--text-dim);font-family:'Cormorant SC',serif;letter-spacing:0.08em">Level</span>
@@ -995,6 +1010,24 @@ function attachPersonalListeners(learned, unlearned) {
     });
   });
 }
+
+/* ── PUBLIC ARCHIVES FILTERING ── */
+function filterArchives() {
+  const langFilter = document.getElementById('filter-language').value.toLowerCase();
+  const levelFilter = document.getElementById('filter-level').value.toLowerCase();
+  
+  document.querySelectorAll('.public-collection-card').forEach(card => {
+    const cardLang = card.getAttribute('data-language');
+    const cardLevel = card.getAttribute('data-level');
+    
+    const matchesLang = langFilter === 'all' || cardLang === langFilter;
+    const matchesLevel = levelFilter === 'all' || cardLevel === levelFilter;
+    
+    // The setup-card class uses flexbox, so we restore it to 'flex' when showing
+    card.style.display = (matchesLang && matchesLevel) ? 'flex' : 'none';
+  });
+}
+
 
 document.getElementById('filter-language').addEventListener('change', filterArchives);
 document.getElementById('filter-level').addEventListener('change', filterArchives);
