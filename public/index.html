@@ -1144,7 +1144,7 @@ const auth = getAuth(app);
 
 /* ── App state ─────────────────────────────────────────────────── */
 const state = {
-  apiKey:'', provider:'gemini',
+  apiKey:'', provider:'openai',
   targetLang:'English', nativeLang:'English',
   level:'beginner', words:[], setting:'',
   scene:0, maxScenes:10, streaming:false, currentUser:null,
@@ -1571,7 +1571,7 @@ function updateApiUI(provider) {
 
 // Single click on the toggle flips between providers
 document.getElementById('provider-toggle-wrap').addEventListener('click', () => {
-  updateApiUI(state.provider === 'gemini' ? 'openai' : 'gemini');
+  updateApiUI(state.provider === 'gemini' ? 'openai' : 'openai');
 });
 
 updateApiUI('gemini');
@@ -1703,19 +1703,19 @@ async function beginStory() {
   // API key logic...
 
   // API key logic...
-  if (userKey) {
-    if (state.provider === 'gemini' && !userKey.startsWith('AIza') && !userKey.startsWith('AQ')) {
-      errEl.textContent = "That doesn't look like a valid Gemini key (should start with AIza… or AQ…).";
-      return;
-    }
-    if (state.provider === 'openai' && !userKey.startsWith('sk-')) {
-      errEl.textContent = "That doesn't look like a valid OpenAI key (should start with sk-…).";
-      return;
-    }
-    state.apiKey = userKey;
-  } else {
-    state.apiKey = ''; // will use demo key in callAI
-  }
+  // if (userKey) {
+  //   if (state.provider === 'gemini' && !userKey.startsWith('AIza') && !userKey.startsWith('AQ')) {
+  //     errEl.textContent = "That doesn't look like a valid Gemini key (should start with AIza… or AQ…).";
+  //     return;
+  //   }
+  //   if (state.provider === 'openai' && !userKey.startsWith('sk-')) {
+  //     errEl.textContent = "That doesn't look like a valid OpenAI key (should start with sk-…).";
+  //     return;
+  //   }
+  //   state.apiKey = userKey;
+  // } else {
+  //   state.apiKey = ''; // will use demo key in callAI
+  // }
 
   state.targetLang = document.getElementById('target-lang').value;
   state.nativeLang = document.getElementById('native-lang').value;
