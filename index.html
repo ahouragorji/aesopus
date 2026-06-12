@@ -29,7 +29,36 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 /* ── AUTH MODAL ─────────────────────────────────────────────────── */
 #auth-modal{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;background:rgba(10,9,8,0.88);backdrop-filter:blur(6px);padding:1.5rem;transition:opacity 0.3s}
 #auth-modal.fading{opacity:0;pointer-events:none}
-.auth-modal-box{width:100%;max-width:440px;background:linear-gradient(160deg,#1e1c19,#16140f);border:0.5px solid rgba(184,146,58,0.3);border-radius:6px;padding:2.5rem 2.5rem 2rem;display:flex;flex-direction:column;gap:1.4rem;box-shadow:0 24px 60px rgba(0,0,0,0.6)}
+
+.auth-modal-box { 
+  width:100%; 
+  max-width:440px; 
+  background:linear-gradient(160deg,#1e1c19,#16140f); 
+  border:0.5px solid rgba(184,146,58,0.3); 
+  border-radius:6px; 
+  padding:2.5rem 2.5rem 2rem; 
+  display:flex; 
+  flex-direction:column; 
+  gap:1.4rem; 
+  box-shadow:0 24px 60px rgba(0,0,0,0.6);
+  position: relative; /* <-- Add this line */
+}
+
+/* Add this new block right below it */
+.github-corner-link {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  color: rgba(242, 232, 217, 0.35); /* Dimmed vellum color */
+  transition: color 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.github-corner-link:hover {
+  color: var(--gold);
+  transform: scale(1.1);
+}
 .auth-brand{text-align:center}
 .auth-brand h2{font-family:'IM Fell English',serif;font-size:2.8rem;color:var(--vellum);letter-spacing:0.04em;line-height:1}
 .auth-brand p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--dust);margin-top:0.35rem}
@@ -475,9 +504,15 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 <body>
 
 <button id="vocab-tooltip">+ Add to Vocab</button>
-
 <div id="auth-modal">
   <div class="auth-modal-box">
+    
+    <a href="https://github.com/ahouragorji/aesop" target="_blank" rel="noopener noreferrer" class="github-corner-link" title="Support the project on GitHub">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+      </svg>
+    </a>
+
     <div class="auth-brand">
       <h2>Aesopus</h2>
       <p>language woven into living stories</p>
