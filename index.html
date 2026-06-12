@@ -2167,6 +2167,7 @@ async function callAI(system, userMsg) {
   const idToken = await auth.currentUser.getIdToken();
 
   const isGemini = state.provider === 'gemini';
+  const expectsJson = system.toLowerCase().includes('json');
 
   let payload;
   if (isGemini) {
@@ -2175,31 +2176,35 @@ async function callAI(system, userMsg) {
       systemInstruction: { parts: [{ text: system }] },
       generationConfig: {
         temperature: 0.82,
-        maxOutputTokens: 2500,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: 'OBJECT',
-          properties: {
-            chapter:         { type: 'STRING' },
-            narrative:       { type: 'STRING' },
-            words_used:      { type: 'ARRAY', items: { type: 'STRING' } },
-            choices: {
-              type: 'ARRAY',
-              items: {
-                type: 'OBJECT',
-                properties: {
-                  id:    { type: 'STRING' },
-                  text:  { type: 'STRING' },
-                  gloss: { type: 'STRING' }
-                }
-              }
-            },
-            is_final:        { type: 'BOOLEAN' },
-            context_summary: { type: 'STRING' }
-          }
-        }
+        maxOutputTokens: 600
       }
     };
+
+    // Only force Gemini into strict JSON mode if the prompt actually asks for it
+    if (expectsJson) {
+      payload.generationConfig.responseMimeType = 'application/json';
+      payload.generationConfig.responseSchema = {
+        type: 'OBJECT',
+        properties: {
+          chapter:         { type: 'STRING' },
+          narrative:       { type: 'STRING' },
+          words_used:      { type: 'ARRAY', items: { type: 'STRING' } },
+          choices: {
+            type: 'ARRAY',
+            items: {
+              type: 'OBJECT',
+              properties: {
+                id:    { type: 'STRING' },
+                text:  { type: 'STRING' },
+                gloss: { type: 'STRING' }
+              }
+            }
+          },
+          is_final:        { type: 'BOOLEAN' },
+          context_summary: { type: 'STRING' }
+        }
+      };
+    }
   } else {
     payload = {
       model: 'gpt-4o',
@@ -2208,9 +2213,13 @@ async function callAI(system, userMsg) {
         { role: 'user',   content: userMsg }
       ],
       temperature: 0.82,
-      max_tokens: 2500,
-      response_format: { type: 'json_object' }
+      max_tokens: 600
     };
+    
+    // Only force OpenAI into strict JSON mode if the prompt actually asks for it
+    if (expectsJson) {
+      payload.response_format = { type: 'json_object' };
+    }
   }
 
   let res;
@@ -2244,8 +2253,6 @@ async function callAI(system, userMsg) {
     return data.choices?.[0]?.message?.content || '';
   }
 }
-
-
 
 function triggerTextDownload(filename, wordsArray) {
   if (!wordsArray || wordsArray.length === 0) return;
