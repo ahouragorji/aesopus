@@ -2103,32 +2103,71 @@ function renderEnd(container) {
    which supports browser CORS. Users who hit rate limits can paste
    their own key from https://aistudio.google.com/app/apikey (free).
 ════════════════════════════════════════════════════════════════ */
-async function callAI(system, userMsg) {
-  let targetUrl = '';
-  let targetHeaders = { 'Content-Type': 'application/json' };
-  let payload = {};
-  let isGemini = false;
+// async function callAI(system, userMsg) {
+//   let targetUrl = '';
+//   let targetHeaders = { 'Content-Type': 'application/json' };
+//   let payload = {};
+//   let isGemini = false;
 
-  if (state.provider === 'openai') {
-    // OpenAI — requires user-supplied key (no free CORS-friendly fallback)
-    if (!state.apiKey) throw new Error('An OpenAI API key is required. Get one at platform.openai.com.');
-    targetUrl = 'https://api.openai.com/v1/chat/completions';
-    targetHeaders['Authorization'] = `Bearer ${state.apiKey}`;
-    payload = {
-      model: 'gpt-4o',
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: userMsg }
-      ],
-      temperature: 0.82,
-      max_tokens: 2500,
-      response_format: { type: 'json_object' }
-    };
-  } else {
-    // Gemini — works browser-direct; key optional (falls back to free demo key)
-    isGemini = true;
-    const key = state.apiKey || 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'; // demo key, rate-limited
-    targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+//   if (state.provider === 'openai') {
+//     // OpenAI — requires user-supplied key (no free CORS-friendly fallback)
+//     if (!state.apiKey) throw new Error('An OpenAI API key is required. Get one at platform.openai.com.');
+//     targetUrl = 'https://api.openai.com/v1/chat/completions';
+//     targetHeaders['Authorization'] = `Bearer ${state.apiKey}`;
+//     payload = {
+//       model: 'gpt-4o',
+//       messages: [
+//         { role: 'system', content: system },
+//         { role: 'user', content: userMsg }
+//       ],
+//       temperature: 0.82,
+//       max_tokens: 2500,
+//       response_format: { type: 'json_object' }
+//     };
+//   } else {
+//     // Gemini — works browser-direct; key optional (falls back to free demo key)
+//     isGemini = true;
+//     const key = state.apiKey || 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY'; // demo key, rate-limited
+//     targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+//     payload = {
+//       contents: [{ role: 'user', parts: [{ text: userMsg }] }],
+//       systemInstruction: { parts: [{ text: system }] },
+//       generationConfig: {
+//         temperature: 0.82,
+//         maxOutputTokens: 2500,
+//         responseMimeType: 'application/json',
+//         responseSchema: {
+//           type: 'OBJECT',
+//           properties: {
+//             chapter:         { type: 'STRING' },
+//             narrative:       { type: 'STRING' },
+//             words_used:      { type: 'ARRAY', items: { type: 'STRING' } },
+//             choices: {
+//               type: 'ARRAY',
+//               items: {
+//                 type: 'OBJECT',
+//                 properties: {
+//                   id:    { type: 'STRING' },
+//                   text:  { type: 'STRING' },
+//                   gloss: { type: 'STRING' }
+//                 }
+//               }
+//             },
+//             is_final:        { type: 'BOOLEAN' },
+//             context_summary: { type: 'STRING' }
+//           }
+//         }
+//       }
+//     };
+//   }
+async function callAI(system, userMsg) {
+  // Get Firebase ID token using the modular SDK (already imported above)
+  const idToken = await auth.currentUser.getIdToken();
+
+  const isGemini = state.provider === 'gemini';
+
+  let payload;
+  if (isGemini) {
     payload = {
       contents: [{ role: 'user', parts: [{ text: userMsg }] }],
       systemInstruction: { parts: [{ text: system }] },
@@ -2159,7 +2198,50 @@ async function callAI(system, userMsg) {
         }
       }
     };
+  } else {
+    payload = {
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user',   content: userMsg }
+      ],
+      temperature: 0.82,
+      max_tokens: 2500,
+      response_format: { type: 'json_object' }
+    };
   }
+
+  let res;
+  try {
+    res = await fetch('/api/ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-firebase-token': idToken
+      },
+      body: JSON.stringify({ provider: state.provider, payload })
+    });
+  } catch (networkErr) {
+    throw new Error('Network error: could not reach the AI provider. Check your connection.');
+  }
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const msg = err?.error?.message || `AI error ${res.status}`;
+    if (res.status === 401 || res.status === 403) throw new Error('Unauthorized — please sign in again.');
+    if (res.status === 429) throw new Error('Rate limit reached. Wait a moment, or paste your own API key.');
+    if (res.status === 400) throw new Error(`Bad request: ${msg}`);
+    throw new Error(msg);
+  }
+
+  const data = await res.json();
+
+  if (isGemini) {
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  } else {
+    return data.choices?.[0]?.message?.content || '';
+  }
+}
 
   let res;
   try {
@@ -2185,7 +2267,7 @@ async function callAI(system, userMsg) {
   } else {
     return data.choices?.[0]?.message?.content || '';
   }
-}
+
 
 
 function triggerTextDownload(filename, wordsArray) {
