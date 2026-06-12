@@ -758,9 +758,13 @@ import { getAuth,
          onAuthStateChanged,
          reload as reloadUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-         
+
 import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, deleteField, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, /* ... */ } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, deleteField, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+async function renderLibraryFromCache() {
 async function renderLibraryFromCache() {
   if (!state.currentUser) return;
   
