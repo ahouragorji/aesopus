@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aesop — Learn Through Story</title>
+<title>Aesopus — Learn Through Story</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cormorant+SC:wght@300;400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -474,7 +474,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 <div id="auth-modal">
   <div class="auth-modal-box">
     <div class="auth-brand">
-      <h2>Aesop</h2>
+      <h2>Aesopus</h2>
       <p>language woven into living stories</p>
       <div class="auth-brand-rule"></div>
     </div>
@@ -531,7 +531,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 </div>
 
 <div id="topbar" class="hidden">
-  <span class="topbar-brand">Aesop</span>
+  <span class="topbar-brand">Aesopus</span>
   <div class="story-meta hidden" id="story-meta">Chapter I · Scene 1</div>
   <div class="topbar-right">
     <button class="restart-btn hidden" id="restart-btn">Close the book</button>
@@ -590,7 +590,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   <div class="setup-wrap">
     <div class="masthead">
       <div class="masthead-rule"><span class="masthead-ornament">✦ ✦ ✦</span></div>
-      <h1>Aesop</h1>
+      <h1>Aesopus</h1>
       <p class="masthead-sub">language woven into living stories</p>
     </div>
 
@@ -1348,7 +1348,7 @@ document.getElementById('generate-wordlist-btn').addEventListener('click', async
     return;
   }
 
-  const systemPrompt = `You are a vocabulary list generator for a language learning app called Aesop.
+  const systemPrompt = `You are a vocabulary list generator for a language learning app called Aesopus.
 The learner's target language is ${targetLang} and their native language is ${nativeLang}.
 
 You will receive either:
@@ -1984,7 +1984,7 @@ JSON SCHEMA:
 async function generateScene(chosenText = null) {
   state.streaming = true;
   const thisScene = state.scene + 1; // tentative; only committed on success
-  document.getElementById('story-meta').textContent = `Chapter ${romanize(thisScene)}  ·  Scene ${thisScene}`;
+  document.getElementById('story-meta').textContent = `Chapter ${romanize(1)}  ·  Scene ${thisScene}`;
 
   const pageLeft = document.getElementById('page-left');
   pageLeft.innerHTML = `<div class="thinking-text">The ink is still drying…<span class="cursor active"></span></div>`;
@@ -2212,7 +2212,7 @@ async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
     const err = await res.json().catch(() => ({}));
     const msg = err?.error?.message || `AI error ${res.status}`;
     if (res.status === 401 || res.status === 403) throw new Error('Unauthorized — please sign in again.');
-    if (res.status === 429) throw new Error('Rate limit reached. Wait a moment, or paste your own API key.');
+    if (res.status === 429) throw new Error('Rate limit (20) reached. Wait a moment, or paste your own API key.');
     if (res.status === 400) throw new Error(`Bad request: ${msg}`);
     throw new Error(msg);
   }
