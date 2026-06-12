@@ -596,7 +596,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
       <div class="auth-verify-box">
         <div class="auth-verify-icon">✉</div>
         <div class="auth-verify-title">Check your inbox</div>
-        <p class="auth-verify-body">We sent a verification link to <strong id="auth-verify-email" style="color:var(--vellum)"></strong>.<br>Click the link in that email, then come back and sign in.</p>
+        <p class="auth-verify-body">We sent a verification link to <strong id="auth-verify-email" style="color:var(--vellum)"></strong>.<br>Check your Spam folder. Click the link in that email, then come back and sign in.</p>
         <div id="auth-info" class="auth-info"></div>
         <button class="auth-resend-btn" id="auth-resend-btn">Resend verification email</button>
         <button class="auth-submit" id="auth-back-btn" style="margin-top:0.75rem;background:rgba(255,255,255,0.06);color:var(--vellum)">Back to Sign In</button>
@@ -2227,6 +2227,7 @@ function triggerTextDownload(filename, wordsArray) {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
 /* ── Helpers ─────────────────────────────────────────────────── */
 grid.innerHTML = '';
 function parseScene(raw) {
