@@ -927,7 +927,7 @@ async function renderLibraryFromCache() {
   }
 
   const grid = document.getElementById('public-collections-grid');
-  grid.innerHTML = '';
+  
   let addedCollectionsHTML = '';
 
   state.publicCollectionsCache.forEach(col => {
@@ -1514,7 +1514,7 @@ submitBtn.addEventListener('click', async () => {
     if (isSignup) {
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
       pendingUser = cred.user;
-      await sendEmailVerification(cred.user);
+      
       authEmail.value = ''; authPass.value = ''; authConfirm.value = '';
       showVerifyScreen(email);
       await signOut(auth);
@@ -1548,6 +1548,7 @@ submitBtn.addEventListener('click', async () => {
 [authEmail, authPass, authConfirm].forEach(el =>
   el.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.click(); })
 );
+let libraryUnsubscribe = null;
 
 setPersistence(auth, browserLocalPersistence)
   .then(() => {
@@ -1573,15 +1574,18 @@ setPersistence(auth, browserLocalPersistence)
         document.getElementById('nav-setup-btn').classList.add('active-nav');
         document.getElementById('nav-library-btn').classList.remove('active-nav');
 
-        const userRef = doc(db, "users", user.uid);
-        onSnapshot(userRef, (docSnap) => {
-          state.userData = docSnap.data() || {};
-          renderLibraryFromCache(); 
-        });
+        if (libraryUnsubscribe) libraryUnsubscribe();
+          libraryUnsubscribe = onSnapshot(userRef, (docSnap) => {
+            state.userData = docSnap.data() || {};
+            renderLibraryFromCache();
+          });
 
       } else {
+        cachedToken = null;
+        tokenExpiry = 0;
         state.currentUser = null;
         const modal = document.getElementById('auth-modal');
+        if (libraryUnsubscribe) { libraryUnsubscribe(); libraryUnsubscribe = null; }
         if (!verifyWrap.classList.contains('hidden')) return;
         if (!resetWrap.classList.contains('hidden')) return;
         
@@ -1767,27 +1771,28 @@ async function beginStory() {
     }
     state.words = manualWords.slice(0, 30);
   } else {
-    try {
-      const userRef = doc(db, "users", state.currentUser.uid);
-      const userSnap = await getDoc(userRef);
-      let unlearnedPool = userSnap.exists() ? (userSnap.data().unlearned || []) : [];
+    let unlearnedPool = state.userData.unlearned || [];
+    // try {
+    //   const userRef = doc(db, "users", state.currentUser.uid);
+    //   const userSnap = await getDoc(userRef);
+    //   let unlearnedPool = userSnap.exists() ? (userSnap.data().unlearned || []) : [];
       
-      const combinedPool = [...new Set([...manualWords, ...state.uploadedWords, ...unlearnedPool])];
+    //   const combinedPool = [...new Set([...manualWords, ...state.uploadedWords, ...unlearnedPool])];
       
-      if (combinedPool.length === 0) {
-        errEl.textContent = 'Your personal queue is empty. Enter words manually or upload a .txt file.';
-        return;
-      }
+    //   if (combinedPool.length === 0) {
+    //     errEl.textContent = 'Your personal queue is empty. Enter words manually or upload a .txt file.';
+    //     return;
+    //   }
       
-      await setDoc(userRef, { unlearned: combinedPool }, { merge: true });
-      state.uploadedWords = [];
-      state.words = combinedPool.slice(0, 30);
+    //   await setDoc(userRef, { unlearned: combinedPool }, { merge: true });
+    //   state.uploadedWords = [];
+    //   state.words = combinedPool.slice(0, 30);
       
-    } catch (err) {
-      console.error("Error fetching vocab:", err);
-      errEl.textContent = 'Could not load your vocabulary. Check your connection.';
-      return;
-    }
+    // } catch (err) {
+    //   console.error("Error fetching vocab:", err);
+    //   errEl.textContent = 'Could not load your vocabulary. Check your connection.';
+    //   return;
+    // }
   }
 
   state.targetLang = document.getElementById('target-lang').value;
@@ -2121,6 +2126,16 @@ function renderEnd(container) {
       <button class="new-story-btn" id="new-story-btn">Begin another story</button>
     </div>`;
   document.getElementById('new-story-btn').addEventListener('click', showSetupScreen);
+}
+let cachedToken = null;
+let tokenExpiry = 0;
+
+async function getFastToken() {
+  const now = Date.now();
+  if (cachedToken && now < tokenExpiry - 60000) return cachedToken;
+  cachedToken = await auth.currentUser.getIdToken();
+  tokenExpiry = now + 3600000;
+  return cachedToken;
 }
 
 async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
