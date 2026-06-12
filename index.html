@@ -26,9 +26,6 @@ input,textarea,select{font-family:'Cormorant Garamond',Georgia,serif;font-weight
 
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.6}
 
-
-
-
 /* ── AUTH MODAL ─────────────────────────────────────────────────── */
 #auth-modal{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;background:rgba(10,9,8,0.88);backdrop-filter:blur(6px);padding:1.5rem;transition:opacity 0.3s}
 #auth-modal.fading{opacity:0;pointer-events:none}
@@ -44,15 +41,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   flex-direction:column; 
   gap:1.4rem; 
   box-shadow:0 24px 60px rgba(0,0,0,0.6);
-  position: relative; /* <-- Add this line */
+  position: relative;
 }
 
-/* Add this new block right below it */
 .github-corner-link {
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  color: rgba(242, 232, 217, 0.35); /* Dimmed vellum color */
+  color: rgba(242, 232, 217, 0.35);
   transition: color 0.2s, transform 0.2s;
   display: flex;
   align-items: center;
@@ -101,10 +97,6 @@ input:focus::placeholder, textarea:focus::placeholder { color: transparent !impo
 #personal-lexicon-container .lexicon-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0.5rem; }
 .lexicon-progress-bg { width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin-top: 4px; }
 .lexicon-progress-fill { height: 100%; background: var(--sage); transition: width 0.5s ease-out; }
-
-
-
-
 
 /* Fixed Icon Alignments & Hovers */
 .icon-btn-add { background: transparent; border: 0.5px solid rgba(184,146,58,0.4); color: var(--gold); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; padding: 0; margin: 0; }
@@ -218,9 +210,6 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .generate-btn.used{opacity:0.3;cursor:not-allowed;color:var(--text-dim);border-color:rgba(255,255,255,0.1)}
 .generate-btn.loading{opacity:0.6}
 
-/* Custom scrollbar */
-
-
 /* Custom scrollbars for all textareas */
 .vocab-textarea::-webkit-scrollbar,
 textarea.inp::-webkit-scrollbar {
@@ -243,10 +232,6 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   background: rgba(184,146,58,0.45);
 }
 
-.vocab-textarea::-webkit-scrollbar{width:8px}
-.vocab-textarea::-webkit-scrollbar-track{background:rgba(0,0,0,0.15)}
-.vocab-textarea::-webkit-scrollbar-thumb{background:rgba(184,146,58,0.25);border-radius:4px}
-.vocab-textarea::-webkit-scrollbar-thumb:hover{background:rgba(184,146,58,0.45)}
 .vocab-textarea::placeholder {
   color: rgba(242, 232, 217, 0.32);
   font-style: italic;
@@ -308,15 +293,15 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 /* API provider flex container (places input and toggle side-by-side) */
 .api-key-wrap {
   display: flex;
-  align-items: stretch; /* Stretches the toggle to perfectly match the input's height */
-  gap: 0.5rem; /* Space between the input and the toggle */
+  align-items: stretch;
+  gap: 0.5rem;
   margin-top: 0.3rem;
   width: 100%;
 }
 
 .api-key-wrap .inp {
-  flex: 1; /* Allows the text input to take up all remaining width */
-  padding-right: 0.9rem; /* Restores normal padding */
+  flex: 1;
+  padding-right: 0.9rem;
 }
 
 /* Vertical stacked toggle outside the input */
@@ -331,11 +316,10 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   width: 25px; 
   flex-shrink: 0;
   transition: background 0.2s;
-  /* Border removed as requested! */
 }
 
 .provider-toggle-wrap:hover {
-  background: rgba(255, 255, 255, 0.05); /* Soft background highlight on hover instead of a border */
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Individual logo containers */
@@ -357,9 +341,8 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 /* Beautiful fading horizontal divider */
 .api-logos-divider {
   width: 24px;
-  height: 1px; /* Thinner look */
+  height: 1px;
   margin: 2px 0;
-  /* Fades out smoothly on the left and right edges */
   background: linear-gradient(90deg, transparent, rgba(184, 146, 58, 0.65), transparent);
 }
 
@@ -376,6 +359,50 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 .begin-btn:hover{opacity:0.9;transform:translateY(-1px)}
 .begin-btn:active{transform:translateY(0)}
 .begin-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── GLOBAL LOADER STYLES ───────────────────────────────────── */
+.library-loader-wrap {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 0;
+  gap: 1.2rem;
+}
+
+/* The spinning ring icon */
+.library-loader-wrap .spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(184, 146, 58, 0.1);
+  border-top: 2px solid var(--gold);
+  border-radius: 50%;
+  animation: spinRing 0.8s linear infinite;
+}
+
+/* The pulsing "Unearthing archives..." text */
+.library-loader-wrap span {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--gold);
+  opacity: 0.8;
+  letter-spacing: 0.03em;
+  animation: textPulse 1.8s ease-in-out infinite;
+}
+
+/* Ring rotation keyframes */
+@keyframes spinRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Text pulsing keyframes */
+@keyframes textPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.98); }
+  50% { opacity: 0.9; transform: scale(1); }
+}
 
 /* ── STORY SCREEN ───────────────────────────────────────────────── */
 #story{min-height:100vh;padding-top:46px;display:flex;flex-direction:column;background:radial-gradient(ellipse 100% 50% at 50% 0%,rgba(184,146,58,0.06) 0%,transparent 55%),var(--ink)}
@@ -462,35 +489,6 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   .lexicon-pills-wrapper{min-width:0;width:100%}
   .lexicon-actions{width:100%;justify-content:flex-end}
 
-
-  /* ── LOADER ─────────────────────────────────────────────────── */
-.library-loader-wrap {
-  grid-column: 1 / -1; /* Forces it to span the entire width of the grid */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 0;
-  gap: 1rem;
-  color: var(--gold);
-  font-family: 'IM Fell English', serif;
-  font-style: italic;
-  font-size: 1.2rem;
-  opacity: 0.8;
-}
-
-.spinner {
-  width: 36px;
-  height: 36px;
-  border: 1.5px solid rgba(184, 146, 58, 0.15);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { 
-  100% { transform: rotate(360deg); } 
-}
   /* Setup */
   .setup-wrap{padding:1.75rem 1rem 3rem}
   .masthead h1{font-size:2.6rem}
@@ -1063,7 +1061,6 @@ function attachPersonalListeners(learned, unlearned) {
       if(confirm(`Are you sure you want to permanently clear your ${type}?`)) {
         const updateObj = type === 'Personal Queue' ? { unlearned: [] } : { learned: [] }; 
         await updateDoc(userRef, updateObj);
-        // The onSnapshot listener will detect this change automatically and re-render!
       }
     });
   });
@@ -1103,14 +1100,13 @@ function filterArchives() {
     const matchesLang = langFilter === 'all' || cardLang === langFilter;
     const matchesLevel = levelFilter === 'all' || cardLevel === levelFilter;
     
-    // The setup-card class uses flexbox, so we restore it to 'flex' when showing
     card.style.display = (matchesLang && matchesLevel) ? 'flex' : 'none';
   });
 }
 
-
 document.getElementById('filter-language').addEventListener('change', filterArchives);
 document.getElementById('filter-level').addEventListener('change', filterArchives);
+
 function attachCollectionListeners() {
 
   // 1. Add & Start a Public Collection instantly (from the Note card)
@@ -1122,14 +1118,11 @@ function attachCollectionListeners() {
       const colId = e.currentTarget.dataset.id;
       const userRef = doc(db, "users", state.currentUser.uid);
       
-      // OPTIMISTIC UI: Save locally immediately
       if (!state.userData.publicProgress) state.userData.publicProgress = {};
       state.userData.publicProgress[colId] = 0;
       
-      // Background save to database (no await blocking the UI)
       setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true }).catch(err => console.error(err));
       
-      // ZERO-LATENCY READ: Grab words from the local cache instead of the network
       const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
       const allWords = cachedCol.data.words;
       const colName = cachedCol.data.title || cachedCol.data.name || "Collection";
@@ -1139,7 +1132,6 @@ function attachCollectionListeners() {
       state.activePublicCollection = colId;
       toggleVocabLock(true, colName); // LOCK
 
-      // Populate text area and move straight to Setup
       const vocabTextarea = document.getElementById('vocab-textarea');
       vocabTextarea.value = nextWords.join('\n');
       parseVocabTextarea(); 
@@ -1155,17 +1147,14 @@ function attachCollectionListeners() {
       const colId = e.currentTarget.dataset.id;
       const userRef = doc(db, "users", state.currentUser.uid);
 
-      // OPTIMISTIC UI: Update local state and redraw instantly
       if (!state.userData.publicProgress) state.userData.publicProgress = {};
       state.userData.publicProgress[colId] = 0;
       renderLibraryFromCache(); 
 
-      // Send to database in the background
       try {
         await setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true });
       } catch(err) {
         console.error('Could not add collection:', err);
-        // REVERT if the network fails
         delete state.userData.publicProgress[colId];
         renderLibraryFromCache();
       }
@@ -1176,7 +1165,6 @@ function attachCollectionListeners() {
   document.querySelectorAll('.dl-public-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const colId = e.currentTarget.dataset.id;
-      // ZERO-LATENCY READ: Download from cache!
       const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
       if (cachedCol) {
          triggerTextDownload(`Aesopus_${cachedCol.data.title.replace(/\s+/g, '_')}.txt`, cachedCol.data.words);
@@ -1191,16 +1179,13 @@ function attachCollectionListeners() {
       if(confirm('Remove this collection from your library?')) {
          const userRef = doc(db, "users", state.currentUser.uid);
          
-         // OPTIMISTIC UI: Remove locally and redraw instantly
          const previousProgress = state.userData.publicProgress[colId];
          delete state.userData.publicProgress[colId];
          renderLibraryFromCache();
 
-         // Background delete
          try {
            await updateDoc(userRef, { [`publicProgress.${colId}`]: deleteField() });
          } catch (err) {
-           // REVERT if the network fails
            state.userData.publicProgress[colId] = previousProgress;
            renderLibraryFromCache();
          }
@@ -1217,7 +1202,6 @@ function attachCollectionListeners() {
       const colId = e.currentTarget.dataset.id;
       const checkpoint = parseInt(e.currentTarget.dataset.checkpoint);
       
-      // ZERO-LATENCY READ: Grab words from the local cache
       const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
       const allWords = cachedCol.data.words;
       const colName = cachedCol.data.title || cachedCol.data.name || "Collection";
@@ -1227,12 +1211,10 @@ function attachCollectionListeners() {
       state.activePublicCollection = colId;
       toggleVocabLock(true, colName); // LOCK
 
-      // Auto-Populate the Setup Textarea
       const vocabTextarea = document.getElementById('vocab-textarea');
       vocabTextarea.value = nextWords.join('\n');
       parseVocabTextarea(); 
       
-      // Move to Setup screen
       document.getElementById('library-dashboard').classList.add('hidden');
       document.getElementById('setup').classList.remove('hidden');
     });
@@ -1267,8 +1249,8 @@ const state = {
   uploadedWords: [], 
   activePublicCollection: null, 
   generateUsed: false,
-  userData: {},               // <-- Add this
-  publicCollectionsCache: null // <-- Add this
+  userData: {},               
+  publicCollectionsCache: null 
 };
 const MAX_WORDS = 30;
 
@@ -1379,15 +1361,13 @@ document.getElementById('vocab-file-upload').addEventListener('change', (e) => {
 
   fileNameDisplay.textContent = "Reading...";
   fileNameDisplay.style.color = "var(--text-dim)";
-  uploadIcon.style.color = "var(--gold)"; // Reset to gold while loading
+  uploadIcon.style.color = "var(--gold)"; 
 
   const reader = new FileReader();
   
-  // Note: removed "async" from here because we aren't talking to the database anymore
   reader.onload = (event) => {
     const text = event.target.result;
     
-    // Split by newlines or commas, trim spaces, and remove empty lines
     let newWords = text.split(/\r?\n|,/)
                          .map(w => w.trim())
                          .filter(w => w.length > 0);
@@ -1395,25 +1375,21 @@ document.getElementById('vocab-file-upload').addEventListener('change', (e) => {
     if (newWords.length === 0) {
       fileNameDisplay.textContent = "File is empty";
       fileNameDisplay.style.color = "var(--rose)";
-      state.uploadedWords = []; // Clear state if file is empty
+      state.uploadedWords = []; 
       return;
     }
 
-    // Apply the 100-line file limit
     if (newWords.length > 100) {
       newWords = newWords.slice(0, 100);
     }
 
-    // Hold the words in temporary state instead of saving to the database
     state.uploadedWords = newWords;
       
-    // Update UI to green and show the file name with a ready state
     fileNameDisplay.textContent = file.name + " (Ready)";
     fileNameDisplay.style.color = "var(--sage)";
     uploadIcon.style.color = "var(--sage)";
     uploadIcon.style.opacity = "1";
       
-    // Clear the manual text box
     document.getElementById('vocab-textarea').value = '';
     parseVocabTextarea(); 
   };
@@ -1425,7 +1401,7 @@ document.getElementById('vocab-file-upload').addEventListener('change', (e) => {
    GENERATE WORDLIST (AI-powered, one-time per session)
 ════════════════════════════════════════════════════════════════ */
 document.getElementById('generate-wordlist-btn').addEventListener('click', async () => {
-  if (state.generateUsed) return; // hard block after first use
+  if (state.generateUsed) return; 
 
   const btn = document.getElementById('generate-wordlist-btn');
   const ta  = document.getElementById('vocab-textarea');
@@ -1454,7 +1430,6 @@ No numbering, no bullet points, no extra text, no explanations, no markdown.
 Each line is a single ${targetLang} word or short phrase.
 Do not include any line that is not a vocabulary item.`;
 
-  // Lock button
   state.generateUsed = true;
   btn.disabled = true;
   btn.classList.add('loading');
@@ -1464,7 +1439,6 @@ Do not include any line that is not a vocabulary item.`;
   try {
     const raw = await callAI(systemPrompt, currentText, 150, true);
 
-    // Parse lines, strip any accidental bullets/numbers/whitespace
     const lines = raw
       .split(/\r?\n/)
       .map(l => l.replace(/^[\s\-\*\d\.\)]+/, '').trim())
@@ -1472,11 +1446,9 @@ Do not include any line that is not a vocabulary item.`;
 
     if (lines.length === 0) throw new Error('The AI returned an empty list — try again.');
 
-    // Place generated list in textarea for user to review/edit
     ta.value = lines.join('\n');
     parseVocabTextarea();
 
-    // Save to Firebase personal queue immediately
     if (state.currentUser && !state.activePublicCollection) {
       try {
         const userRef = doc(db, "users", state.currentUser.uid);
@@ -1495,7 +1467,6 @@ Do not include any line that is not a vocabulary item.`;
     btn.title = 'Already used \u2014 you can still edit the list below';
 
   } catch(err) {
-    // Unlock on failure so user can retry
     state.generateUsed = false;
     btn.disabled = false;
     btn.classList.remove('loading');
@@ -1644,7 +1615,6 @@ document.getElementById('nav-setup-btn').addEventListener('click', () => {
   showSetupScreen();
   document.getElementById('vocab-textarea').value = '';
   parseVocabTextarea();
-  // Reset generate button for new session
   state.generateUsed = false;
   const genBtn = document.getElementById('generate-wordlist-btn');
   genBtn.disabled = false;
@@ -1652,7 +1622,6 @@ document.getElementById('nav-setup-btn').addEventListener('click', () => {
   genBtn.textContent = '\u2736 Generate Wordlist';
   genBtn.title = 'Generate a wordlist from your idea or translate a foreign list';
 });
-
 
 /* ════════════════════════════════════════════════════════════════
    API PROVIDER TOGGLE
@@ -1664,7 +1633,6 @@ function updateApiUI(provider) {
   const logoG      = document.getElementById('logo-gemini');
   const logoO      = document.getElementById('logo-openai');
 
-  // Toggle icon: show Gemini star when Gemini active, show it dimmed when OpenAI active
   if (provider === 'gemini') {
     wrap.classList.remove('openai-active');
     logoG.className = 'provider-logo gemini-logo logo-active';
@@ -1694,13 +1662,10 @@ function updateApiUI(provider) {
   inp.value = '';
 }
 
-// Single click on the toggle flips between providers
-// Single click on the toggle flips between providers
 document.getElementById('provider-toggle-wrap').addEventListener('click', () => {
   updateApiUI(state.provider === 'gemini' ? 'openai' : 'gemini');
 });
 
-// Set OpenAI as the default on page load
 updateApiUI('openai');
 
 /* ════════════════════════════════════════════════════════════════
@@ -1786,24 +1751,19 @@ async function beginStory() {
     return; 
   }
 
-  // 1. Grab manual words from the text area
-
   const manualInput = document.getElementById('vocab-textarea').value.trim();
   let manualWords = [];
   if (manualInput.length > 0) {
     manualWords = manualInput.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
   }
 
-  // 2. Fork the logic based on the session type
   if (state.activePublicCollection) {
-    // PUBLIC ARCHIVE ROUTE: Do not save to personal database
     if (manualWords.length === 0) {
       errEl.textContent = 'No words found in this collection.';
       return;
     }
     state.words = manualWords.slice(0, 30);
   } else {
-    // PERSONAL QUEUE ROUTE: Merge and save to database
     try {
       const userRef = doc(db, "users", state.currentUser.uid);
       const userSnap = await getDoc(userRef);
@@ -1827,23 +1787,6 @@ async function beginStory() {
     }
   }
 
-  // API key logic...
-
-  // API key logic...
-  // if (userKey) {
-  //   if (state.provider === 'gemini' && !userKey.startsWith('AIza') && !userKey.startsWith('AQ')) {
-  //     errEl.textContent = "That doesn't look like a valid Gemini key (should start with AIza… or AQ…).";
-  //     return;
-  //   }
-  //   if (state.provider === 'openai' && !userKey.startsWith('sk-')) {
-  //     errEl.textContent = "That doesn't look like a valid OpenAI key (should start with sk-…).";
-  //     return;
-  //   }
-  //   state.apiKey = userKey;
-  // } else {
-  //   state.apiKey = ''; // will use demo key in callAI
-  // }
-
   state.targetLang = document.getElementById('target-lang').value;
   state.nativeLang = document.getElementById('native-lang').value;
   state.setting    = document.getElementById('setting').value.trim();
@@ -1855,16 +1798,10 @@ async function beginStory() {
   document.getElementById('story').classList.remove('hidden');
   document.getElementById('story-meta').classList.remove('hidden');
   
-  // Show 'Close the book', hide main navigation
   document.getElementById('restart-btn').classList.remove('hidden');
   document.getElementById('nav-library-btn').classList.add('hidden');
   document.getElementById('nav-setup-btn').classList.add('hidden');
   
-  // NOTE: do NOT reset state.activePublicCollection here — it was set by the
-  // collection start handler and must remain set so word-removal can increment
-  // the checkpoint in Firestore. It is cleared when the user closes the book
-  // (restart-btn / nav-setup-btn / nav-library-btn) or explicitly starts a
-  // personal-queue session.
   buildWordTracker();
   generateScene();
 }
@@ -1876,10 +1813,9 @@ function showSetupScreen() {
   document.getElementById('nav-library-btn').classList.remove('active-nav');
 
   state.wordsSeenSet = new Set();
-  state.activePublicCollection = null; // clear so the next session starts fresh
+  state.activePublicCollection = null; 
   toggleVocabLock(false);
 
-  // Reset generate button for new session
   state.generateUsed = false;
   const genBtn = document.getElementById('generate-wordlist-btn');
   if (genBtn) {
@@ -1889,11 +1825,9 @@ function showSetupScreen() {
     genBtn.title = 'Generate a wordlist from your idea or translate a foreign list';
   }
   
-  // Revert header content states
   document.getElementById('story-meta').classList.add('hidden');
   document.getElementById('restart-btn').classList.add('hidden');
   
-  // Bring back main navigation
   document.getElementById('nav-library-btn').classList.remove('hidden');
   document.getElementById('nav-setup-btn').classList.remove('hidden');
 }
@@ -1919,49 +1853,37 @@ tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
       
       const wordToMarkLearned = state.words[targetIdx];
       
-      // 1. Remove from the local array
       state.words.splice(targetIdx, 1); 
       
-      // 2. Rebuild the UI instantly to remove the pill and fix index numbers
       buildWordTracker();
-      
-      // 3. Re-apply the gold highlighting to words the user has already seen
       markWordsUsed();
 
-      // 4. Save to the database
       if (state.currentUser) {
         const userRef = doc(db, "users", state.currentUser.uid);
         
         if (state.activePublicCollection) {
-          // PUBLIC COLLECTION: increment the checkpoint for this collection
           await updateDoc(userRef, {
             [`publicProgress.${state.activePublicCollection}`]: increment(1)
           });
         } else {
-          // PERSONAL: Move word from unlearned to learned
           await updateDoc(userRef, {
             unlearned: arrayRemove(wordToMarkLearned),
             learned: arrayUnion(wordToMarkLearned)
           });
         }
-        // Refresh the library so the progress bar reflects the new state
-
       }
   });
   });
 }
 
 function markWordsUsed(usedArr) {
-  // Accumulate seen words persistently across scenes
   if (usedArr) {
     usedArr.forEach(w => state.wordsSeenSet.add(w.toLowerCase()));
   }
-  // Also scan current page text for any vocab words present
   const currentText = document.getElementById('page-left').textContent.toLowerCase();
   state.words.forEach(w => {
     if (currentText.includes(w.toLowerCase())) state.wordsSeenSet.add(w.toLowerCase());
   });
-  // Apply to tracker chips
   document.querySelectorAll('.tracker-word').forEach(el => {
     const w = el.dataset.word;
     if (state.wordsSeenSet.has(w) || Array.from(state.wordsSeenSet).some(s => s.includes(w) || w.includes(s))) {
@@ -1994,18 +1916,16 @@ function handleTextSelection() {
   }, 10);
 }
 
-vocabTooltip.addEventListener('click', async e => { // <-- Note the 'async' here
+vocabTooltip.addEventListener('click', async e => { 
   e.preventDefault(); e.stopPropagation();
   if (!selectedTextToLearn) return;
   
   if (!state.words.some(w => w.toLowerCase() === selectedTextToLearn.toLowerCase())) {
-    // 1. Add to the current reading session UI
     state.words.push(selectedTextToLearn);
     buildWordTracker(); 
     markWordsUsed();
     vocabTooltip.textContent = 'Added ✓';
     
-    // 2. Save it permanently to the database
     if (state.currentUser) {
       const userRef = doc(db, "users", state.currentUser.uid);
       await updateDoc(userRef, {
@@ -2071,7 +1991,7 @@ JSON SCHEMA:
 ════════════════════════════════════════════════════════════════ */
 async function generateScene(chosenText = null) {
   state.streaming = true;
-  const thisScene = state.scene + 1; // tentative; only committed on success
+  const thisScene = state.scene + 1; 
   document.getElementById('story-meta').textContent = `Chapter ${romanize(1)}  ·  Scene ${thisScene}`;
 
   const pageLeft = document.getElementById('page-left');
@@ -2092,7 +2012,7 @@ async function generateScene(chosenText = null) {
     const scene = parseScene(raw);
     if (!scene) throw new Error('The model returned an unexpected format.');
 
-    state.scene = thisScene; // commit the increment only on success
+    state.scene = thisScene; 
     state.rollingSummary = scene.context_summary || '';
 
     renderScene(scene, isHardCeiling);
@@ -2109,22 +2029,6 @@ async function generateScene(chosenText = null) {
   }
   state.streaming = false;
 }
-
-// function handleFileUpload(file) {
-//   const reader = new FileReader();
-//   reader.onload = async (e) => {
-//     const text = e.target.result;
-//     // Split by newlines or commas, trim whitespace, remove empty strings
-//     const newWords = text.split(/[\n,]+/).map(w => w.trim()).filter(w => w);
-    
-//     // Save to Firestore using arrayUnion to avoid duplicates
-//     const userRef = doc(db, "users", state.currentUser.uid);
-//     await updateDoc(userRef, {
-//       unlearned: arrayUnion(...newWords)
-//     });
-//   };
-//   reader.readAsText(file);
-// }
 
 function renderScene(scene, isHardCeiling) {
   const pageLeft  = document.getElementById('page-left');
@@ -2144,7 +2048,6 @@ function renderScene(scene, isHardCeiling) {
 }
 
 function buildNarrativeHTML(text) {
-  // Split into paragraphs first, then escape each paragraph, then apply vocab highlighting
   return text.split(/\n\n+/).filter(p => p.trim()).map(p => {
     const escaped = p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const highlighted = escaped.replace(/\*([^*]+)\*/g, '<em class="vocab-word">$1</em>');
@@ -2172,16 +2075,12 @@ function renderChoices(container, choices) {
 }
 
 function highlightChoiceVocab(text) {
-  // Escape HTML first
   let r = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  // Sort by length descending so longer phrases are matched before sub-words
   const sorted = [...state.words].sort((a, b) => b.length - a.length);
   sorted.forEach((w, i) => {
     const esc = w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    // Use a placeholder to avoid double-wrapping on overlapping matches
     r = r.replace(new RegExp(`(${esc})`, 'gi'), `\x00vocab${i}\x00`);
   });
-  // Replace placeholders with the actual markup
   sorted.forEach((w, i) => {
     r = r.split(`\x00vocab${i}\x00`).join(`<em class="vocab-word">${escHtml(w)}</em>`);
   });
@@ -2199,7 +2098,6 @@ function showChoiceLoading() {
 
 function onChoiceClick(card) {
   if (state.streaming) return;
-  // Disable all cards immediately via data attribute (arrow fn listeners can't be removed by name)
   document.querySelectorAll('.choice-card').forEach(c => {
     c.classList.add('disabled');
     c.dataset.disabled = 'true';
@@ -2222,23 +2120,7 @@ function renderEnd(container) {
   document.getElementById('new-story-btn').addEventListener('click', showSetupScreen);
 }
 
-
-let cachedToken = null;
-let tokenExpiry = 0;
-
-async function getFastToken() {
-  const now = Date.now();
-  if (cachedToken && now < tokenExpiry - 60000) { 
-    return cachedToken; // Return cache if it has more than 1 min left
-  }
-  cachedToken = await auth.currentUser.getIdToken();
-  tokenExpiry = now + 3600000; // Tokens are valid for 1 hour
-  return cachedToken;
-}
-
-
 async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
-  // Get Firebase ID token using the modular SDK
     const idToken = await getFastToken();
 
   const isGemini = state.provider === 'gemini';
@@ -2255,7 +2137,6 @@ async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
       }
     };
 
-    // Only force Gemini into strict JSON mode if the prompt actually asks for it
     if (expectsJson) {
       payload.generationConfig.responseMimeType = 'application/json';
       payload.generationConfig.responseSchema = {
@@ -2291,7 +2172,6 @@ async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
       max_tokens: maxTokens
     };
     
-    // Only force OpenAI into strict JSON mode if the prompt actually asks for it
     if (expectsJson) {
       payload.response_format = { type: 'json_object' };
     }
@@ -2341,16 +2221,16 @@ function triggerTextDownload(filename, wordsArray) {
   document.body.appendChild(a);
   a.click();
   
-  // Cleanup
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 /* ── Helpers ─────────────────────────────────────────────────── */
+grid.innerHTML = '';
 function parseScene(raw) {
   try { return JSON.parse(raw.replace(/```json/gi,'').replace(/```/g,'').trim()); }
   catch { const m = raw.match(/\{[\s\S]*\}/); return m ? JSON.parse(m[0]) : null; }
 }
-function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function romanize(n) {
   let r='';
   [1000,900,500,400,100,90,50,40,10,9,5,4,1].forEach((v,i)=>{while(n>=v){r+=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'][i];n-=v;}});
@@ -2366,7 +2246,7 @@ function toggleVocabLock(isLocked, collectionName = "") {
   if (isLocked) {
     ta.readOnly = true;
     ta.style.opacity = '0.5';
-    ta.placeholder = ""; // Clear placeholder so it doesn't clutter the locked state
+    ta.placeholder = ""; 
     if (uploadLbl) uploadLbl.style.display = 'none';
     if (uploadInp) uploadInp.disabled = true;
     if (genBtn) { genBtn.disabled = true; genBtn.classList.add('used'); }
