@@ -13,4 +13,4 @@ Build a long-term library of knowledge. Aesopus stores your words, tracking them
 ### Public Archives
 Not sure where to start? Browse the Public Archives to discover curated, community wordlists. Filter by language and CEFR proficiency level (A1–C2), and instantly import them into your personal learning queue.
 
-Don't forget to... ahhh... support and stuff.
+BTW if you are based in Iran, [help us keep Aesopus free!](https://daramet.com/aesopus )
