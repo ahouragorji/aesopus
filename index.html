@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com">
+<link rel="dns-prefetch" href="https://generativelanguage.googleapis.com">
+<link rel="dns-prefetch" href="https://api.openai.com">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aesopus — Learn Through Story</title>
@@ -770,7 +775,7 @@ import { getAuth,
          sendEmailVerification,
          sendPasswordResetEmail,
          signOut,
-         onAuthStateChanged,
+         onAuthStateChanged, setPersistence,browserLocalPersistence,
          reload as reloadUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 
@@ -1093,7 +1098,7 @@ function attachCollectionListeners() {
         btn.disabled = false;
         return;
       }
-      renderLibraryFromCache();
+
     });
   });
 
@@ -1115,7 +1120,7 @@ function attachCollectionListeners() {
       if(confirm('Remove this collection from your library?')) {
          const userRef = doc(db, "users", state.currentUser.uid);
          await updateDoc(userRef, { [`publicProgress.${colId}`]: deleteField() });
-         renderLibraryFromCache();
+
       }
     });
   });
@@ -1165,6 +1170,7 @@ const app  = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 try { getAnalytics(app); } catch(e) {}
 const auth = getAuth(app);
+
 
 /* ── App state ─────────────────────────────────────────────────── */
 const state = {
@@ -1485,62 +1491,60 @@ submitBtn.addEventListener('click', async () => {
   el.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.click(); })
 );
 
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    await reloadUser(user);
-    if (!user.emailVerified) {
-      pendingUser = user;
-      showVerifyScreen(user.email);
-      await signOut(auth);
-      return;
-    }
-    state.currentUser = user;
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await reloadUser(user);
+        if (!user.emailVerified) {
+          pendingUser = user;
+          showVerifyScreen(user.email);
+          await signOut(auth);
+          return;
+        }
+        state.currentUser = user;
 
-    const modal = document.getElementById('auth-modal');
-    modal.classList.add('fading');
-    setTimeout(() => modal.classList.add('hidden'), 300);
-    
-    document.getElementById('topbar').classList.remove('hidden');
-    document.getElementById('setup').classList.remove('hidden');
-    document.getElementById('library-dashboard').classList.add('hidden');
+        const modal = document.getElementById('auth-modal');
+        modal.classList.add('fading');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+        
+        document.getElementById('topbar').classList.remove('hidden');
+        document.getElementById('setup').classList.remove('hidden');
+        document.getElementById('library-dashboard').classList.add('hidden');
 
-    document.getElementById('nav-setup-btn').classList.add('active-nav');
-    document.getElementById('nav-library-btn').classList.remove('active-nav');
+        document.getElementById('nav-setup-btn').classList.add('active-nav');
+        document.getElementById('nav-library-btn').classList.remove('active-nav');
 
-    // ── THE BIG CHANGE IS HERE ──
-    // Instead of renderLibraryFromCache(), we attach a real-time listener ONCE.
-    const userRef = doc(db, "users", user.uid);
-    onSnapshot(userRef, (docSnap) => {
-      // Save the latest data into our local state
-      state.userData = docSnap.data() || {};
-      
-      // Call a purely visual function to draw the screen using state.userData 
-      // (This prevents us from getting charged for database reads on every UI update)
-      renderLibraryFromCache(); 
+        const userRef = doc(db, "users", user.uid);
+        onSnapshot(userRef, (docSnap) => {
+          state.userData = docSnap.data() || {};
+          renderLibraryFromCache(); 
+        });
+
+      } else {
+        state.currentUser = null;
+        const modal = document.getElementById('auth-modal');
+        if (!verifyWrap.classList.contains('hidden')) return;
+        if (!resetWrap.classList.contains('hidden')) return;
+        
+        modal.classList.remove('hidden','fading');
+        document.getElementById('topbar').classList.add('hidden');
+        document.getElementById('setup').classList.add('hidden');
+        document.getElementById('story').classList.add('hidden');
+        document.getElementById('library-dashboard').classList.add('hidden');
+        
+        document.getElementById('story-meta').classList.add('hidden');
+        document.getElementById('restart-btn').classList.add('hidden');
+        document.getElementById('nav-library-btn').classList.remove('hidden');
+        document.getElementById('nav-setup-btn').classList.remove('hidden');
+        state.wordsSeenSet = new Set();
+        state.scene = 0;
+      }
     });
-    // ────────────────────────────
-
-  } else {
-    state.currentUser = null;
-    const modal = document.getElementById('auth-modal');
-    if (!verifyWrap.classList.contains('hidden')) return;
-    if (!resetWrap.classList.contains('hidden')) return;
-    
-    modal.classList.remove('hidden','fading');
-    document.getElementById('topbar').classList.add('hidden');
-    document.getElementById('setup').classList.add('hidden');
-    document.getElementById('story').classList.add('hidden');
-    document.getElementById('library-dashboard').classList.add('hidden');
-    
-    // Reset story UI state so it's completely clean for the next login
-    document.getElementById('story-meta').classList.add('hidden');
-    document.getElementById('restart-btn').classList.add('hidden');
-    document.getElementById('nav-library-btn').classList.remove('hidden');
-    document.getElementById('nav-setup-btn').classList.remove('hidden');
-    state.wordsSeenSet = new Set();
-    state.scene = 0;
-  }
-});
+  })
+  .catch((error) => {
+    console.error("Error setting persistence:", error);
+  });
 document.getElementById('topbar-logout-btn').addEventListener('click', () => signOut(auth));
 document.getElementById('nav-library-btn').addEventListener('click', () => {
   document.getElementById('setup').classList.add('hidden');
@@ -1857,7 +1861,7 @@ tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
           });
         }
         // Refresh the library so the progress bar reflects the new state
-        renderLibraryFromCache();
+
       }
   });
   });
@@ -2134,9 +2138,24 @@ function renderEnd(container) {
   document.getElementById('new-story-btn').addEventListener('click', showSetupScreen);
 }
 
+
+let cachedToken = null;
+let tokenExpiry = 0;
+
+async function getFastToken() {
+  const now = Date.now();
+  if (cachedToken && now < tokenExpiry - 60000) { 
+    return cachedToken; // Return cache if it has more than 1 min left
+  }
+  cachedToken = await auth.currentUser.getIdToken();
+  tokenExpiry = now + 3600000; // Tokens are valid for 1 hour
+  return cachedToken;
+}
+
+
 async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
   // Get Firebase ID token using the modular SDK
-  const idToken = await auth.currentUser.getIdToken();
+    const idToken = await getFastToken();
 
   const isGemini = state.provider === 'gemini';
   const expectsJson = system.toLowerCase().includes('json');
