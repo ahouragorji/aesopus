@@ -38,6 +38,8 @@ export default async function handler(req, res) {
   const headers = { 'Content-Type': 'application/json' };
   if (!isGemini) headers['Authorization'] = `Bearer ${process.env.OPENAI_API_KEY}`;
 
+  console.log('Payload received:', JSON.stringify(payload).slice(0, 300));
+  
   const upstream = await fetch(targetUrl, {
     method: 'POST',
     headers,
