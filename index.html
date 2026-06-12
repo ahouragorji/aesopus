@@ -2161,7 +2161,7 @@ function renderEnd(container) {
 //     };
 //   }
 async function callAI(system, userMsg) {
-  // Get Firebase ID token using the modular SDK (already imported above)
+  // Get Firebase ID token using the modular SDK
   const idToken = await auth.currentUser.getIdToken();
 
   const isGemini = state.provider === 'gemini';
@@ -2242,31 +2242,6 @@ async function callAI(system, userMsg) {
     return data.choices?.[0]?.message?.content || '';
   }
 }
-
-  let res;
-  try {
-    res = await fetch(targetUrl, { method: 'POST', headers: targetHeaders, body: JSON.stringify(payload) });
-  } catch (networkErr) {
-    // TypeError: Failed to fetch → almost always CORS or network down
-    throw new Error('Network error: could not reach the AI provider. Check your connection or try a different provider.');
-  }
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    const msg = err?.error?.message || `AI error ${res.status}`;
-    if (res.status === 401 || res.status === 403) throw new Error('API key rejected — double-check your key or get a new one.');
-    if (res.status === 429) throw new Error('Rate limit reached. Wait a moment, or paste your own API key.');
-    if (res.status === 400) throw new Error(`Bad request: ${msg}`);
-    throw new Error(msg);
-  }
-
-  const data = await res.json();
-
-  if (isGemini) {
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  } else {
-    return data.choices?.[0]?.message?.content || '';
-  }
 
 
 
