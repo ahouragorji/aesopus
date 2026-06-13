@@ -223,16 +223,17 @@ select.inp option{background:#1C1917;color:var(--vellum)}
   white-space: nowrap; 
   overscroll-behavior-x: contain; /* Prevents page swipe-back when reaching the end */
 }
-
 .scroll-pills-y {
-  display: flex; 
-  flex-wrap: wrap; 
-  gap: 6px; 
-  max-height: 110px; 
-  overflow-y: auto; 
-  align-content: flex-start; 
-  overscroll-behavior-y: contain;
-}
+    border: 0.5px solid transparent;
+    border-radius: 4px;
+    padding: 6px 4px; 
+    margin: -6px -4px; 
+    transition: border-color 0.3s ease, background 0.3s ease;
+    cursor: pointer;
+    
+    overflow-y: hidden; /* Lock internal scrolling */
+    overscroll-behavior-y: auto; /* ALLOW the main page to scroll if swiped */
+  }
 
 /* Fading Masks */
 .mask-right {
@@ -580,39 +581,22 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   .story-end{padding:1.25rem 0.5rem}
   .end-title{font-size:1.35rem}
 /* ── MOBILE SCROLL LOCK LOGIC ── */
-  .scroll-pills-x, .scroll-pills-y {
+  .scroll-pills-y {
     border: 0.5px solid transparent;
     border-radius: 4px;
     padding: 6px 4px; 
     margin: -6px -4px; 
     transition: border-color 0.3s ease, background 0.3s ease;
     cursor: pointer;
-  }
-
-  /* Lock horizontal lists */
-  .scroll-pills-x {
-    overflow-x: hidden; 
-    touch-action: pan-y; /* Only allow page to scroll up/down */
-  }
-
-  /* Lock vertical lists (Public Archives) */
-  .scroll-pills-y {
-    overflow-y: hidden;
+    
+    overflow-y: hidden; /* Lock internal scrolling initially */
+    overscroll-behavior-y: auto; /* ALLOW the main page to scroll if swiped */
   }
 
   /* The active state when tapped (Gold Border) */
-  .scroll-pills-x.scroll-active {
-    overflow-x: auto;
-    touch-action: pan-x pan-y;
-  }
-
   .scroll-pills-y.scroll-active {
-    overflow-y: auto;
-  }
-
-  /* Shared highlight styles */
-  .scroll-pills-x.scroll-active, 
-  .scroll-pills-y.scroll-active {
+    overflow-y: auto; /* Unlock internal scrolling */
+    overscroll-behavior-y: contain; /* TRAP the scroll so the page doesn't move */
     border-color: rgba(184, 146, 58, 0.4); 
     background: rgba(184, 146, 58, 0.04); 
     cursor: default;
