@@ -2582,13 +2582,13 @@ function initDragToScroll() {
     let startX, startY, scrollLeft, scrollTop;
 
     // Show a "grab" hand cursor on desktop so users know they can swipe
-    if (window.innerWidth > 700) {
-      slider.style.cursor = 'grab';
-    }
+    // if (window.innerWidth > 700) {
+    //   slider.style.cursor = 'grab';
+    // }
 
     slider.addEventListener('mousedown', (e) => {
       isDown = true;
-      slider.style.cursor = 'grabbing';
+      //slider.style.cursor = 'grabbing';
       startX = e.pageX - slider.offsetLeft;
       startY = e.pageY - slider.offsetTop;
       scrollLeft = slider.scrollLeft;
@@ -2597,12 +2597,12 @@ function initDragToScroll() {
 
     slider.addEventListener('mouseleave', () => {
       isDown = false;
-      if (window.innerWidth > 700) slider.style.cursor = 'grab';
+      //if (window.innerWidth > 700) slider.style.cursor = 'grab';
     });
 
     slider.addEventListener('mouseup', () => {
       isDown = false;
-      if (window.innerWidth > 700) slider.style.cursor = 'grab';
+      //if (window.innerWidth > 700) slider.style.cursor = 'grab';
     });
 
     slider.addEventListener('mousemove', (e) => {
