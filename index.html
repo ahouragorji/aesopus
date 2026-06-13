@@ -45,10 +45,24 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   position: relative;
 }
 
+.auth-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  color: rgba(242, 232, 217, 0.4);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  line-height: 1;
+}
+.auth-close-btn:hover { color: var(--vellum); }
+
 .github-corner-link {
   position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
+  top: 1.1rem;
+  left: 1.25rem;
   color: rgba(242, 232, 217, 0.35);
   transition: color 0.2s, transform 0.2s;
   display: flex;
@@ -131,18 +145,124 @@ input:focus::placeholder, textarea:focus::placeholder { color: transparent !impo
   align-items: center;
   justify-content: space-between;
   padding: 0 1.75rem;
-  height: 46px;
+  height: 54px;
   background: rgba(14,12,11,0.75);
   backdrop-filter: blur(8px);
   border-bottom: 0.5px solid rgba(184,146,58,0.1);
 }
-.topbar-brand {
-  font-family: 'IM Fell English', serif;
-  font-size: 1.15rem;
-  color: var(--gold);
-  letter-spacing: 0.08em;
-  opacity: 0.8;
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
+
+/* ── ICON NAV BUTTONS ──────────────────────── */
+.nav-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 4px;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  transition: color 0.2s;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.nav-icon-btn svg { width: 18px; height: 18px; transition: fill 0.2s; }
+.nav-icon-btn:hover { color: var(--vellum); }
+.nav-icon-btn.active-nav { color: var(--gold); }
+
+/* ── SETTINGS PAGE ──────────────────────────────────────────────── */
+#settings-page {
+  min-height: 100vh;
+  padding-top: 54px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(184,146,58,0.07) 0%, transparent 60%), var(--ink);
+}
+.settings-wrap {
+  width: 100%;
+  max-width: 680px;
+  padding: 3rem 2rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.settings-title {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 2rem;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  border-bottom: 0.5px solid rgba(184,146,58,0.2);
+  padding-bottom: 0.75rem;
+}
+.settings-section {
+  background: rgba(255,255,255,0.025);
+  border: 0.5px solid rgba(184,146,58,0.18);
+  border-radius: 4px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.settings-section-title {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--gold);
+  border-bottom: 0.5px solid rgba(184,146,58,0.2);
+  padding-bottom: 0.4rem;
+}
+.settings-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+.settings-stat-label {
+  font-family: 'Cormorant SC', serif;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+.settings-stat-value {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--vellum);
+  font-size: 1.05rem;
+}
+.settings-stat-value.highlight { color: var(--gold); }
+.settings-divider { height: 0.5px; background: linear-gradient(90deg, transparent, rgba(184,146,58,0.15), transparent); margin: 0.5rem 0; }
+.limit-bar-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.limit-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease-out; background: linear-gradient(90deg, var(--sage), var(--gold)); }
+.limit-bar-fill.danger { background: linear-gradient(90deg, var(--rose), rgba(184,114,90,0.7)); }
+.settings-sign-in-prompt {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: rgba(242,232,217,0.45);
+  text-align: center;
+  padding: 1rem 0;
+}
+.settings-sign-in-btn {
+  display: block;
+  margin: 0.5rem auto 0;
+  padding: 0.55rem 1.5rem;
+  background: rgba(184,146,58,0.12);
+  border: 0.5px solid rgba(184,146,58,0.4);
+  border-radius: 3px;
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--gold);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.settings-sign-in-btn:hover { background: rgba(184,146,58,0.22); }
 .story-meta {
   position: absolute;
   left: 50%;
@@ -157,20 +277,11 @@ input:focus::placeholder, textarea:focus::placeholder { color: transparent !impo
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
-.restart-btn { font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-dim); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 2px; padding: 4px 12px; transition: color 0.2s, border-color 0.2s, background 0.2s; }
+.restart-btn { font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-dim); border: 0.5px solid rgba(255,255,255,0.15); border-radius: 2px; padding: 4px 12px; transition: color 0.2s, border-color 0.2s, background 0.2s; margin-right: 1rem;}
 .restart-btn:hover{color:var(--vellum);border-color:rgba(255,255,255,0.2)}
 
-/* Active Nav State */
-.restart-btn.active-nav {
-  color: var(--gold);
-  border-color: rgba(184,146,58,0.4);
-  background: rgba(184,146,58,0.08);
-}
-
-.topbar-logout { width:30px; height:30px; border-radius:50%; border:0.5px solid transparent; color:var(--text-dim); display:flex; align-items:center; justify-content:center; transition:color 0.2s, border-color 0.2s, background 0.2s; flex-shrink:0; }
-.topbar-logout:hover{ color:var(--rose); border-color:rgba(184,114,90,0.35); background:rgba(184,114,90,0.08); }
 .auth-forgot-btn { font-family:'Inter',sans-serif; font-size:0.78rem; color:var(--text-dim); background:none; border:none; cursor:pointer; text-align:right; align-self:flex-end; margin-top:-0.2rem; transition:color 0.2s; text-decoration:underline; text-decoration-color:transparent; }
 .auth-forgot-btn:hover { color:var(--sage); text-decoration-color:rgba(106,142,127,0.5); }
 .auth-reset-wrap { display:flex; flex-direction:column; align-items:center; gap:1rem; padding:0.5rem 0; text-align:center; }
@@ -179,7 +290,7 @@ input:focus::placeholder, textarea:focus::placeholder { color: transparent !impo
 .auth-reset-body { font-family:'Inter',sans-serif; font-size:0.82rem; color:rgba(242,232,217,0.6); line-height:1.6; }
 
 /* ── SETUP SCREEN ───────────────────────────────────────────────── */
-#setup{min-height:100vh;padding-top:46px;display:flex;align-items:flex-start;justify-content:center;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(184,146,58,0.08) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(106,142,127,0.06) 0%,transparent 50%),var(--ink)}
+#setup{min-height:100vh;padding-top:54px;display:flex;align-items:flex-start;justify-content:center;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(184,146,58,0.08) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(106,142,127,0.06) 0%,transparent 50%),var(--ink)}
 .setup-wrap{width:100%;max-width:1200px;padding:3rem 2.5rem 4rem;display:flex;flex-direction:column;gap:2rem}
 .masthead{text-align:center;margin-bottom:0.5rem}
 .masthead-rule{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;max-width:380px;margin-inline:auto}
@@ -201,47 +312,14 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
 .col-left,.col-centre,.col-right{min-width:0}
 
-
 /* ── SCROLLABLE PILL CONTAINERS ── */
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.scroll-pills-x { display: flex; gap: 8px; width: 100%; overflow-x: auto; white-space: nowrap; overscroll-behavior-x: contain; }
+.scroll-pills-y { display: flex; flex-wrap: wrap; gap: 6px; max-height: 110px; overflow-y: auto; align-content: flex-start; overscroll-behavior-y: auto; }
+.mask-right { mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%); -webkit-mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%); }
+.mask-bottom { mask-image: linear-gradient(to bottom, black 65%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%); }
 
-/* Hide scrollbars for all browsers */
-.hide-scrollbar {
-  -ms-overflow-style: none;     /* IE and Edge */
-  scrollbar-width: none;        /* Firefox */
-}
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;                /* Chrome, Safari, Opera */
-}
-
-/* Base horizontal/vertical scroll layouts */
-.scroll-pills-x {
-  display: flex; 
-  gap: 8px; 
-  width: 100%; 
-  overflow-x: auto; 
-  white-space: nowrap; 
-  overscroll-behavior-x: contain; /* Prevents page swipe-back when reaching the end */
-}
-.scroll-pills-y {
-  display: flex; 
-  flex-wrap: wrap; 
-  gap: 6px; 
-  max-height: 110px; 
-  overflow-y: auto; 
-  align-content: flex-start; 
-  overscroll-behavior-y: auto;
-}
-
-/* Fading Masks */
-.mask-right {
-  mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%);
-}
-
-.mask-bottom {
-  mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
-}
 /* Vocab textarea wrapper */
 .vocab-wrap{position:relative;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;overflow:hidden;background:transparent;transition:border-color 0.2s}
 .vocab-wrap:focus-within{border-color:rgba(184,146,58,0.55)}
@@ -252,225 +330,67 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .generate-btn.used{opacity:0.3;cursor:not-allowed;color:var(--text-dim);border-color:rgba(255,255,255,0.1)}
 .generate-btn.loading{opacity:0.6}
 
-
 /* Brighter state for selected vocab words in the story */
-.vocab-word {
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
+.vocab-word { transition: all 0.2s ease; cursor: pointer; }
+.vocab-word.selected-word { color: #FFFFFF !important; text-shadow: 0 0 10px rgba(184, 146, 58, 0.8); border-bottom: 1.5px solid var(--gold) !important; background: rgba(184, 146, 58, 0.15); border-radius: 2px; }
+.vocab-textarea::-webkit-scrollbar, textarea.inp::-webkit-scrollbar { width: 8px; }
+.vocab-textarea::-webkit-scrollbar-track, textarea.inp::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); }
+.vocab-textarea::-webkit-scrollbar-thumb, textarea.inp::-webkit-scrollbar-thumb { background: rgba(184,146,58,0.25); border-radius: 4px; }
+.vocab-textarea::-webkit-scrollbar-thumb:hover, textarea.inp::-webkit-scrollbar-thumb:hover { background: rgba(184,146,58,0.45); }
+.vocab-textarea::placeholder { color: rgba(242, 232, 217, 0.32); font-style: italic; }
+.inp::placeholder { color: rgba(242, 232, 217, 0.32); font-style: italic; }
 
-.vocab-word.selected-word {
-  color: #FFFFFF !important;
-  text-shadow: 0 0 10px rgba(184, 146, 58, 0.8);
-  border-bottom: 1.5px solid var(--gold) !important;
-  background: rgba(184, 146, 58, 0.15);
-  border-radius: 2px;
-}
-/* Custom scrollbars for all textareas */
-.vocab-textarea::-webkit-scrollbar,
-textarea.inp::-webkit-scrollbar {
-  width: 8px;
-}
-
-.vocab-textarea::-webkit-scrollbar-track,
-textarea.inp::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.15);
-}
-
-.vocab-textarea::-webkit-scrollbar-thumb,
-textarea.inp::-webkit-scrollbar-thumb {
-  background: rgba(184,146,58,0.25);
-  border-radius: 4px;
-}
-
-.vocab-textarea::-webkit-scrollbar-thumb:hover,
-textarea.inp::-webkit-scrollbar-thumb:hover {
-  background: rgba(184,146,58,0.45);
-}
-
-.vocab-textarea::placeholder {
-  color: rgba(242, 232, 217, 0.32);
-  font-style: italic;
-}
-.inp::placeholder {
-  color: rgba(242, 232, 217, 0.32);
-  font-style: italic;
-}
-/* Fixed transparent background overlay */
 .vocab-status{position:absolute;bottom:0;left:0;right:0;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;border-top:0.5px solid rgba(184,146,58,0.15);background:linear-gradient(to bottom, rgba(30,28,25,0.9), rgba(22,20,15,0.95))}
 .vocab-status-left{display:flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;font-size:0.72rem;line-height:1}
 .vocab-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background 0.3s}
-.dot-idle{background:#5a544e} 
-.dot-ok{background:#6A8E7F}
-.dot-warn{background:#B8923A}
-.dot-err{background:#B8725A}
+.dot-idle{background:#5a544e} .dot-ok{background:#6A8E7F} .dot-warn{background:#B8923A} .dot-err{background:#B8725A}
 .vocab-status-msg{color:rgba(242,232,217,0.45);transition:color 0.3s;display:inline-block;line-height:1}
 .vocab-status-count{font-family:'Inter',sans-serif;font-size:0.72rem;color:rgba(242,232,217,0.3);line-height:1}
 
-/* Level pills */
 .level-pills{display:flex;gap:6px}
 .level-pill{flex:1;padding:0.3rem 0.4rem;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;background:transparent;color:var(--text-dim);font-family:'Cormorant SC',serif;font-weight:600;font-size:0.88rem;letter-spacing:0.07em;text-align:center;cursor:pointer;transition:all 0.2s}
 .level-pill:hover{border-color:rgba(184,146,58,0.45);color:var(--vellum)}
 .level-pill.active{background:rgba(184,146,58,0.16);border-color:var(--gold);color:var(--gold)}
 
-/* -- ARCHIVE FILTERS & TAGS -- */
-.filter-select {
-  background: transparent;
-  border: 0.5px solid rgba(184,146,58,0.25);
-  color: var(--text-dim);
-  font-family: 'Cormorant SC', serif;
-  font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  padding: 4px 24px 4px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6E64' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  transition: all 0.2s;
-}
+.filter-select { background: transparent; border: 0.5px solid rgba(184,146,58,0.25); color: var(--text-dim); font-family: 'Cormorant SC', serif; font-weight: 600; font-size: 0.8rem; letter-spacing: 0.05em; padding: 4px 24px 4px 10px; border-radius: 3px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6E64' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; transition: all 0.2s; }
 .filter-select:hover { border-color: rgba(184,146,58,0.5); color: var(--vellum); }
 .filter-select option { background: #1C1917; color: var(--vellum); }
-.archive-tag {
-  font-family: 'Cormorant SC', serif;
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(184,146,58,0.8);
-  background: rgba(184,146,58,0.03);
-  border: 0.5px solid rgba(184,146,58,0.25);
-  padding: 1px 6px 0px 6px;
-  border-radius: 2px;
-  white-space: nowrap;
-}
-/* API provider flex container (places input and toggle side-by-side) */
-.api-key-wrap {
-  display: flex;
-  align-items: stretch;
-  gap: 0.5rem;
-  margin-top: 0.3rem;
-  width: 100%;
-}
+.archive-tag { font-family: 'Cormorant SC', serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(184,146,58,0.8); background: rgba(184,146,58,0.03); border: 0.5px solid rgba(184,146,58,0.25); padding: 1px 6px 0px 6px; border-radius: 2px; white-space: nowrap; }
 
-.api-key-wrap .inp {
-  flex: 1;
-  padding-right: 0.9rem;
-}
-
-/* Vertical stacked toggle outside the input */
-.provider-toggle-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(12, 10, 9, 0.95);
-  border-radius: 3px;
-  cursor: pointer;
-  width: 25px; 
-  flex-shrink: 0;
-  transition: background 0.2s;
-}
-
-.provider-toggle-wrap:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* Individual logo containers */
-.provider-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 18px; 
-  transition: color 0.3s;
-  pointer-events: none;
-}
-
-.provider-logo svg {
-  width: 12px;
-  height: 12px;
-}
-
-/* Beautiful fading horizontal divider */
-.api-logos-divider {
-  width: 24px;
-  height: 1px;
-  margin: 2px 0;
-  background: linear-gradient(90deg, transparent, rgba(184, 146, 58, 0.65), transparent);
-}
-
-/* Active/Inactive states */
+/* API provider flex container */
+.api-key-wrap { display: flex; align-items: stretch; gap: 0.5rem; margin-top: 0.3rem; width: 100%; }
+.api-key-wrap .inp { flex: 1; padding-right: 0.9rem; }
+.provider-toggle-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(12, 10, 9, 0.95); border-radius: 3px; cursor: pointer; width: 25px; flex-shrink: 0; transition: background 0.2s; }
+.provider-toggle-wrap:hover { background: rgba(255, 255, 255, 0.05); }
+.provider-logo { display: flex; align-items: center; justify-content: center; width: 100%; height: 18px; transition: color 0.3s; pointer-events: none; }
+.provider-logo svg { width: 12px; height: 12px; }
+.api-logos-divider { width: 24px; height: 1px; margin: 2px 0; background: linear-gradient(90deg, transparent, rgba(184, 146, 58, 0.65), transparent); }
 .provider-logo.logo-active { color: var(--gold); }
 .provider-logo.logo-inactive { color: rgba(255,255,255,0.15); }
-
 .key-note { font-family:'Inter',sans-serif;font-size:0.73rem;color:rgba(122,110,100,0.65);font-style:italic;line-height:1.5; }
 .key-note a { color:var(--sage);text-decoration:none; }
 .key-note a:hover { text-decoration:underline; }
-/* Error + begin */
+
 .setup-error{font-family:'Inter',sans-serif;font-size:0.85rem;color:var(--rose);min-height:1rem;text-align:center}
 .begin-btn{width:100%;padding:0.95rem;background:linear-gradient(135deg,rgba(184,146,58,0.9),rgba(106,142,127,0.7));border-radius:3px;font-family:'IM Fell English',serif;font-size:1.2rem;color:var(--ink);letter-spacing:0.07em;transition:opacity 0.2s,transform 0.1s;box-shadow:0 4px 16px rgba(0,0,0,0.28)}
 .begin-btn:hover{opacity:0.9;transform:translateY(-1px)}
 .begin-btn:active{transform:translateY(0)}
 .begin-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
 
-/* ── GLOBAL LOADER STYLES ───────────────────────────────────── */
-.library-loader-wrap {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 5rem 0;
-  gap: 1.2rem;
-}
-
-/* The spinning ring icon */
-.library-loader-wrap .spinner {
-  width: 32px;
-  height: 32px;
-  border: 2px solid rgba(184, 146, 58, 0.1);
-  border-top: 2px solid var(--gold);
-  border-radius: 50%;
-  animation: spinRing 0.8s linear infinite;
-}
-
-/* The pulsing "Unearthing archives..." text */
-.library-loader-wrap span {
-  font-family: 'IM Fell English', serif;
-  font-style: italic;
-  font-size: 1.25rem;
-  color: var(--gold);
-  opacity: 0.8;
-  letter-spacing: 0.03em;
-  animation: textPulse 1.8s ease-in-out infinite;
-}
-
-/* Ring rotation keyframes */
-@keyframes spinRing {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Text pulsing keyframes */
-@keyframes textPulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.98); }
-  50% { opacity: 0.9; transform: scale(1); }
-}
+.library-loader-wrap { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5rem 0; gap: 1.2rem; }
+.library-loader-wrap .spinner { width: 32px; height: 32px; border: 2px solid rgba(184, 146, 58, 0.1); border-top: 2px solid var(--gold); border-radius: 50%; animation: spinRing 0.8s linear infinite; }
+.library-loader-wrap span { font-family: 'IM Fell English', serif; font-style: italic; font-size: 1.25rem; color: var(--gold); opacity: 0.8; letter-spacing: 0.03em; animation: textPulse 1.8s ease-in-out infinite; }
+@keyframes spinRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes textPulse { 0%, 100% { opacity: 0.3; transform: scale(0.98); } 50% { opacity: 0.9; transform: scale(1); } }
 
 /* ── STORY SCREEN ───────────────────────────────────────────────── */
-#story{min-height:100vh;padding-top:46px;display:flex;flex-direction:column;background:radial-gradient(ellipse 100% 50% at 50% 0%,rgba(184,146,58,0.06) 0%,transparent 55%),var(--ink)}
+#story{min-height:100vh;padding-top:54px;display:flex;flex-direction:column;background:radial-gradient(ellipse 100% 50% at 50% 0%,rgba(184,146,58,0.06) 0%,transparent 55%),var(--ink)}
 .word-tracker{display:flex;align-items:center;gap:8px;padding:0.4rem 2rem;background:rgba(14,12,11,0.4);border-bottom:0.5px solid rgba(44,24,16,0.3);flex-wrap:wrap}
 .tracker-label{font-family:'Cormorant SC',serif;font-size:0.7rem;letter-spacing:0.1em;color:var(--text-dim)}
-
-/* Interactive Delete Action */
 .tracker-word{display:inline-flex;align-items:center;gap:4px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.88rem;color:rgba(242,232,217,0.35);padding:2px 10px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.08);transition:all 0.4s}
 .tracker-word.seen{color:var(--gold);border-color:rgba(184,146,58,0.4);background:rgba(184,146,58,0.08)}
 .tracker-word-remove{font-family:'Inter', sans-serif;font-size:0.75rem;color:rgba(255,255,255,0.2);cursor:pointer;margin-left:2px;font-style:normal;line-height:1}
 .tracker-word-remove:hover{color:var(--rose)}
-
 .book{flex:1;display:grid;grid-template-columns:1fr 1.5px 1fr;max-width:1100px;width:100%;margin:0 auto} 
 .book-gutter{background:linear-gradient(180deg,transparent 0%,rgba(184,146,58,0.15) 15%,rgba(184,146,58,0.08) 85%,transparent 100%);align-self:stretch}
 .page-left{padding:3rem 3rem 3rem 2.5rem;display:flex;flex-direction:column;gap:1.5rem}
@@ -517,35 +437,29 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 @keyframes popIn{from{opacity:0;transform:translateY(5px) scale(0.95) translateX(-50%)}to{opacity:1;transform:translateY(0) scale(1) translateX(-50%)}}
 
 /* ── RESPONSIVE ───────────────────────────────────────────────── */
-
-/* Tablet: collapse 3-col setup to 2-col */
 @media(max-width:1000px){
   .setup-grid{grid-template-columns:1fr 1fr;gap:1.5rem}
   .setup-grid .col-right{grid-column:1/-1}
 }
 
-/* Mobile */
 @media(max-width:700px){
-  /* Topbar */
   #topbar{padding:0 0.9rem;gap:0.5rem}
-  .topbar-brand{font-size:1rem}
   .story-meta{position:static;transform:none;flex:1;text-align:center;font-size:0.7rem;letter-spacing:0.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .topbar-right{gap:0.4rem}
-  .restart-btn,.topbar-logout{font-size:0.68rem;padding:3px 7px;letter-spacing:0.06em}
-  .topbar-logout{padding:0;width:28px;height:28px}
+  .topbar-right{gap:0.2rem}
+  .restart-btn{font-size:0.68rem;padding:3px 7px;letter-spacing:0.06em;margin-right:0.3rem;}
+  .nav-icon-btn{width:40px;height:40px;}
+  .settings-wrap{padding:2rem 1rem 4rem}
+  .settings-section{padding:1.25rem}
 
-  /* Auth modal */
   .auth-modal-box{padding:1.75rem 1.25rem 1.5rem}
   .auth-brand h2{font-size:2.2rem}
 
-  /* Library */
-  #library-dashboard{padding:70px 1rem 3rem!important;gap:2rem!important}
+  #library-dashboard{padding:80px 1rem 3rem!important;gap:2rem!important}
   #public-collections-grid{grid-template-columns:1fr!important}
   .lexicon-middle{flex-wrap:wrap;gap:0.6rem}
   .lexicon-pills-wrapper{min-width:0;width:100%}
   .lexicon-actions{width:100%;justify-content:flex-end}
 
-  /* Setup */
   .setup-wrap{padding:1.75rem 1rem 3rem}
   .masthead h1{font-size:2.6rem}
   .masthead-sub{font-size:1rem}
@@ -556,7 +470,6 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   .level-pill{flex:1 1 calc(33% - 6px);padding:0.55rem 0.3rem;font-size:0.82rem}
   .vocab-textarea{min-height:160px}
 
-  /* Story: stack pages, hide gutter */
   .book{grid-template-columns:1fr}
   .book-gutter{display:none}
   .page-left{padding:1.5rem 1.1rem 1rem;gap:1rem;border-bottom:0.5px solid rgba(184,146,58,0.12)}
@@ -566,47 +479,21 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   .choice-card{padding:1rem 1.1rem;gap:0.8rem}
   .choice-text{font-size:1.1rem}
 
-  /* Word tracker: scrollable single row */
   .word-tracker{padding:0.35rem 1rem;gap:5px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .word-tracker::-webkit-scrollbar{display:none}
   .tracker-word{font-size:0.82rem;padding:2px 8px;white-space:nowrap}
 
-  /* Tooltip */
   #vocab-tooltip{font-size:0.8rem;padding:5px 11px}
-
-  /* Story end */
   .story-end{padding:1.25rem 0.5rem}
   .end-title{font-size:1.35rem}
 
-  /* ── MOBILE SCROLL LOCK LOGIC (Only for vertical Public Archives) ── */
-  .scroll-pills-y {
-    border: 0.5px solid transparent;
-    border-radius: 4px;
-    padding: 6px 4px; 
-    margin: -6px -4px; 
-    transition: border-color 0.3s ease, background 0.3s ease;
-    cursor: pointer;
-    
-    max-height: 110px !important; /* Force the height limit */
-    overflow-y: hidden; /* Lock internal scrolling initially */
-    overscroll-behavior-y: auto; /* ALLOW the main page to scroll if swiped */
-  }
-
-  /* The active state when tapped (Gold Border) */
-  .scroll-pills-y.scroll-active {
-    overflow-y: auto; /* Unlock internal scrolling */
-    overscroll-behavior-y: auto; /* TRAP the scroll so the page doesn't move */
-    border-color: rgba(184, 146, 58, 0.4); 
-    background: rgba(184, 146, 58, 0.04); 
-    cursor: default;
-  }
+  .scroll-pills-y { border: 0.5px solid transparent; border-radius: 4px; padding: 6px 4px; margin: -6px -4px; transition: border-color 0.3s ease, background 0.3s ease; cursor: pointer; max-height: 110px !important; overflow-y: hidden; overscroll-behavior-y: auto; }
+  .scroll-pills-y.scroll-active { overflow-y: auto; overscroll-behavior-y: auto; border-color: rgba(184, 146, 58, 0.4); background: rgba(184, 146, 58, 0.04); cursor: default; }
 }
 
-/* Very small phones */
 @media(max-width:380px){
-  .topbar-brand{display:none}
-  .restart-btn,.topbar-logout{font-size:0.63rem;padding:3px 6px}
-  .topbar-logout{padding:0;width:26px;height:26px}
+  .restart-btn{font-size:0.63rem;padding:3px 6px}
+  .nav-icon-btn{width:36px;height:38px}
   .masthead h1{font-size:2.2rem}
   .setup-card{padding:1.5rem 1rem}
   .page-left,.page-right{padding:1.1rem 0.8rem}
@@ -617,19 +504,26 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 <body>
 
 <button id="vocab-tooltip">+ Add to Vocab</button>
-<div id="auth-modal">
+
+<div id="auth-modal" class="hidden fading">
   <div class="auth-modal-box">
     
+    <button id="auth-close-btn" class="auth-close-btn" title="Close">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
     <a href="https://github.com/ahouragorji/aesop" target="_blank" rel="noopener noreferrer" class="github-corner-link" title="Support the project on GitHub">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
       </svg>
     </a>
 
     <div class="auth-brand">
       <h2>Aesopus</h2>
-      <p>Enter words you want to memorize. Learn them through an interactive story.</p>
-
+      <p>Sign in to save vocabulary lists, download archives, and track your stories.</p>
       <div class="auth-brand-rule"></div>
     </div>
 
@@ -679,60 +573,84 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
         <button class="auth-submit" id="auth-back-btn" style="margin-top:0.75rem;background:rgba(255,255,255,0.06);color:var(--vellum)">Back to Sign In</button>
       </div>
     </div>
-
-    <p class="auth-footer-note">Your account saves vocabulary lists and story progress across sessions.</p>
   </div>
 </div>
 
-<div id="topbar" class="hidden">
-  <span class="topbar-brand">Aesopus</span>
+<div id="topbar">
+  <div class="topbar-left">
+    <button class="nav-icon-btn hidden" id="topbar-logout-btn" title="Sign out" style="color:var(--rose);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+    <button class="nav-icon-btn" id="nav-settings-btn" title="Settings">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </button>
+  </div>
+
   <div class="story-meta hidden" id="story-meta">Chapter I · Scene 1</div>
+
   <div class="topbar-right">
     <button class="restart-btn hidden" id="restart-btn">Close the book</button>
-    <button class="restart-btn" id="nav-library-btn">Library</button>
-    <button class="restart-btn active-nav" id="nav-setup-btn">New Story</button>
-    <button class="topbar-logout" id="topbar-logout-btn" title="Sign out" aria-label="Sign out">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    
+    <button class="nav-icon-btn" id="nav-library-btn" title="Library">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 22H5.5a1 1 0 0 1 0-5h4.501"/><path d="m21 22-1.879-1.878"/><path d="M3 19.5v-15A2.5 2.5 0 0 1 5.5 2H18a1 1 0 0 1 1 1v8"/><circle cx="17" cy="18" r="3"/></svg>
+    </button>
+    
+    <button class="nav-icon-btn active-nav" id="nav-setup-btn" title="New Story">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17.5" y1="15" x2="9" y2="6.5"></line></svg>
+    </button>
+
+    <button class="nav-icon-btn hidden" id="topbar-login-btn" title="Sign In">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
     </button>
   </div>
 </div>
 
 <div id="library-dashboard" class="hidden" style="min-height:100vh; padding-top:80px; max-width:1000px; margin:0 auto; display:flex; flex-direction:column; gap:3rem;">
   
-  <div class="setup-card" id="personal-lexicon-card">
-<div id="lexicon-header-wrap" style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 0.5px solid rgba(184,146,58,0.25); padding-bottom: 0.5rem;">    <h2 style="font-family:'IM Fell English',serif; font-style:italic; font-size:1.1rem; color:var(--gold);">Your Personal Lexicon</h2>
-    <div id="mastered-header-container"></div>
-  </div>
-  <div id="personal-lexicon-container">
+  <div class="setup-card hidden" id="personal-lexicon-card">
+    <div id="lexicon-header-wrap" style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 0.5px solid rgba(184,146,58,0.25); padding-bottom: 0.5rem;">    
+        <h2 style="font-family:'IM Fell English',serif; font-style:italic; font-size:1.1rem; color:var(--gold);">Your Personal Lexicon</h2>
+        <div id="mastered-header-container"></div>
     </div>
-</div>
-  <div>
-<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
-  <h2 style="font-family:'IM Fell English',serif; font-size:2rem; color:var(--gold); font-style:italic;">Public Archives</h2>
-  <div style="display: flex; gap: 0.75rem; margin-bottom: 0.3rem;">
-    <select id="filter-language" class="filter-select">
-      <option value="all">All Languages</option>
-      <option value="english">English</option>
-                <option value="german">German</option>
-                <option value="spanish">Spanish</option>
-                <option value="french">French</option>
-                <option value="farsi">Farsi</option>
-                <option value="russian">Russian</option>
-                <option value="chinese">Chinese</option>
-                <option value="italian">Italian</option>
-                <option value="arabic">Arabic</option>
-      </select>
-    <select id="filter-level" class="filter-select">
-      <option value="all">All Levels</option>
-      <option value="a1">A1</option>
-      <option value="a2">A2</option>
-      <option value="b1">B1</option>
-      <option value="b2">B2</option>
-      <option value="c1">C1</option>
-      <option value="c2">C2</option>
-    </select>
+    
+    <div id="guest-lexicon-prompt" class="settings-sign-in-prompt hidden">
+      Sign in to build your personal lexicon and save collections.
+      <button class="settings-sign-in-btn" id="guest-lexicon-login-btn">Sign In</button>
+    </div>
+
+    <div id="personal-lexicon-container"></div>
   </div>
-</div>
+
+  <div>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
+      <h2 style="font-family:'IM Fell English',serif; font-size:2rem; color:var(--gold); font-style:italic;">Public Archives</h2>
+      <div style="display: flex; gap: 0.75rem; margin-bottom: 0.3rem;">
+        <select id="filter-language" class="filter-select">
+          <option value="all">All Languages</option>
+          <option value="english">English</option>
+          <option value="german">German</option>
+          <option value="spanish">Spanish</option>
+          <option value="french">French</option>
+          <option value="farsi">Farsi</option>
+          <option value="russian">Russian</option>
+          <option value="chinese">Chinese</option>
+          <option value="italian">Italian</option>
+          <option value="arabic">Arabic</option>
+        </select>
+        <select id="filter-level" class="filter-select">
+          <option value="all">All Levels</option>
+          <option value="a1">A1</option>
+          <option value="a2">A2</option>
+          <option value="b1">B1</option>
+          <option value="b2">B2</option>
+          <option value="c1">C1</option>
+          <option value="c2">C2</option>
+        </select>
+      </div>
+    </div>
     <div id="public-collections-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1.5rem;">
       <div class="library-loader-wrap" id="library-loader">
         <div class="spinner"></div>
@@ -740,15 +658,88 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
       </div>
     </div>
   </div>
+</div>
+<div id="settings-page" class="hidden">
+  <div class="settings-wrap">
+    <h1 class="settings-title">Settings & Archives</h1>
 
+    <div class="settings-section">
+      <h2 class="settings-section-title">Your Progress & Operational Limits</h2>
+      
+      <div id="settings-stats-guest" class="settings-sign-in-prompt hidden">
+        Sign in to track your vocabulary and operational limits.
+        <button class="settings-sign-in-btn" id="settings-login-btn">Sign In</button>
+      </div>
+      
+      <div id="settings-stats-user">
+        <div class="settings-stat-row">
+          <span class="settings-stat-label">Words Mastered</span>
+          <span class="settings-stat-value highlight" id="stat-words-learned">0</span>
+        </div>
+        <div class="settings-divider"></div>
+        <div class="settings-stat-row">
+          <span class="settings-stat-label">Total Stories Unlocked</span>
+          <span class="settings-stat-value" id="stat-total-stories">0</span>
+        </div>
+        <div class="settings-divider"></div>
+
+        <div class="settings-stat-row" style="margin-bottom:0.25rem;">
+          <span class="settings-stat-label">Daily Scenes Used</span>
+          <span class="settings-stat-value highlight" id="stat-stories-left">0 / 50</span>
+        </div>
+        <div class="limit-bar-bg">
+          <div class="limit-bar-fill" id="limit-bar-stories" style="width: 0%;"></div>
+        </div>
+        
+        <div class="settings-divider"></div>
+        
+        <div class="settings-stat-row" style="margin-bottom:0.25rem;">
+          <span class="settings-stat-label">Daily Wordlists Used</span>
+          <span class="settings-stat-value highlight" id="stat-wordlists-left">0 / 2</span>
+        </div>
+        <div class="limit-bar-bg">
+          <div class="limit-bar-fill" id="limit-bar-wordlists" style="width: 0%;"></div>
+        </div>
+        
+        <p class="key-note" style="margin-top:0.3rem;">Operational limits update dynamically on cloud resource execution blocks.</p>
+      </div> </div> <div class="settings-section">
+      <h2 class="settings-section-title">AI Engine Settings</h2>
+      <div class="field-group">
+        <label class="field-label">AI Provider & API Key</label>
+        <p class="field-hint" id="api-hint">Leave blank to use the free Gemini tier.</p>
+        
+        <div class="api-key-wrap" id="api-key-wrap">
+          <input type="password" class="inp" id="api-key" placeholder="AIza… or AQ… (optional)" autocomplete="off"/>
+          
+          <div class="provider-toggle-wrap" id="provider-toggle-wrap" title="Switch AI provider">
+            <div class="provider-logo gemini-logo logo-active" id="logo-gemini">
+              <svg width="14" height="14" viewBox="0 0 65 65" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M32.447 0c.68 0 1.273.465 1.439 1.125a38.904 38.904 0 001.999 5.905c2.152 5 5.105 9.376 8.854 13.125 3.751 3.75 8.126 6.703 13.125 8.855a38.98 38.98 0 005.906 1.999c.66.166 1.124.758 1.124 1.438 0 .68-.464 1.273-1.125 1.439a38.902 38.902 0 00-5.905 1.999c-5 2.152-9.375 5.105-13.125 8.854-3.749 3.751-6.702 8.126-8.854 13.125a38.973 38.973 0 00-2 5.906 1.485 1.485 0 01-1.438 1.124c-.68 0-1.272-.464-1.438-1.125a38.913 38.913 0 00-2-5.905c-2.151-5-5.103-9.375-8.854-13.125-3.75-3.749-8.125-6.702-13.125-8.854a38.973 38.973 0 00-5.905-2A1.485 1.485 0 010 32.448c0-.68.465-1.272 1.125-1.438a38.903 38.903 0 005.905-2c5-2.151 9.376-5.104 13.125-8.854 3.75-3.749 6.703-8.125 8.855-13.125a38.972 38.972 0 001.999-5.905A1.485 1.485 0 0132.447 0z"/></svg>
+            </div>
+            <div class="api-logos-divider"></div>
+            <div class="provider-logo openai-logo logo-inactive" id="logo-openai">
+              <svg width="14" height="14" viewBox="0 0 41 41" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M37.532 16.87a9.963 9.963 0 0 0-.856-8.184 10.078 10.078 0 0 0-10.855-4.835 9.964 9.964 0 0 0-6.211-2.682 10.079 10.079 0 0 0-9.641 6.956 9.967 9.967 0 0 0-6.664 4.834 10.08 10.08 0 0 0 1.24 11.817 9.965 9.965 0 0 0 .856 8.185 10.079 10.079 0 0 0 10.855 4.835 9.965 9.965 0 0 0 6.211 2.682 10.079 10.079 0 0 0 9.642-6.956 9.967 9.967 0 0 0 6.663-4.834 10.079 10.079 0 0 0-1.24-11.817ZM22.498 37.886a7.474 7.474 0 0 1-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 0 0 .655-1.134V19.054l3.366 1.944a.12.12 0 0 1 .066.092v9.299a7.505 7.505 0 0 1-7.49 7.496ZM6.392 31.006a7.471 7.471 0 0 1-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 0 0 1.308 0l9.724-5.614v3.888a.12.12 0 0 1-.048.103l-8.051 4.649a7.504 7.504 0 0 1-10.24-2.744ZM4.297 13.62A7.469 7.469 0 0 1 8.2 10.333c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 0 0 .654 1.132l9.723 5.614-3.366 1.944a.12.12 0 0 1-.114.012L7.044 23.86a7.504 7.504 0 0 1-2.747-10.24Zm27.658 6.437-9.724-5.615 3.367-1.943a.121.121 0 0 1 .114-.012l8.048 4.648a7.498 7.498 0 0 1-1.158 13.528v-9.476a1.293 1.293 0 0 0-.647-1.13Zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 0 0-1.308 0l-9.723 5.614v-3.888a.12.12 0 0 1 .048-.103l8.05-4.645a7.497 7.497 0 0 1 11.135 7.763Zm-21.063 6.929-3.367-1.944a.12.12 0 0 1-.065-.092v-9.299a7.497 7.497 0 0 1 12.293-5.756 6.94 6.94 0 0 0-.236.134l-7.965 4.6a1.294 1.294 0 0 0-.654 1.132l-.006 11.225Zm1.829-3.943 4.33-2.501 4.332 2.5v4.999l-4.331 2.5-4.331-2.5V18Z"/></svg>
+            </div>
+          </div>
+        </div>
+        <p class="key-note" id="api-link-note" style="margin-top:0.3rem">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a></p>
+      </div>
+    </div>
+  </div> </div> 
+
+
+
+  </div>
 </div>
 
-<div id="setup" class="hidden">
+
+
+
+<div id="setup">
   <div class="setup-wrap">
    <div class="masthead">
       <div class="masthead-rule">
         <span class="masthead-ornament" style="display: flex; align-items: center; justify-content: center;">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold-dim)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold-dim)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
           </svg>
@@ -766,29 +757,28 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
             <label class="field-label">Story language</label>
             <select class="inp" id="target-lang">
               <option value="english">English</option>
-                <option value="german">German</option>
-                <option value="spanish">Spanish</option>
-                <option value="french">French</option>
-                <option value="farsi">Farsi</option>
-                <option value="russian">Russian</option>
-                <option value="chinese">Chinese</option>
-                <option value="italian">Italian</option>
-                <option value="arabic">Arabic</option>
+              <option value="german">German</option>
+              <option value="spanish">Spanish</option>
+              <option value="french">French</option>
+              <option value="farsi">Farsi</option>
+              <option value="russian">Russian</option>
+              <option value="chinese">Chinese</option>
+              <option value="italian">Italian</option>
+              <option value="arabic">Arabic</option>
             </select>
           </div>
           <div class="field-group">
             <label class="field-label">Your native language</label>
             <select class="inp" id="native-lang">
                <option value="english">English</option>
-                <option value="german">German</option>
-                <option value="spanish">Spanish</option>
-                <option value="french">French</option>
-                <option value="farsi">Farsi</option>
-                <option value="russian">Russian</option>
-                <option value="chinese">Chinese</option>
-                <option value="italian">Italian</option>
-                <option value="arabic">Arabic</option>
-
+               <option value="german">German</option>
+               <option value="spanish">Spanish</option>
+               <option value="french">French</option>
+               <option value="farsi">Farsi</option>
+               <option value="russian">Russian</option>
+               <option value="chinese">Chinese</option>
+               <option value="italian">Italian</option>
+               <option value="arabic">Arabic</option>
             </select>
           </div>
           <div class="setup-divider"></div>
@@ -799,34 +789,6 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
               <button class="level-pill" data-level="intermediate">Intermediate</button>
               <button class="level-pill" data-level="advanced">Advanced</button>
             </div>
-          </div>
-          <div class="setup-divider"></div>
-
-          <div class="field-group">
-            <label class="field-label">AI Provider</label>
-            <p class="field-hint" id="api-hint">Leave blank to use the free Gemini tier.</p>
-            
-            <div class="api-key-wrap" id="api-key-wrap">
-              <input type="password" class="inp" id="api-key" placeholder="AIza… or AQ… (optional)" autocomplete="off"/>
-              
-              <div class="provider-toggle-wrap" id="provider-toggle-wrap" title="Switch AI provider">
-                
-                <div class="provider-logo gemini-logo logo-active" id="logo-gemini">
-                  <svg width="14" height="14" viewBox="0 0 65 65" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M32.447 0c.68 0 1.273.465 1.439 1.125a38.904 38.904 0 001.999 5.905c2.152 5 5.105 9.376 8.854 13.125 3.751 3.75 8.126 6.703 13.125 8.855a38.98 38.98 0 005.906 1.999c.66.166 1.124.758 1.124 1.438 0 .68-.464 1.273-1.125 1.439a38.902 38.902 0 00-5.905 1.999c-5 2.152-9.375 5.105-13.125 8.854-3.749 3.751-6.702 8.126-8.854 13.125a38.973 38.973 0 00-2 5.906 1.485 1.485 0 01-1.438 1.124c-.68 0-1.272-.464-1.438-1.125a38.913 38.913 0 00-2-5.905c-2.151-5-5.103-9.375-8.854-13.125-3.75-3.749-8.125-6.702-13.125-8.854a38.973 38.973 0 00-5.905-2A1.485 1.485 0 010 32.448c0-.68.465-1.272 1.125-1.438a38.903 38.903 0 005.905-2c5-2.151 9.376-5.104 13.125-8.854 3.75-3.749 6.703-8.125 8.855-13.125a38.972 38.972 0 001.999-5.905A1.485 1.485 0 0132.447 0z"/>
-                  </svg>
-                </div>
-                
-                <div class="api-logos-divider"></div>
-                
-                <div class="provider-logo openai-logo logo-inactive" id="logo-openai">
-                  <svg width="14" height="14" viewBox="0 0 41 41" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M37.532 16.87a9.963 9.963 0 0 0-.856-8.184 10.078 10.078 0 0 0-10.855-4.835 9.964 9.964 0 0 0-6.211-2.682 10.079 10.079 0 0 0-9.641 6.956 9.967 9.967 0 0 0-6.664 4.834 10.08 10.08 0 0 0 1.24 11.817 9.965 9.965 0 0 0 .856 8.185 10.079 10.079 0 0 0 10.855 4.835 9.965 9.965 0 0 0 6.211 2.682 10.079 10.079 0 0 0 9.642-6.956 9.967 9.967 0 0 0 6.663-4.834 10.079 10.079 0 0 0-1.24-11.817ZM22.498 37.886a7.474 7.474 0 0 1-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 0 0 .655-1.134V19.054l3.366 1.944a.12.12 0 0 1 .066.092v9.299a7.505 7.505 0 0 1-7.49 7.496ZM6.392 31.006a7.471 7.471 0 0 1-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 0 0 1.308 0l9.724-5.614v3.888a.12.12 0 0 1-.048.103l-8.051 4.649a7.504 7.504 0 0 1-10.24-2.744ZM4.297 13.62A7.469 7.469 0 0 1 8.2 10.333c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 0 0 .654 1.132l9.723 5.614-3.366 1.944a.12.12 0 0 1-.114.012L7.044 23.86a7.504 7.504 0 0 1-2.747-10.24Zm27.658 6.437-9.724-5.615 3.367-1.943a.121.121 0 0 1 .114-.012l8.048 4.648a7.498 7.498 0 0 1-1.158 13.528v-9.476a1.293 1.293 0 0 0-.647-1.13Zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 0 0-1.308 0l-9.723 5.614v-3.888a.12.12 0 0 1 .048-.103l8.05-4.645a7.497 7.497 0 0 1 11.135 7.763Zm-21.063 6.929-3.367-1.944a.12.12 0 0 1-.065-.092v-9.299a7.497 7.497 0 0 1 12.293-5.756 6.94 6.94 0 0 0-.236.134l-7.965 4.6a1.294 1.294 0 0 0-.654 1.132l-.006 11.225Zm1.829-3.943 4.33-2.501 4.332 2.5v4.999l-4.331 2.5-4.331-2.5V18Z"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-            <p class="key-note" id="api-link-note" style="margin-top:0.3rem">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a></p>
           </div>
         </div>
       </div>
@@ -937,414 +899,7 @@ import { getAuth,
          onAuthStateChanged, setPersistence,browserLocalPersistence,
          reload as reloadUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-
 import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, increment, deleteField, onSnapshot, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-
-async function renderLibraryFromCache() {
-  if (!state.currentUser) return;
-  
-  // 1. Read from our local cache instead of making a Firebase request
-  const userData = state.userData || {};
-  const learned = userData.learned || [];
-  const unlearned = userData.unlearned || [];
-  const userProgress = userData.publicProgress || {};
-
-  // -- Standardized Row HTML Builder --
-  const buildRowHTML = (title, countText, wordsList, actionBtns, progressBarHTML = '') => {
-    const preview = wordsList.slice(0, 15); 
-    
-    // Create the pills and add "..." if the list exceeds the preview count
-    let pillsHtml = preview.map(w => `<span class="lexicon-pill">${escHtml(w)}</span>`).join('');
-    if (wordsList.length > 15) {
-      pillsHtml += `<span class="lexicon-pill" style="border:none; padding: 2px 4px; color: var(--text-dim);">...</span>`;
-    }
-
-    return `
-      <div class="lexicon-row">
-        <div class="lexicon-header">
-          ${title} <span class="lexicon-count">${countText}</span>
-        </div>
-        <div class="lexicon-middle">
-          <div class="lexicon-pills-wrapper" style="flex: 1; min-width: 0;">
-            <div class="scroll-pills-x hide-scrollbar mask-right">
-              ${pillsHtml}
-            </div>
-          </div>
-          <div class="lexicon-actions">
-            ${actionBtns}
-          </div>
-        </div>
-        ${progressBarHTML}
-      </div>
-    `;
-  };
-
-  const dlIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>`;
-  const xIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-
-  // 2. Personal Queue Row 
-  let personalHTML = '';
-  if (unlearned.length > 0) {
-    const unlearnedBtns = `
-      <button class="lexicon-btn dl-btn" data-type="Personal Queue" title="Download .txt">${dlIcon}</button>
-      <button class="lexicon-btn clear-btn" data-type="Personal Queue" title="Clear list">${xIcon}</button>
-      <button class="small-start-btn start-unlearned-btn" style="margin-left: 8px;">Start</button>
-    `;
-    personalHTML = buildRowHTML('Personal Queue', `(${unlearned.length})`, unlearned, unlearnedBtns);
-  }
-
-  // 3. Mastered Download Tag
-  const masteredContainer = document.getElementById('mastered-header-container');
-  if (learned.length > 0) {
-    masteredContainer.innerHTML = `
-      <button id="download-mastered-tag" title="Download mastered words" style="font-family:'Inter',sans-serif; font-size:0.75rem; font-weight:500; color:var(--text-dim); background:rgba(255,255,255,0.03); border:0.5px solid rgba(255,255,255,0.1); border-radius:20px; padding:4px 12px; cursor:pointer; transition:all 0.2s;">
-        ↓ ${learned.length} item${learned.length === 1 ? '' : 's'} mastered
-      </button>
-    `;
-  } else {
-    masteredContainer.innerHTML = '';
-  }
-
-  // 4. Fetch Public Collections ONCE and cache them
-  if (!state.publicCollectionsCache) {
-    const publicSnap = await getDocs(collection(db, "public_collections"));
-    state.publicCollectionsCache = [];
-    publicSnap.forEach(docSnap => {
-      state.publicCollectionsCache.push({ id: docSnap.id, data: docSnap.data() });
-    });
-  }
-
-  
-const grid = document.getElementById('public-collections-grid');
-  let addedCollectionsHTML = '';
-  let unsubscribedCollectionsHTML = ''; // 1. Create a new string for the public grid
-  state.publicCollectionsCache.forEach(col => {
-    const data = col.data;
-    const colId = col.id;
-    const isAdded = userProgress.hasOwnProperty(colId);
-    const checkpoint = isAdded ? userProgress[colId] : 0;
-    const totalWords = data.words.length;
-    const collectionName = data.title || data.name || data.Title || "Untitled Collection";
-    
-    if (isAdded) {
-      // (Your existing Added Collections code stays exactly the same here)
-      const pct = totalWords === 0 ? 0 : Math.round((checkpoint / totalWords) * 100);
-      const progressHTML = `
-        <div class="lexicon-progress-bg">
-          <div class="lexicon-progress-fill" style="width: ${pct}%"></div>
-        </div>`;
-      
-      const addedBtns = `
-        <button class="lexicon-btn dl-public-btn" data-id="${colId}" title="Download .txt">${dlIcon}</button>
-        <button class="lexicon-btn remove-collection-btn" data-id="${colId}" title="Remove collection">${xIcon}</button>
-        <button class="small-start-btn start-collection-btn" data-id="${colId}" data-checkpoint="${checkpoint}" style="margin-left: 8px;">Start</button>
-      `;
-      
-      addedCollectionsHTML += buildRowHTML(escHtml(collectionName), `(${checkpoint}/${totalWords})`, data.words, addedBtns, progressHTML);
-    } else {
-
-      // 1. Define previewWords by taking the first 35 words of the collection
-      const previewWords = data.words.slice(0, 35);
-      
-      // 2. Generate the pills
-      let previewPills = previewWords.map(w => `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border-color: rgba(184,146,58,0.2); color: var(--text-dim); display: inline-block;">${escHtml(w)}</span>`).join('');
-      
-      if (data.words.length > 35) {
-        previewPills += `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border:none; color: var(--text-dim); display: inline-block;">...</span>`;
-      }
-      
-      const langTag = data.language || 'Unknown';
-      const levelTag = data.level || 'Unrated';
-      const langTagHTML = langTag !== 'Unknown' ? `<span class="archive-tag">${escHtml(langTag)}</span>` : '';
-      const levelTagHTML = levelTag !== 'Unrated' ? `<span class="archive-tag">${escHtml(levelTag)}</span>` : '';
-      const optTagHTML = data.optionalTag ? `<span class="archive-tag">${escHtml(data.optionalTag)}</span>` : '';
-
-      const publicCardHTML = `
-        <div class="setup-card public-collection-card" data-language="${langTag.toLowerCase()}" data-level="${levelTag.toLowerCase()}" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%; border: 0.5px solid rgba(184,146,58,0.15); background: rgba(255,255,255,0.02);">
-          <div>
-            <h3 style="font-family:'IM Fell English',serif; color:var(--vellum); font-size:1.4rem; line-height: 1.2;">${escHtml(collectionName)}</h3>
-            <div class="lexicon-count" style="margin-top: 0.3rem; margin-bottom: 1rem;">(${totalWords} words)</div>
-            
-            <div class="scroll-pills-y hide-scrollbar mask-bottom">
-              ${previewPills}
-            </div>
-            
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
-            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-              ${langTagHTML}
-              ${levelTagHTML}
-              ${optTagHTML}
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <button class="icon-btn-add add-collection-btn" data-id="${colId}" title="Add to Library">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              </button>
-              <button class="small-start-btn start-public-new-btn" data-id="${colId}" title="Add and Start Learning">Start</button>
-            </div>
-          </div>
-        </div>
-      `;
-      // 2. Append to our string instead of the DOM
-      unsubscribedCollectionsHTML += publicCardHTML;
-    }
-  });
-
-  // 3. Update the DOM exactly once. This overwrites the loader and prevents duplicates!
-  grid.innerHTML = unsubscribedCollectionsHTML;
-  // 5. Inject Personal Lexicon + Added Collections combined
-  const container = document.getElementById('personal-lexicon-container');
-  container.innerHTML = personalHTML + addedCollectionsHTML;
-
-  // 6. Toggle Visibility of the Entire Personal Lexicon Section
-  const personalCard = document.getElementById('personal-lexicon-card');
-  const hasActiveContent = unlearned.length > 0 || learned.length > 0 || addedCollectionsHTML.length > 0;
-  
-  if (hasActiveContent) {
-    personalCard.classList.remove('hidden');
-  } else {
-    personalCard.classList.add('hidden');
-  }
- 
-  // 7. Clean up the border and spacing if the container below the title is empty
-  const headerWrap = document.getElementById('lexicon-header-wrap');
-  const lexiconContainer = document.getElementById('personal-lexicon-container');
-  
-  if (unlearned.length === 0 && addedCollectionsHTML.length === 0) {
-    headerWrap.style.borderBottom = 'none';
-    headerWrap.style.paddingBottom = '0';
-    lexiconContainer.style.display = 'none'; 
-  } else {
-    headerWrap.style.borderBottom = '0.5px solid rgba(184,146,58,0.25)';
-    headerWrap.style.paddingBottom = '0.5rem';
-    lexiconContainer.style.display = 'block';
-  }
-
-  // 8. Reattach all listeners to the freshly rendered HTML
-  attachPersonalListeners(learned, unlearned);
-  attachCollectionListeners();
-  
-  // Re-apply any active filters
-  filterArchives();
-  
-  // Initialize dynamic scroll masks and desktop swiping
-  initScrollMasks();
-  initDragToScroll();
-}
-
-function attachPersonalListeners(learned, unlearned) {
-  const container = document.getElementById('personal-lexicon-container');
-  const userRef = doc(db, "users", state.currentUser.uid);
-
-  // Mastered Tag Download
-  const masteredTagBtn = document.getElementById('download-mastered-tag');
-  if (masteredTagBtn) {
-    masteredTagBtn.addEventListener('click', () => {
-      triggerTextDownload('Aesop_Mastered_Words.txt', learned);
-    });
-    masteredTagBtn.addEventListener('mouseover', () => {
-      masteredTagBtn.style.color = 'var(--vellum)';
-      masteredTagBtn.style.background = 'rgba(255,255,255,0.08)';
-    });
-    masteredTagBtn.addEventListener('mouseout', () => {
-      masteredTagBtn.style.color = 'var(--text-dim)';
-      masteredTagBtn.style.background = 'rgba(255,255,255,0.03)';
-    });
-  }
-
-  // Download Row
-  container.querySelectorAll('.dl-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const type = btn.dataset.type;
-      const dataToDownload = type === 'Personal Queue' ? unlearned : learned;
-      triggerTextDownload(`Aesop_${type.replace(' ', '_')}_Words.txt`, dataToDownload);
-    });
-  });
-
-  // Clear Row
-  container.querySelectorAll('.clear-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const type = btn.dataset.type;
-      if(confirm(`Are you sure you want to permanently clear your ${type}?`)) {
-        const updateObj = type === 'Personal Queue' ? { unlearned: [] } : { learned: [] }; 
-        await updateDoc(userRef, updateObj);
-      }
-    });
-  });
-
-  // Start Personal Queue
-  container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-       document.getElementById('nav-setup-btn').classList.add('active-nav');
-       document.getElementById('nav-library-btn').classList.remove('active-nav');
-
-       state.activePublicCollection = null;
-       toggleVocabLock(false);
-       
-       const nextWords = unlearned.slice(0, 30);
-       const vocabTextarea = document.getElementById('vocab-textarea');
-       vocabTextarea.value = nextWords.join('\n');
-       parseVocabTextarea();
-       
-       document.getElementById('library-dashboard').classList.add('hidden');
-       document.getElementById('story').classList.add('hidden');
-       document.getElementById('setup').classList.remove('hidden');
-       document.getElementById('story-meta').classList.add('hidden');
-       document.getElementById('restart-btn').classList.add('hidden');
-    });
-  });
-}
-
-/* ── PUBLIC ARCHIVES FILTERING ── */
-function filterArchives() {
-  const langFilter = document.getElementById('filter-language').value.toLowerCase();
-  const levelFilter = document.getElementById('filter-level').value.toLowerCase();
-  
-  document.querySelectorAll('.public-collection-card').forEach(card => {
-    const cardLang = card.getAttribute('data-language');
-    const cardLevel = card.getAttribute('data-level');
-    
-    const matchesLang = langFilter === 'all' || cardLang === langFilter;
-    const matchesLevel = levelFilter === 'all' || cardLevel === levelFilter;
-    
-    card.style.display = (matchesLang && matchesLevel) ? 'flex' : 'none';
-  });
-}
-
-document.getElementById('filter-language').addEventListener('change', filterArchives);
-document.getElementById('filter-level').addEventListener('change', filterArchives);
-
-function attachCollectionListeners() {
-
-  // 1. Add & Start a Public Collection instantly (from the Note card)
-  document.querySelectorAll('.start-public-new-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      document.getElementById('nav-setup-btn').classList.add('active-nav');
-      document.getElementById('nav-library-btn').classList.remove('active-nav');
-      
-      const colId = e.currentTarget.dataset.id;
-      const userRef = doc(db, "users", state.currentUser.uid);
-      
-      if (!state.userData.publicProgress) state.userData.publicProgress = {};
-      state.userData.publicProgress[colId] = 0;
-      
-      setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true }).catch(err => console.error(err));
-      
-      const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
-      const allWords = cachedCol.data.words;
-      const colName = cachedCol.data.title || cachedCol.data.name || "Collection";
-      const nextWords = allWords.slice(0, 30);
-      
-      state.words = nextWords;
-      state.activePublicCollection = colId;
-      toggleVocabLock(true, colName); // LOCK
-
-      const vocabTextarea = document.getElementById('vocab-textarea');
-      vocabTextarea.value = nextWords.join('\n');
-      parseVocabTextarea(); 
-      
-      document.getElementById('library-dashboard').classList.add('hidden');
-      document.getElementById('setup').classList.remove('hidden');
-    });
-  });
-
-  // 2. Add a Public Collection (+)
-  document.querySelectorAll('.add-collection-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const colId = e.currentTarget.dataset.id;
-      const userRef = doc(db, "users", state.currentUser.uid);
-
-      if (!state.userData.publicProgress) state.userData.publicProgress = {};
-      state.userData.publicProgress[colId] = 0;
-      renderLibraryFromCache(); 
-
-      try {
-        await setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true });
-      } catch(err) {
-        console.error('Could not add collection:', err);
-        delete state.userData.publicProgress[colId];
-        renderLibraryFromCache();
-      }
-    });
-  });
-
-  // 3. Download an Added Collection
-  document.querySelectorAll('.dl-public-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const colId = e.currentTarget.dataset.id;
-      const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
-      if (cachedCol) {
-         triggerTextDownload(`Aesopus_${cachedCol.data.title.replace(/\s+/g, '_')}.txt`, cachedCol.data.words);
-      }
-    });
-  });
-
-  // 4. Remove an Added Collection (X)
-  document.querySelectorAll('.remove-collection-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const colId = e.currentTarget.dataset.id;
-      if(confirm('Remove this collection from your library?')) {
-         const userRef = doc(db, "users", state.currentUser.uid);
-         
-         const previousProgress = state.userData.publicProgress[colId];
-         delete state.userData.publicProgress[colId];
-         renderLibraryFromCache();
-
-         try {
-           await updateDoc(userRef, { [`publicProgress.${colId}`]: deleteField() });
-         } catch (err) {
-           state.userData.publicProgress[colId] = previousProgress;
-           renderLibraryFromCache();
-         }
-      }
-    });
-  });
-
-  // 5. Start an Added Collection
-  document.querySelectorAll('.start-collection-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      document.getElementById('nav-setup-btn').classList.add('active-nav');
-      document.getElementById('nav-library-btn').classList.remove('active-nav');
-
-      const colId = e.currentTarget.dataset.id;
-      const checkpoint = parseInt(e.currentTarget.dataset.checkpoint);
-      
-      const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
-      const allWords = cachedCol.data.words;
-      const colName = cachedCol.data.title || cachedCol.data.name || "Collection";
-      
-      const nextWords = allWords.slice(checkpoint, checkpoint + 30);
-      state.words = nextWords;
-      state.activePublicCollection = colId;
-      toggleVocabLock(true, colName); // LOCK
-
-      const vocabTextarea = document.getElementById('vocab-textarea');
-      vocabTextarea.value = nextWords.join('\n');
-      parseVocabTextarea(); 
-      
-      document.getElementById('library-dashboard').classList.add('hidden');
-      document.getElementById('setup').classList.remove('hidden');
-    });
-  });
-}
-/* ── Firebase ──────────────────────────────────────────────────── */
-const firebaseConfig = {
-  apiKey: "AIzaSyCLAxH6tbIWhIaa9Ah_wNmEfE4T-b3Ba2M",
-  authDomain: "aesop-1a933.firebaseapp.com",
-  projectId: "aesop-1a933",
-  storageBucket: "aesop-1a933.firebasestorage.app",
-  messagingSenderId: "159161013702",
-  appId: "1:159161013702:web:3df4bab84186d1b91c8ec7",
-  measurementId: "G-CBWV00GTK2"
-};
-
-const app  = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-try { getAnalytics(app); } catch(e) {}
-const auth = getAuth(app);
-
 
 /* ── App state ─────────────────────────────────────────────────── */
 const state = {
@@ -1363,8 +918,32 @@ const state = {
 const MAX_WORDS = 30;
 
 /* ════════════════════════════════════════════════════════════════
-   AUTH MODAL
+   AUTH MODAL & GATE KEEPER
 ════════════════════════════════════════════════════════════════ */
+function showAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  modal.classList.remove('hidden', 'fading');
+}
+
+function hideAuthModal() {
+  const modal = document.getElementById('auth-modal');
+  modal.classList.add('fading');
+  setTimeout(() => modal.classList.add('hidden'), 300);
+}
+
+document.getElementById('auth-close-btn').addEventListener('click', hideAuthModal);
+document.getElementById('topbar-login-btn').addEventListener('click', showAuthModal);
+document.getElementById('guest-lexicon-login-btn').addEventListener('click', showAuthModal);
+document.getElementById('settings-login-btn').addEventListener('click', showAuthModal);
+
+function requireAuth(callback) {
+  if (state.currentUser) {
+    callback();
+  } else {
+    showAuthModal();
+  }
+}
+
 let isSignup = false;
 let pendingUser = null; 
 
@@ -1428,181 +1007,496 @@ function hideResetScreen() {
 document.getElementById('auth-forgot-btn').addEventListener('click', showResetScreen);
 document.getElementById('auth-reset-back-btn').addEventListener('click', hideResetScreen);
 
-document.getElementById('auth-reset-send-btn').addEventListener('click', async () => {
-  const email = document.getElementById('auth-reset-email').value.trim();
-  const msgEl = document.getElementById('auth-reset-msg');
-  const sendBtn = document.getElementById('auth-reset-send-btn');
 
-  if (!email) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = 'Please enter your email address.'; return; }
+/* ════════════════════════════════════════════════════════════════
+   LIBRARY RENDERING (Guest & Authenticated)
+════════════════════════════════════════════════════════════════ */
+async function renderLibraryFromCache() {
+  const userData = state.userData || {};
+  const learned = userData.learned || [];
+  const unlearned = userData.unlearned || [];
+  const userProgress = userData.publicProgress || {};
 
-  sendBtn.disabled = true;
-  sendBtn.textContent = 'Sending…';
-  msgEl.textContent = '';
-
-  try {
-    await sendPasswordResetEmail(auth, email);
-    msgEl.style.color = 'var(--sage)';
-    msgEl.textContent = 'Reset link sent — check your inbox (and spam folder).';
-    sendBtn.textContent = 'Sent ✓';
-  } catch(err) {
-    const msgs = {
-      'auth/user-not-found':  'No account found with that email.',
-      'auth/invalid-email':   'Please enter a valid email address.',
-      'auth/too-many-requests': 'Too many attempts. Please wait a moment.',
-    };
-    msgEl.style.color = 'var(--rose)';
-    msgEl.textContent = msgs[err.code] || err.message.replace('Firebase: ', '');
-    sendBtn.disabled = false;
-    sendBtn.textContent = 'Send reset link';
-  }
-});
-
-document.getElementById('auth-reset-email').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('auth-reset-send-btn').click();
-});
-document.getElementById('vocab-file-upload').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  
-  const fileNameDisplay = document.getElementById('upload-file-name');
-  const uploadIcon = document.getElementById('upload-icon-label');
-
-  fileNameDisplay.textContent = "Reading...";
-  fileNameDisplay.style.color = "var(--text-dim)";
-  uploadIcon.style.color = "var(--gold)"; 
-
-  const reader = new FileReader();
-  
-  reader.onload = (event) => {
-    const text = event.target.result;
+  const buildRowHTML = (title, countText, wordsList, actionBtns, progressBarHTML = '') => {
+    const preview = wordsList.slice(0, 15); 
     
-    let newWords = text.split(/\r?\n|,/)
-                         .map(w => w.trim())
-                         .filter(w => w.length > 0);
-    
-    if (newWords.length === 0) {
-      fileNameDisplay.textContent = "File is empty";
-      fileNameDisplay.style.color = "var(--rose)";
-      state.uploadedWords = []; 
-      return;
+    let pillsHtml = preview.map(w => `<span class="lexicon-pill">${escHtml(w)}</span>`).join('');
+    if (wordsList.length > 15) {
+      pillsHtml += `<span class="lexicon-pill" style="border:none; padding: 2px 4px; color: var(--text-dim);">...</span>`;
     }
 
-    if (newWords.length > 100) {
-      newWords = newWords.slice(0, 100);
-    }
-
-    state.uploadedWords = newWords;
-      
-    fileNameDisplay.textContent = file.name + " (Ready)";
-    fileNameDisplay.style.color = "var(--sage)";
-    uploadIcon.style.color = "var(--sage)";
-    uploadIcon.style.opacity = "1";
-      
-    document.getElementById('vocab-textarea').value = '';
-    parseVocabTextarea(); 
+    return `
+      <div class="lexicon-row">
+        <div class="lexicon-header">
+          ${title} <span class="lexicon-count">${countText}</span>
+        </div>
+        <div class="lexicon-middle">
+          <div class="lexicon-pills-wrapper" style="flex: 1; min-width: 0;">
+            <div class="scroll-pills-x hide-scrollbar mask-right">
+              ${pillsHtml}
+            </div>
+          </div>
+          <div class="lexicon-actions">
+            ${actionBtns}
+          </div>
+        </div>
+        ${progressBarHTML}
+      </div>
+    `;
   };
+
+  const dlIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>`;
+  const xIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+
+  let personalHTML = '';
+  let addedCollectionsHTML = '';
+
+  if (state.currentUser) {
+    document.getElementById('guest-lexicon-prompt').classList.add('hidden');
+
+    if (unlearned.length > 0) {
+      const unlearnedBtns = `
+        <button class="lexicon-btn dl-btn" data-type="Personal Queue" title="Download .txt">${dlIcon}</button>
+        <button class="lexicon-btn clear-btn" data-type="Personal Queue" title="Clear list">${xIcon}</button>
+        <button class="small-start-btn start-unlearned-btn" style="margin-left: 8px;">Start</button>
+      `;
+      personalHTML = buildRowHTML('Personal Queue', `(${unlearned.length})`, unlearned, unlearnedBtns);
+    }
+
+    const masteredContainer = document.getElementById('mastered-header-container');
+    if (learned.length > 0) {
+      masteredContainer.innerHTML = `
+        <button id="download-mastered-tag" title="Download mastered words" style="font-family:'Inter',sans-serif; font-size:0.75rem; font-weight:500; color:var(--text-dim); background:rgba(255,255,255,0.03); border:0.5px solid rgba(255,255,255,0.1); border-radius:20px; padding:4px 12px; cursor:pointer; transition:all 0.2s;">
+          ↓ ${learned.length} item${learned.length === 1 ? '' : 's'} mastered
+        </button>
+      `;
+    } else {
+      masteredContainer.innerHTML = '';
+    }
+  } else {
+    document.getElementById('guest-lexicon-prompt').classList.remove('hidden');
+    document.getElementById('mastered-header-container').innerHTML = '';
+  }
+
+  if (!state.publicCollectionsCache) {
+    const publicSnap = await getDocs(collection(db, "public_collections"));
+    state.publicCollectionsCache = [];
+    publicSnap.forEach(docSnap => {
+      state.publicCollectionsCache.push({ id: docSnap.id, data: docSnap.data() });
+    });
+  }
+
+  const grid = document.getElementById('public-collections-grid');
+  let unsubscribedCollectionsHTML = ''; 
+
+  state.publicCollectionsCache.forEach(col => {
+    const data = col.data;
+    const colId = col.id;
+    const isAdded = state.currentUser && userProgress.hasOwnProperty(colId);
+    const checkpoint = isAdded ? userProgress[colId] : 0;
+    const totalWords = data.words.length;
+    const collectionName = data.title || data.name || data.Title || "Untitled Collection";
+    
+    if (isAdded) {
+      const pct = totalWords === 0 ? 0 : Math.round((checkpoint / totalWords) * 100);
+      const progressHTML = `
+        <div class="lexicon-progress-bg">
+          <div class="lexicon-progress-fill" style="width: ${pct}%"></div>
+        </div>`;
+      
+      const addedBtns = `
+        <button class="lexicon-btn dl-public-btn" data-id="${colId}" title="Download .txt">${dlIcon}</button>
+        <button class="lexicon-btn remove-collection-btn" data-id="${colId}" title="Remove collection">${xIcon}</button>
+        <button class="small-start-btn start-collection-btn" data-id="${colId}" data-checkpoint="${checkpoint}" style="margin-left: 8px;">Start</button>
+      `;
+      
+      addedCollectionsHTML += buildRowHTML(escHtml(collectionName), `(${checkpoint}/${totalWords})`, data.words, addedBtns, progressHTML);
+    } else {
+      const previewWords = data.words.slice(0, 35);
+      let previewPills = previewWords.map(w => `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border-color: rgba(184,146,58,0.2); color: var(--text-dim); display: inline-block;">${escHtml(w)}</span>`).join('');
+      if (data.words.length > 35) {
+        previewPills += `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border:none; color: var(--text-dim); display: inline-block;">...</span>`;
+      }
+      
+      const langTag = data.language || 'Unknown';
+      const levelTag = data.level || 'Unrated';
+      const langTagHTML = langTag !== 'Unknown' ? `<span class="archive-tag">${escHtml(langTag)}</span>` : '';
+      const levelTagHTML = levelTag !== 'Unrated' ? `<span class="archive-tag">${escHtml(levelTag)}</span>` : '';
+      const optTagHTML = data.optionalTag ? `<span class="archive-tag">${escHtml(data.optionalTag)}</span>` : '';
+
+      const publicCardHTML = `
+        <div class="setup-card public-collection-card" data-language="${langTag.toLowerCase()}" data-level="${levelTag.toLowerCase()}" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; height: 100%; border: 0.5px solid rgba(184,146,58,0.15); background: rgba(255,255,255,0.02);">
+          <div>
+            <h3 style="font-family:'IM Fell English',serif; color:var(--vellum); font-size:1.4rem; line-height: 1.2;">${escHtml(collectionName)}</h3>
+            <div class="lexicon-count" style="margin-top: 0.3rem; margin-bottom: 1rem;">(${totalWords} words)</div>
+            
+            <div class="scroll-pills-y hide-scrollbar mask-bottom">
+              ${previewPills}
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              ${langTagHTML}
+              ${levelTagHTML}
+              ${optTagHTML}
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="icon-btn-add add-collection-btn" data-id="${colId}" title="Add to Library">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+              <button class="small-start-btn start-public-new-btn" data-id="${colId}" title="Add and Start Learning">Start</button>
+            </div>
+          </div>
+        </div>
+      `;
+      unsubscribedCollectionsHTML += publicCardHTML;
+    }
+  });
+
+  grid.innerHTML = unsubscribedCollectionsHTML;
+
+  const container = document.getElementById('personal-lexicon-container');
+  container.innerHTML = personalHTML + addedCollectionsHTML;
+
+  const personalCard = document.getElementById('personal-lexicon-card');
+  const hasActiveContent = !state.currentUser || unlearned.length > 0 || learned.length > 0 || addedCollectionsHTML.length > 0;
   
-  reader.readAsText(file);
-});
+  if (hasActiveContent) {
+    personalCard.classList.remove('hidden');
+  } else {
+    personalCard.classList.add('hidden');
+  }
+ 
+  const headerWrap = document.getElementById('lexicon-header-wrap');
+  const lexiconContainer = document.getElementById('personal-lexicon-container');
+  
+  if (state.currentUser && unlearned.length === 0 && addedCollectionsHTML.length === 0) {
+    headerWrap.style.borderBottom = 'none';
+    headerWrap.style.paddingBottom = '0';
+    lexiconContainer.style.display = 'none'; 
+  } else {
+    headerWrap.style.borderBottom = '0.5px solid rgba(184,146,58,0.25)';
+    headerWrap.style.paddingBottom = '0.5rem';
+    lexiconContainer.style.display = 'block';
+  }
+
+  attachPersonalListeners(learned, unlearned);
+  attachCollectionListeners();
+  filterArchives();
+  initScrollMasks();
+  initDragToScroll();
+}
+
+function attachPersonalListeners(learned, unlearned) {
+  const container = document.getElementById('personal-lexicon-container');
+  if(!state.currentUser) return;
+  const userRef = doc(db, "users", state.currentUser.uid);
+
+  const masteredTagBtn = document.getElementById('download-mastered-tag');
+  if (masteredTagBtn) {
+    masteredTagBtn.addEventListener('click', () => {
+      triggerTextDownload('Aesop_Mastered_Words.txt', learned);
+    });
+    masteredTagBtn.addEventListener('mouseover', () => {
+      masteredTagBtn.style.color = 'var(--vellum)';
+      masteredTagBtn.style.background = 'rgba(255,255,255,0.08)';
+    });
+    masteredTagBtn.addEventListener('mouseout', () => {
+      masteredTagBtn.style.color = 'var(--text-dim)';
+      masteredTagBtn.style.background = 'rgba(255,255,255,0.03)';
+    });
+  }
+
+  container.querySelectorAll('.dl-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.type;
+      const dataToDownload = type === 'Personal Queue' ? unlearned : learned;
+      triggerTextDownload(`Aesop_${type.replace(' ', '_')}_Words.txt`, dataToDownload);
+    });
+  });
+
+  container.querySelectorAll('.clear-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const type = btn.dataset.type;
+      if(confirm(`Are you sure you want to permanently clear your ${type}?`)) {
+        const updateObj = type === 'Personal Queue' ? { unlearned: [] } : { learned: [] }; 
+        await setDoc(userRef, updateObj, { merge: true });
+      }
+    });
+  });
+
+  container.querySelectorAll('.start-unlearned-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+       document.getElementById('nav-setup-btn').classList.add('active-nav');
+       document.getElementById('nav-library-btn').classList.remove('active-nav');
+       document.getElementById('nav-settings-btn').classList.remove('active-nav');
+
+       state.activePublicCollection = null;
+       toggleVocabLock(false);
+       
+       const nextWords = unlearned.slice(0, 30);
+       const vocabTextarea = document.getElementById('vocab-textarea');
+       vocabTextarea.value = nextWords.join('\n');
+       parseVocabTextarea();
+       
+       document.getElementById('library-dashboard').classList.add('hidden');
+       document.getElementById('story').classList.add('hidden');
+       document.getElementById('settings-page').classList.add('hidden');
+       document.getElementById('setup').classList.remove('hidden');
+       document.getElementById('story-meta').classList.add('hidden');
+       document.getElementById('restart-btn').classList.add('hidden');
+    });
+  });
+}
+
+function filterArchives() {
+  const langFilter = document.getElementById('filter-language').value.toLowerCase();
+  const levelFilter = document.getElementById('filter-level').value.toLowerCase();
+  
+  document.querySelectorAll('.public-collection-card').forEach(card => {
+    const cardLang = card.getAttribute('data-language');
+    const cardLevel = card.getAttribute('data-level');
+    const matchesLang = langFilter === 'all' || cardLang === langFilter;
+    const matchesLevel = levelFilter === 'all' || cardLevel === levelFilter;
+    card.style.display = (matchesLang && matchesLevel) ? 'flex' : 'none';
+  });
+}
+document.getElementById('filter-language').addEventListener('change', filterArchives);
+document.getElementById('filter-level').addEventListener('change', filterArchives);
+
+function attachCollectionListeners() {
+  document.querySelectorAll('.start-public-new-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      requireAuth(async () => {
+        document.getElementById('nav-setup-btn').classList.add('active-nav');
+        document.getElementById('nav-library-btn').classList.remove('active-nav');
+        document.getElementById('nav-settings-btn').classList.remove('active-nav');
+        
+        const colId = e.currentTarget.dataset.id;
+        const userRef = doc(db, "users", state.currentUser.uid);
+        
+        if (!state.userData.publicProgress) state.userData.publicProgress = {};
+        state.userData.publicProgress[colId] = 0;
+        
+        setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true }).catch(err => console.error(err));
+        
+        const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
+        const allWords = cachedCol.data.words;
+        const colName = cachedCol.data.title || cachedCol.data.name || "Collection";
+        const nextWords = allWords.slice(0, 30);
+        
+        state.words = nextWords;
+        state.activePublicCollection = colId;
+        toggleVocabLock(true, colName);
+
+        const vocabTextarea = document.getElementById('vocab-textarea');
+        vocabTextarea.value = nextWords.join('\n');
+        parseVocabTextarea(); 
+        
+        document.getElementById('library-dashboard').classList.add('hidden');
+        document.getElementById('setup').classList.remove('hidden');
+      });
+    });
+  });
+
+  document.querySelectorAll('.add-collection-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      requireAuth(async () => {
+        const colId = e.currentTarget.dataset.id;
+        const userRef = doc(db, "users", state.currentUser.uid);
+        if (!state.userData.publicProgress) state.userData.publicProgress = {};
+        state.userData.publicProgress[colId] = 0;
+        renderLibraryFromCache(); 
+
+        try {
+          await setDoc(userRef, { [`publicProgress.${colId}`]: 0 }, { merge: true });
+        } catch(err) {
+          console.error('Could not add collection:', err);
+          delete state.userData.publicProgress[colId];
+          renderLibraryFromCache();
+        }
+      });
+    });
+  });
+
+  document.querySelectorAll('.dl-public-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const colId = e.currentTarget.dataset.id;
+      const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
+      if (cachedCol) {
+         triggerTextDownload(`Aesopus_${cachedCol.data.title.replace(/\s+/g, '_')}.txt`, cachedCol.data.words);
+      }
+    });
+  });
+
+ document.querySelectorAll('.remove-collection-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const colId = e.currentTarget.dataset.id;
+      if(confirm('Remove this collection from your library?')) {
+         const userRef = doc(db, "users", state.currentUser.uid);
+         const previousProgress = state.userData.publicProgress[colId];
+         
+         delete state.userData.publicProgress[colId];
+         renderLibraryFromCache();
+
+         try {
+           // CHANGE this line to use updateDoc instead of setDoc
+           await updateDoc(userRef, { [`publicProgress.${colId}`]: deleteField() });
+         } catch (err) {
+           console.error("Failed to delete collection:", err); // Added error logging
+           state.userData.publicProgress[colId] = previousProgress;
+           renderLibraryFromCache();
+         }
+      }
+    });
+  });
+
+  document.querySelectorAll('.start-collection-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      document.getElementById('nav-setup-btn').classList.add('active-nav');
+      document.getElementById('nav-library-btn').classList.remove('active-nav');
+      document.getElementById('nav-settings-btn').classList.remove('active-nav');
+
+      const colId = e.currentTarget.dataset.id;
+      const checkpoint = parseInt(e.currentTarget.dataset.checkpoint);
+      
+      const cachedCol = state.publicCollectionsCache.find(c => c.id === colId);
+      const allWords = cachedCol.data.words;
+      const colName = cachedCol.data.title || cachedCol.data.name || "Collection";
+      
+      const nextWords = allWords.slice(checkpoint, checkpoint + 30);
+      state.words = nextWords;
+      state.activePublicCollection = colId;
+      toggleVocabLock(true, colName);
+
+      const vocabTextarea = document.getElementById('vocab-textarea');
+      vocabTextarea.value = nextWords.join('\n');
+      parseVocabTextarea(); 
+      
+      document.getElementById('library-dashboard').classList.add('hidden');
+      document.getElementById('setup').classList.remove('hidden');
+    });
+  });
+}
+
+/* ── Firebase ──────────────────────────────────────────────────── */
+const firebaseConfig = {
+  apiKey: "AIzaSyCLAxH6tbIWhIaa9Ah_wNmEfE4T-b3Ba2M",
+  authDomain: "aesop-1a933.firebaseapp.com",
+  projectId: "aesop-1a933",
+  storageBucket: "aesop-1a933.firebasestorage.app",
+  messagingSenderId: "159161013702",
+  appId: "1:159161013702:web:3df4bab84186d1b91c8ec7",
+  measurementId: "G-CBWV00GTK2"
+};
+
+const app  = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+try { getAnalytics(app); } catch(e) {}
+const auth = getAuth(app);
+
 
 /* ════════════════════════════════════════════════════════════════
    GENERATE WORDLIST (AI-powered, one-time per session)
 ════════════════════════════════════════════════════════════════ */
-document.getElementById('generate-wordlist-btn').addEventListener('click', async () => {
-  if (state.generateUsed) return; 
+document.getElementById('generate-wordlist-btn').addEventListener('click', () => {
+  requireAuth(async () => {
+    if (state.generateUsed) return; 
 
-  const btn = document.getElementById('generate-wordlist-btn');
-  const ta  = document.getElementById('vocab-textarea');
-  const targetLang = document.getElementById('target-lang').value;
-  const nativeLang = document.getElementById('native-lang').value;
-  const currentText = ta.value.trim();
+    const btn = document.getElementById('generate-wordlist-btn');
+    const ta  = document.getElementById('vocab-textarea');
+    const targetLang = document.getElementById('target-lang').value;
+    const nativeLang = document.getElementById('native-lang').value;
+    const currentText = ta.value.trim();
 
-  if (!currentText) {
-    setVocabStatus('warn', 'Type an idea or paste a foreign-language list first', 0);
-    return;
-  }
-
-  const systemPrompt = `You are a vocabulary list generator for a language learning app called Aesopus.
-The learner's target language is ${targetLang} and their native language is ${nativeLang}.
-
-You will receive either:
-(A) A general learning topic or idea written in ${nativeLang} (e.g. "I want to learn how to cook" or "kitchen vocabulary").
-(B) A list of words already in a language other than ${targetLang} that the user wants translated into ${targetLang}.
-
-Your task:
-- If (A): generate a focused list of 15-25 useful ${targetLang} vocabulary words or short phrases related to that topic.
-- If (B): translate every word/phrase in the list into ${targetLang}.
-
-STRICT OUTPUT FORMAT - respond with ONLY a plain newline-separated word list, one entry per line.
-No numbering, no bullet points, no extra text, no explanations, no markdown.
-Each line is a single ${targetLang} word or short phrase.
-Do not include any line that is not a vocabulary item.`;
-
-  state.generateUsed = true;
-  btn.disabled = true;
-  btn.classList.add('loading');
-  btn.textContent = '\u2736 Generating\u2026';
-  setVocabStatus('idle', 'asking the AI\u2026', 0);
-
-  try {
-    const raw = await callAI(systemPrompt, currentText, 150, true);
-
-    const lines = raw
-      .split(/\r?\n/)
-      .map(l => l.replace(/^[\s\-\*\d\.\)]+/, '').trim())
-      .filter(l => l.length > 0 && l.length < 80);
-
-    if (lines.length === 0) throw new Error('The AI returned an empty list — try again.');
-
-    ta.value = lines.join('\n');
-    parseVocabTextarea();
-
-    if (state.currentUser && !state.activePublicCollection) {
-      try {
-        const userRef = doc(db, "users", state.currentUser.uid);
-        const snap = await getDoc(userRef);
-        const existing = snap.exists() ? (snap.data().unlearned || []) : [];
-        const merged = [...new Set([...lines, ...existing])];
-        await setDoc(userRef, { unlearned: merged }, { merge: true });
-      } catch(saveErr) {
-        console.warn('Could not auto-save generated list to Firebase:', saveErr);
-      }
+    if (!currentText) {
+      setVocabStatus('warn', 'Type an idea or paste a foreign-language list first', 0);
+      return;
     }
 
-    btn.classList.remove('loading');
-    btn.classList.add('used');
-    btn.textContent = '\u2736 Generate Wordlist';
-    btn.title = 'Already used \u2014 you can still edit the list below';
+    const systemPrompt = `You are a vocabulary list generator for a language learning app called Aesopus.
+  The learner's target language is ${targetLang} and their native language is ${nativeLang}.
 
-  } catch(err) {
-    state.generateUsed = false;
-    btn.disabled = false;
-    btn.classList.remove('loading');
-    btn.textContent = '\u2736 Generate Wordlist';
-    setVocabStatus('err', 'AI error \u2014 ' + err.message.slice(0, 60), state.words.length);
-  }
+  You will receive either:
+  (A) A general learning topic or idea written in ${nativeLang} (e.g. "I want to learn how to cook" or "kitchen vocabulary").
+  (B) A list of words already in a language other than ${targetLang} that the user wants translated into ${targetLang}.
+
+  Your task:
+  - If (A): generate a focused list of 15-25 useful ${targetLang} vocabulary words or short phrases related to that topic.
+  - If (B): translate every word/phrase in the list into ${targetLang}.
+
+  STRICT OUTPUT FORMAT - respond with ONLY a plain newline-separated word list, one entry per line.
+  No numbering, no bullet points, no extra text, no explanations, no markdown.
+  Each line is a single ${targetLang} word or short phrase.
+  Do not include any line that is not a vocabulary item.`;
+
+    state.generateUsed = true;
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btn.textContent = '\u2736 Generating\u2026';
+    setVocabStatus('idle', 'asking the AI\u2026', 0);
+
+    try {
+      const raw = await callAI(systemPrompt, currentText, 150, true);
+
+      const lines = raw
+        .split(/\r?\n/)
+        .map(l => l.replace(/^[\s\-\*\d\.\)]+/, '').trim())
+        .filter(l => l.length > 0 && l.length < 80);
+
+      if (lines.length === 0) throw new Error('The AI returned an empty list — try again.');
+
+      ta.value = lines.join('\n');
+      parseVocabTextarea();
+
+      if (state.currentUser && !state.activePublicCollection) {
+        try {
+          const userRef = doc(db, "users", state.currentUser.uid);
+          const snap = await getDoc(userRef);
+          const existing = snap.exists() ? (snap.data().unlearned || []) : [];
+          const merged = [...new Set([...lines, ...existing])];
+          await setDoc(userRef, { unlearned: merged }, { merge: true });
+        } catch(saveErr) {
+          console.warn('Could not auto-save generated list to Firebase:', saveErr);
+        }
+      }
+
+      btn.classList.remove('loading');
+      btn.classList.add('used');
+      btn.textContent = '\u2736 Generate Wordlist';
+      btn.title = 'Already used \u2014 you can still edit the list below';
+
+    } catch(err) {
+      state.generateUsed = false;
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.textContent = '\u2736 Generate Wordlist';
+      setVocabStatus('err', 'AI error \u2014 ' + err.message.slice(0, 60), state.words.length);
+    }
+  });
 });
 
-const resendBtn = document.getElementById('auth-resend-btn');
-let resendCooldown = 0;
-resendBtn.addEventListener('click', async () => {
-  if (!pendingUser || resendCooldown > 0) return;
+/* ════════════════════════════════════════════════════════════════
+   AUTH OBSERVER & NAVIGATION
+════════════════════════════════════════════════════════════════ */
+document.getElementById('auth-reset-send-btn').addEventListener('click', async () => {
+  const email = document.getElementById('auth-reset-email').value.trim();
+  const msgEl = document.getElementById('auth-reset-msg');
+  const sendBtn = document.getElementById('auth-reset-send-btn');
+  if (!email) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = 'Please enter your email address.'; return; }
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Sending…';
+  msgEl.textContent = '';
   try {
-    await sendEmailVerification(pendingUser);
-    authInfo.textContent = 'Verification email resent.';
-    resendBtn.disabled = true;
-    resendCooldown = 60;
-    const interval = setInterval(() => {
-      resendCooldown--;
-      resendBtn.textContent = `Resend (${resendCooldown}s)`;
-      if (resendCooldown <= 0) {
-        clearInterval(interval);
-        resendBtn.disabled = false;
-        resendBtn.textContent = 'Resend verification email';
-      }
-    }, 1000);
-  } catch(e) {
-    authInfo.textContent = 'Could not resend — try again shortly.';
+    await sendPasswordResetEmail(auth, email);
+    msgEl.style.color = 'var(--sage)';
+    msgEl.textContent = 'Reset link sent — check your inbox.';
+    sendBtn.textContent = 'Sent ✓';
+  } catch(err) {
+    msgEl.style.color = 'var(--rose)';
+    msgEl.textContent = err.message.replace('Firebase: ', '');
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send reset link';
   }
 });
 
@@ -1619,7 +1513,6 @@ submitBtn.addEventListener('click', async () => {
     if (isSignup) {
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
       pendingUser = cred.user;
-      
       authEmail.value = ''; authPass.value = ''; authConfirm.value = '';
       showVerifyScreen(email);
       await signOut(auth);
@@ -1635,17 +1528,7 @@ submitBtn.addEventListener('click', async () => {
       }
     }
   } catch(err) {
-    const msgs = {
-      'auth/user-not-found':       'No account found with that email.',
-      'auth/wrong-password':       'Incorrect password.',
-      'auth/invalid-credential':   'Incorrect email or password.',
-      'auth/email-already-in-use': 'An account with this email already exists.',
-      'auth/invalid-email':        'Please enter a valid email address.',
-      'auth/weak-password':        'Password must be at least 6 characters.',
-      'auth/too-many-requests':    'Too many attempts. Please wait a moment.',
-      'auth/configuration-not-found': 'Auth not configured — enable Email/Password in the Firebase Console.',
-    };
-    authError.textContent = msgs[err.code] || err.message.replace('Firebase: ','');
+    authError.textContent = err.message.replace('Firebase: ','');
   }
   submitBtn.disabled = false;
 });
@@ -1653,7 +1536,16 @@ submitBtn.addEventListener('click', async () => {
 [authEmail, authPass, authConfirm].forEach(el =>
   el.addEventListener('keydown', e => { if (e.key === 'Enter') submitBtn.click(); })
 );
+
 let libraryUnsubscribe = null;
+let quotaUnsubscribe = null;
+
+function updateSettingsStats() {
+  if (state.currentUser) {
+    document.getElementById('stat-words-learned').textContent = (state.userData.learned || []).length;
+    document.getElementById('stat-total-stories').textContent = state.userData.totalStories || 0;
+  }
+}
 
 setPersistence(auth, browserLocalPersistence)
   .then(() => {
@@ -1667,84 +1559,167 @@ setPersistence(auth, browserLocalPersistence)
           return;
         }
         state.currentUser = user;
+        hideAuthModal();
 
-        const modal = document.getElementById('auth-modal');
-        modal.classList.add('fading');
-        setTimeout(() => modal.classList.add('hidden'), 300);
-        
-        document.getElementById('topbar').classList.remove('hidden');
-        document.getElementById('setup').classList.remove('hidden');
-        document.getElementById('library-dashboard').classList.add('hidden');
-
-        document.getElementById('nav-setup-btn').classList.add('active-nav');
-        document.getElementById('nav-library-btn').classList.remove('active-nav');
+        document.getElementById('topbar-login-btn').classList.add('hidden');
+        document.getElementById('topbar-logout-btn').classList.remove('hidden');
+        document.getElementById('settings-stats-guest').classList.add('hidden');
+        document.getElementById('settings-stats-user').classList.remove('hidden');
 
         const userRef = doc(db, "users", user.uid);
         if (libraryUnsubscribe) libraryUnsubscribe();
-          libraryUnsubscribe = onSnapshot(userRef, (docSnap) => {
-            state.userData = docSnap.data() || {};
-            renderLibraryFromCache();
-          });
+        libraryUnsubscribe = onSnapshot(userRef, (docSnap) => {
+          state.userData = docSnap.data() || {};
+          renderLibraryFromCache();
+          updateSettingsStats();
 
-      } else {
+          if (state.userData.targetLang) {
+            document.getElementById('target-lang').value = state.userData.targetLang;
+            document.getElementById('summary-lang').textContent = state.userData.targetLang;
+            state.targetLang = state.userData.targetLang;
+          }
+          if (state.userData.nativeLang) {
+            document.getElementById('native-lang').value = state.userData.nativeLang;
+            state.nativeLang = state.userData.nativeLang;
+          }
+          if (state.userData.apiKey && document.activeElement !== document.getElementById('api-key')) {
+            document.getElementById('api-key').value = state.userData.apiKey;
+            state.apiKey = state.userData.apiKey;
+          }
+          if (state.userData.provider) {
+            state.provider = state.userData.provider;
+            updateApiUI(state.provider);
+          }
+        });
+
+        // Track user dynamic cloud compute limit fields
+        const quotaRef = doc(db, "quotas", user.uid);
+       if (quotaUnsubscribe) quotaUnsubscribe();
+    if (quotaUnsubscribe) quotaUnsubscribe();
+    quotaUnsubscribe = onSnapshot(quotaRef, (docSnap) => {
+      const quotaData = docSnap.data() || {};
+      const today = new Date().toISOString().slice(0,10);
+      const calls = quotaData.date === today ? (quotaData.calls || 0) : 0;
+      const wordlists = quotaData.date === today ? (quotaData.wordlists || 0) : 0;
+
+      // Cap at limits so the bar doesn't break if they overshoot
+      const scenesUsed = Math.min(50, calls);
+      const wordlistsUsed = Math.min(2, wordlists);
+
+      // 1. Update text to show USED / TOTAL
+      document.getElementById('stat-stories-left').textContent = `${scenesUsed} / 50`;
+      document.getElementById('stat-wordlists-left').textContent = `${wordlistsUsed} / 2`;
+
+      // 2. Fills the bar based on usage (left to right)
+      const pctScenes = Math.round((scenesUsed / 50) * 100);
+      const fillStories = document.getElementById('limit-bar-stories');
+      if (fillStories) {
+        fillStories.style.width = `${pctScenes}%`;
+        fillStories.classList.toggle('danger', scenesUsed >= 45); // Turns red when almost out
+      }
+
+      const pctWordlists = Math.round((wordlistsUsed / 2) * 100);
+      const fillWordlists = document.getElementById('limit-bar-wordlists');
+      if (fillWordlists) {
+        fillWordlists.style.width = `${pctWordlists}%`;
+        fillWordlists.classList.toggle('danger', wordlistsUsed >= 2); // Turns red when fully used
+      }
+    });
+    } else {
         cachedToken = null;
         tokenExpiry = 0;
         state.currentUser = null;
-        const modal = document.getElementById('auth-modal');
+        state.userData = {};
+        
+        document.getElementById('topbar-login-btn').classList.remove('hidden');
+        document.getElementById('topbar-logout-btn').classList.add('hidden');
+        document.getElementById('settings-stats-guest').classList.remove('hidden');
+        document.getElementById('settings-stats-user').classList.add('hidden');
+        
         if (libraryUnsubscribe) { libraryUnsubscribe(); libraryUnsubscribe = null; }
-        if (!verifyWrap.classList.contains('hidden')) return;
-        if (!resetWrap.classList.contains('hidden')) return;
+        if (quotaUnsubscribe) { quotaUnsubscribe(); quotaUnsubscribe = null; }
         
-        modal.classList.remove('hidden','fading');
-        document.getElementById('topbar').classList.add('hidden');
-        document.getElementById('setup').classList.add('hidden');
-        document.getElementById('story').classList.add('hidden');
-        document.getElementById('library-dashboard').classList.add('hidden');
-        
-        document.getElementById('story-meta').classList.add('hidden');
-        document.getElementById('restart-btn').classList.add('hidden');
-        document.getElementById('nav-library-btn').classList.remove('hidden');
-        document.getElementById('nav-setup-btn').classList.remove('hidden');
-        state.wordsSeenSet = new Set();
-        state.scene = 0;
+        document.getElementById('stat-stories-left').textContent = "20 / 20";
+        document.getElementById('stat-wordlists-left').textContent = "2 / 2";
+        const fill = document.getElementById('limit-bar-fill');
+        if (fill) fill.style.width = "100%";
+
+        renderLibraryFromCache();
       }
     });
-  })
-  .catch((error) => {
-    console.error("Error setting persistence:", error);
   });
-document.getElementById('topbar-logout-btn').addEventListener('click', () => signOut(auth));
-document.getElementById('nav-library-btn').addEventListener('click', () => {
+
+const handleLogoutAction = () => {
+  signOut(auth);
+  switchNav('nav-setup-btn');
+  document.getElementById('setup').classList.remove('hidden');
+};
+document.getElementById('topbar-logout-btn').addEventListener('click', handleLogoutAction);
+
+// Navigation Handlers
+function switchNav(activeId) {
+  ['nav-library-btn', 'nav-setup-btn', 'nav-settings-btn'].forEach(id => {
+    document.getElementById(id).classList.remove('active-nav');
+  });
+  if (activeId) {
+    document.getElementById(activeId).classList.add('active-nav');
+  }
+  
+  document.getElementById('library-dashboard').classList.add('hidden');
   document.getElementById('setup').classList.add('hidden');
+  document.getElementById('settings-page').classList.add('hidden');
   document.getElementById('story').classList.add('hidden');
+  document.getElementById('story-meta').classList.add('hidden');
+  document.getElementById('restart-btn').classList.add('hidden');
+}
+
+document.getElementById('nav-library-btn').addEventListener('click', () => {
+  switchNav('nav-library-btn');
   document.getElementById('library-dashboard').classList.remove('hidden');
-  document.getElementById('nav-library-btn').classList.add('active-nav');
-  document.getElementById('nav-setup-btn').classList.remove('active-nav');
   renderLibraryFromCache();
 });
 document.getElementById('nav-setup-btn').addEventListener('click', () => {
-  document.getElementById('library-dashboard').classList.add('hidden');
-  document.getElementById('story').classList.add('hidden');
+  switchNav('nav-setup-btn');
   showSetupScreen();
-  document.getElementById('vocab-textarea').value = '';
-  parseVocabTextarea();
-  state.generateUsed = false;
-  const genBtn = document.getElementById('generate-wordlist-btn');
-  genBtn.disabled = false;
-  genBtn.classList.remove('used', 'loading');
-  genBtn.textContent = '\u2736 Generate Wordlist';
-  genBtn.title = 'Generate a wordlist from your idea or translate a foreign list';
+});
+document.getElementById('nav-settings-btn').addEventListener('click', () => {
+  switchNav('nav-settings-btn');
+  document.getElementById('settings-page').classList.remove('hidden');
+  updateSettingsStats();
 });
 
+// Real-Time field modification pipeline integration handlers
+document.getElementById('target-lang').addEventListener('change', async (e) => {
+  state.targetLang = e.target.value;
+  document.getElementById('summary-lang').textContent = e.target.value;
+  if (state.currentUser) {
+    await setDoc(doc(db, "users", state.currentUser.uid), { targetLang: e.target.value }, { merge: true });
+  }
+});
+
+document.getElementById('native-lang').addEventListener('change', async (e) => {
+  state.nativeLang = e.target.value;
+  if (state.currentUser) {
+    await setDoc(doc(db, "users", state.currentUser.uid), { nativeLang: e.target.value }, { merge: true });
+  }
+});
+
+document.getElementById('api-key').addEventListener('change', async (e) => {
+  state.apiKey = e.target.value.trim();
+  if (state.currentUser) {
+    await setDoc(doc(db, "users", state.currentUser.uid), { apiKey: state.apiKey }, { merge: true });
+  }
+});
+
+
 /* ════════════════════════════════════════════════════════════════
-   API PROVIDER TOGGLE
+   API PROVIDER TOGGLE (Now in Settings)
 ════════════════════════════════════════════════════════════════ */
 function updateApiUI(provider) {
   state.provider = provider;
-
-  const wrap       = document.getElementById('provider-toggle-wrap');
-  const logoG      = document.getElementById('logo-gemini');
-  const logoO      = document.getElementById('logo-openai');
+  const wrap = document.getElementById('provider-toggle-wrap');
+  const logoG = document.getElementById('logo-gemini');
+  const logoO = document.getElementById('logo-openai');
 
   if (provider === 'gemini') {
     wrap.classList.remove('openai-active');
@@ -1756,29 +1731,31 @@ function updateApiUI(provider) {
     logoO.className = 'provider-logo openai-logo logo-active';
   }
 
-  const inp       = document.getElementById('api-key');
-  const hint      = document.getElementById('api-hint');
-  const linkNote  = document.getElementById('api-link-note');
+  const inp = document.getElementById('api-key');
+  const hint = document.getElementById('api-hint');
+  const linkNote = document.getElementById('api-link-note');
   const summaryAi = document.getElementById('summary-ai');
 
   if (provider === 'gemini') {
     inp.placeholder = 'AIza… or AQ… (optional — free tier works without a key)';
     hint.textContent = 'Please put your own API key.';
     linkNote.innerHTML = 'Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a>';
-    summaryAi.textContent = 'Gemini 2.0 Flash';
+    if(summaryAi) summaryAi.textContent = 'Gemini 2.0 Flash';
   } else {
     inp.placeholder = 'sk-… (required for OpenAI)';
     hint.textContent = 'It is great if you use your own OpenAI key for best performance, but it is not required.';
     linkNote.innerHTML = 'Get a key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>';
-    summaryAi.textContent = 'GPT-4o';
+    if(summaryAi) summaryAi.textContent = 'GPT-4o';
   }
-  inp.value = '';
 }
 
-document.getElementById('provider-toggle-wrap').addEventListener('click', () => {
-  updateApiUI(state.provider === 'gemini' ? 'openai' : 'gemini');
+document.getElementById('provider-toggle-wrap').addEventListener('click', async () => {
+  const nextProvider = state.provider === 'gemini' ? 'openai' : 'gemini';
+  updateApiUI(nextProvider);
+  if (state.currentUser) {
+    await setDoc(doc(db, "users", state.currentUser.uid), { provider: nextProvider }, { merge: true });
+  }
 });
-
 updateApiUI('openai');
 
 /* ════════════════════════════════════════════════════════════════
@@ -1791,10 +1768,6 @@ document.querySelectorAll('.level-pill').forEach(btn => {
     state.level = btn.dataset.level;
     document.getElementById('summary-level').textContent = btn.dataset.level.charAt(0).toUpperCase()+btn.dataset.level.slice(1);
   });
-});
-
-document.getElementById('target-lang').addEventListener('change', e => {
-  document.getElementById('summary-lang').textContent = e.target.value;
 });
 
 const vocabTextarea = document.getElementById('vocab-textarea');
@@ -1812,7 +1785,6 @@ function parseVocabTextarea() {
     updateSummaryWords();
     return;
   }
-
   const raw_items = raw.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
   const seen = new Map();
   const unique = [];
@@ -1829,16 +1801,11 @@ function parseVocabTextarea() {
     trimmed = unique.length - MAX_WORDS;
     final = unique.slice(0, MAX_WORDS);
   }
-
   state.words = final;
 
-  if (trimmed > 0) {
-    setVocabStatus('err', `max ${MAX_WORDS} — ${trimmed} trimmed`, final.length);
-  } else if (dupCount > 0) {
-    setVocabStatus('warn', `${dupCount} duplicate${dupCount>1?'s':''} ignored`, final.length);
-  } else {
-    setVocabStatus('ok', `${final.length} entr${final.length===1?'y':'ies'}`, final.length);
-  }
+  if (trimmed > 0) setVocabStatus('err', `max ${MAX_WORDS} — ${trimmed} trimmed`, final.length);
+  else if (dupCount > 0) setVocabStatus('warn', `${dupCount} duplicate${dupCount>1?'s':''} ignored`, final.length);
+  else setVocabStatus('ok', `${final.length} entr${final.length===1?'y':'ies'}`, final.length);
   updateSummaryWords();
 }
 
@@ -1853,16 +1820,13 @@ function updateSummaryWords() {
     state.words.length === 0 ? '0 entries' : `${state.words.length} entr${state.words.length===1?'y':'ies'}`;
 }
 
-document.getElementById('begin-btn').addEventListener('click', beginStory);
+document.getElementById('begin-btn').addEventListener('click', () => {
+  requireAuth(beginStory);
+});
+
 async function beginStory() {
-  const userKey = document.getElementById('api-key').value.trim();
   const errEl = document.getElementById('setup-error');
   errEl.textContent = '';
-  
-  if (!state.currentUser) { 
-    errEl.textContent = 'Please sign in first.'; 
-    return; 
-  }
 
   const manualInput = document.getElementById('vocab-textarea').value.trim();
   let manualWords = [];
@@ -1885,7 +1849,6 @@ async function beginStory() {
       return;
     }
 
-    // Persist any newly added words back to Firebase
     if (state.currentUser && (manualWords.length > 0 || state.uploadedWords.length > 0)) {
       try {
         const userRef = doc(db, "users", state.currentUser.uid);
@@ -1894,7 +1857,6 @@ async function beginStory() {
         console.warn("Could not persist vocab to Firebase:", err);
       }
     }
-
     state.uploadedWords = [];
     state.words = combinedPool.slice(0, 30);
   }
@@ -1906,23 +1868,26 @@ async function beginStory() {
   state.rollingSummary = '';
   state.wordsSeenSet = new Set();
 
+  switchNav(''); // Run this first to clear the board
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('story').classList.remove('hidden');
   document.getElementById('story-meta').classList.remove('hidden');
-  
   document.getElementById('restart-btn').classList.remove('hidden');
-  document.getElementById('nav-library-btn').classList.add('hidden');
-  document.getElementById('nav-setup-btn').classList.add('hidden');
+  
+  if(state.currentUser) {
+    try {
+      const userRef = doc(db, "users", state.currentUser.uid);
+      await setDoc(userRef, { totalStories: increment(1) }, { merge: true });
+    } catch(e) {}
+  }
   
   buildWordTracker();
   generateScene();
 }
+
 function showSetupScreen() {
   document.getElementById('story').classList.add('hidden');
   document.getElementById('setup').classList.remove('hidden');
-
-  document.getElementById('nav-setup-btn').classList.add('active-nav');
-  document.getElementById('nav-library-btn').classList.remove('active-nav');
 
   state.wordsSeenSet = new Set();
   state.activePublicCollection = null; 
@@ -1939,11 +1904,12 @@ function showSetupScreen() {
   
   document.getElementById('story-meta').classList.add('hidden');
   document.getElementById('restart-btn').classList.add('hidden');
-  
-  document.getElementById('nav-library-btn').classList.remove('hidden');
-  document.getElementById('nav-setup-btn').classList.remove('hidden');
 }
-document.getElementById('restart-btn').addEventListener('click', showSetupScreen);
+
+document.getElementById('restart-btn').addEventListener('click', () => {
+  switchNav('nav-setup-btn');
+  showSetupScreen();
+});
 
 /* ════════════════════════════════════════════════════════════════
    WORD TRACKER & TOOLTIP
@@ -1958,21 +1924,17 @@ function buildWordTracker() {
     span.dataset.word = w.toLowerCase();
     tracker.appendChild(span);
   });
-tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
+  tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
     btn.addEventListener('click', async (e) => { 
       e.stopPropagation();
       const targetIdx = parseInt(btn.dataset.index);
-      
       const wordToMarkLearned = state.words[targetIdx];
-      
       state.words.splice(targetIdx, 1); 
-      
       buildWordTracker();
       markWordsUsed();
 
       if (state.currentUser) {
         const userRef = doc(db, "users", state.currentUser.uid);
-        
         if (state.activePublicCollection) {
           await updateDoc(userRef, {
             [`publicProgress.${state.activePublicCollection}`]: increment(1)
@@ -1984,7 +1946,7 @@ tracker.querySelectorAll('.tracker-word-remove').forEach(btn => {
           });
         }
       }
-  });
+    });
   });
 }
 
@@ -2008,23 +1970,6 @@ const vocabTooltip = document.getElementById('vocab-tooltip');
 let selectedTextToLearn = '';
 
 document.getElementById('page-left').addEventListener('click', handleTextTap);
-function handleTextSelection() {
-  setTimeout(() => {
-    const sel  = window.getSelection();
-    const text = sel.toString().trim();
-    if (text.length > 0 && text.length < 40) {
-      selectedTextToLearn = text;
-      const rect = sel.getRangeAt(0).getBoundingClientRect();
-      vocabTooltip.style.left      = `${rect.left + rect.width/2}px`;
-      vocabTooltip.style.top       = `${rect.top - 40}px`;
-      vocabTooltip.style.transform = 'translateX(-50%)';
-      vocabTooltip.classList.add('show');
-      vocabTooltip.textContent = '+ Add to Vocab';
-    } else {
-      vocabTooltip.classList.remove('show');
-    }
-  }, 10);
-}
 
 vocabTooltip.addEventListener('click', async e => { 
   e.preventDefault(); e.stopPropagation();
@@ -2052,7 +1997,7 @@ vocabTooltip.addEventListener('click', async e => {
 document.addEventListener('mousedown', e => { if(e.target !== vocabTooltip) vocabTooltip.classList.remove('show'); });
 
 /* ════════════════════════════════════════════════════════════════
-   SYSTEM PROMPT
+   SCENE GENERATION / API
 ════════════════════════════════════════════════════════════════ */
 function buildSystemPrompt() {
   const { targetLang, nativeLang, level, words } = state;
@@ -2064,7 +2009,6 @@ function buildSystemPrompt() {
   }[level];
 
   return `You are an immersive interactive story engine that teaches vocabulary through adaptive contextual fiction.
-
 TARGET LANGUAGE: ${targetLang} — write ALL narrative, dialogue, chapter labels, and choices in ${targetLang}.
 NATIVE LANGUAGE: ${nativeLang} — brief parenthetical gloss inside choices only when genuinely helpful.
 VOCABULARY TO TEACH: [${wordList}]
@@ -2079,7 +2023,6 @@ DIRECTIVES:
 CRITICAL PAYLOAD COMPRESSION DIRECTIVE:
 You must maintain a brief summary of the narrative development for internal tracking. 
 In your JSON response payload, output a highly condensed one-sentence background summary inside the "context_summary" parameter string. 
-This summary must encompass all vital past narrative developments plus the most immediate scene choices.
 
 JSON SCHEMA:
 {
@@ -2088,17 +2031,13 @@ JSON SCHEMA:
   "words_used": ["list of original vocabulary strings used in this scene"],
   "choices": [
     {"id":"I",   "text":"choice in ${targetLang}", "gloss":"optional brief ${nativeLang} gloss"},
-    {"id":"II",  "text":"choice in ${targetLang}", "gloss":"optional brief ${nativeLang} gloss"},
-    {"id":"III", "text":"choice in ${targetLang}", "gloss":"optional brief ${nativeLang} gloss"}
+    {"id":"II",  "text":"choice in ${targetLang}", "gloss":"optional brief ${nativeLang} gloss"}
   ],
   "is_final": false,
-  "context_summary": "1-sentence condensed summary of the overarching plot progression up to this moment, written in English for system context memory retention blocks"
+  "context_summary": "1-sentence condensed summary of plot progression"
 }`;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   SCENE GENERATION
-════════════════════════════════════════════════════════════════ */
 async function generateScene(chosenText = null) {
   state.streaming = true;
   const thisScene = state.scene + 1; 
@@ -2109,12 +2048,11 @@ async function generateScene(chosenText = null) {
   showChoiceLoading();
 
   const isHardCeiling = thisScene >= state.maxScenes;
-
   let userMsg = '';
   if (thisScene === 1) {
-    userMsg = `Begin the narrative. Setting: ${state.setting || 'An evocative and mysterious environment suited for discovery'}. Targeting these vocabulary tokens: ${state.words.join(', ')}. Draft scene 1.`;
+    userMsg = `Begin the narrative. Setting: ${state.setting || 'An evocative and mysterious environment'}. Targeting these vocabulary tokens: ${state.words.join(', ')}. Draft scene 1.`;
   } else {
-    userMsg = `Continue the story. Story so far: "${state.rollingSummary}". The reader chose: "${chosenText}". ${isHardCeiling ? 'This is the final scene — conclude the story now. Set is_final true, omit choices.' : 'Write the next scene. You may conclude naturally if the arc is complete.'}`;
+    userMsg = `Continue the story. Story so far: "${state.rollingSummary}". The reader chose: "${chosenText}". ${isHardCeiling ? 'This is the final scene — conclude the story now. Set is_final true, omit choices.' : 'Write the next scene.'}`;
   }
 
   try {
@@ -2124,7 +2062,6 @@ async function generateScene(chosenText = null) {
 
     state.scene = thisScene; 
     state.rollingSummary = scene.context_summary || '';
-
     renderScene(scene, isHardCeiling);
   } catch(err) {
     pageLeft.innerHTML = `<p class="story-error">⚠ ${escHtml(err.message)}</p>`;
@@ -2135,7 +2072,7 @@ async function generateScene(chosenText = null) {
         <button class="new-story-btn" id="new-story-btn2" style="margin-top:0.25rem;opacity:0.6">Back to setup</button>
       </div>`;
     document.getElementById('retry-btn')?.addEventListener('click', () => generateScene(chosenText));
-    document.getElementById('new-story-btn2')?.addEventListener('click', showSetupScreen);
+    document.getElementById('new-story-btn2')?.addEventListener('click', () => { switchNav('nav-setup-btn'); showSetupScreen(); });
   }
   state.streaming = false;
 }
@@ -2227,22 +2164,29 @@ function renderEnd(container) {
       <div class="end-words">${state.words.map(w=>`<span class="chip">${escHtml(w)}</span>`).join('')}</div>
       <button class="new-story-btn" id="new-story-btn">Begin another story</button>
     </div>`;
-  document.getElementById('new-story-btn').addEventListener('click', showSetupScreen);
+  document.getElementById('new-story-btn').addEventListener('click', () => { switchNav('nav-setup-btn'); showSetupScreen(); });
 }
+
 let cachedToken = null;
 let tokenExpiry = 0;
-
 async function getFastToken() {
+  if(!state.currentUser) return null;
   const now = Date.now();
   if (cachedToken && now < tokenExpiry - 60000) return cachedToken;
-  cachedToken = await auth.currentUser.getIdToken();
-  tokenExpiry = now + 3600000;
-  return cachedToken;
+  
+  try {
+    // Passing 'true' forces a refresh to guarantee the token isn't stale
+    cachedToken = await state.currentUser.getIdToken(true);
+    tokenExpiry = now + 3600000;
+    return cachedToken;
+  } catch (err) {
+    console.error("Failed to retrieve token:", err);
+    return null;
+  }
 }
 
 async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
-    const idToken = await getFastToken();
-
+  const idToken = await getFastToken();
   const isGemini = state.provider === 'gemini';
   const expectsJson = system.toLowerCase().includes('json');
 
@@ -2251,82 +2195,55 @@ async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
     payload = {
       contents: [{ role: 'user', parts: [{ text: userMsg }] }],
       systemInstruction: { parts: [{ text: system }] },
-      generationConfig: {
-        temperature: 0.82,
-        maxOutputTokens: maxTokens
-      }
+      generationConfig: { temperature: 0.82, maxOutputTokens: maxTokens }
     };
-
     if (expectsJson) {
       payload.generationConfig.responseMimeType = 'application/json';
       payload.generationConfig.responseSchema = {
         type: 'OBJECT',
         properties: {
-          chapter:         { type: 'STRING' },
-          narrative:       { type: 'STRING' },
-          words_used:      { type: 'ARRAY', items: { type: 'STRING' } },
-          choices: {
-            type: 'ARRAY',
-            items: {
-              type: 'OBJECT',
-              properties: {
-                id:    { type: 'STRING' },
-                text:  { type: 'STRING' },
-                gloss: { type: 'STRING' }
-              }
-            }
-          },
-          is_final:        { type: 'BOOLEAN' },
-          context_summary: { type: 'STRING' }
+          chapter: { type: 'STRING' }, narrative: { type: 'STRING' },
+          words_used: { type: 'ARRAY', items: { type: 'STRING' } },
+          choices: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: { type: 'STRING' }, text: { type: 'STRING' }, gloss: { type: 'STRING' } } } },
+          is_final: { type: 'BOOLEAN' }, context_summary: { type: 'STRING' }
         }
       };
     }
   } else {
     payload = {
       model: 'gpt-4o',
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user',   content: userMsg }
-      ],
-      temperature: 0.82,
-      max_tokens: maxTokens
+      messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }],
+      temperature: 0.82, max_tokens: maxTokens
     };
-    
-    if (expectsJson) {
-      payload.response_format = { type: 'json_object' };
-    }
+    if (expectsJson) payload.response_format = { type: 'json_object' };
   }
 
   let res;
   try {
     res = await fetch('/api/ai', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-firebase-token': idToken
-      },
-      body: JSON.stringify({ provider: state.provider, payload, isWordlist })
+      headers: { 'Content-Type': 'application/json', ...(idToken && {'x-firebase-token': idToken}) },
+      body: JSON.stringify({ provider: state.provider, payload, isWordlist, customKey: state.apiKey })
     });
   } catch (networkErr) {
     throw new Error('Network error: could not reach the AI provider. Check your connection.');
   }
-
-  if (!res.ok) {
+    if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    const msg = err?.error?.message || `AI error ${res.status}`;
-    if (res.status === 401 || res.status === 403) throw new Error('Unauthorized — please sign in again.');
-    if (res.status === 429) throw new Error('Rate limit (20) reached. Wait a moment, or paste your own API key.');
+    
+    // ADD THIS LINE to see the exact error from the backend:
+    console.error("BACKEND REJECTION REASON:", err);
+
+    const msg = err?.error?.message || err?.error || `AI error ${res.status}`;
+    if (res.status === 401 || res.status === 403) throw new Error(`Unauthorized: ${msg}`);
+    if (res.status === 429) throw new Error(err.error || 'Rate limit reached.');
     if (res.status === 400) throw new Error(`Bad request: ${msg}`);
     throw new Error(msg);
   }
 
   const data = await res.json();
-
-  if (isGemini) {
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  } else {
-    return data.choices?.[0]?.message?.content || '';
-  }
+  if (isGemini) return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return data.choices?.[0]?.message?.content || '';
 }
 
 function triggerTextDownload(filename, wordsArray) {
@@ -2334,142 +2251,84 @@ function triggerTextDownload(filename, wordsArray) {
   const textContent = wordsArray.join('\n');
   const blob = new Blob([textContent], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
-  
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
   document.body.appendChild(a);
   a.click();
-  
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
 
-/* ── TWO-STEP IN-STORY DELETION LOGIC ── */
 let selectedStoryWord = null;
-
 document.addEventListener('click', (e) => {
-  // Check if the user clicked on a highlighted vocab word in the story
   const clickedVocabNode = e.target.closest('.vocab-word');
-
   if (clickedVocabNode) {
-    // If they clicked the ALREADY selected word (Click 2: Delete)
     if (selectedStoryWord === clickedVocabNode) {
       const wordText = clickedVocabNode.textContent.toLowerCase().trim();
-
-      // 1. Find the corresponding word in the top tracker and click its remove button
       const trackerWords = document.querySelectorAll('.tracker-word');
       trackerWords.forEach(trackerNode => {
         const trackerBaseWord = trackerNode.dataset.word;
-        // Check if the story word contains the tracker word (or vice versa) to handle conjugations
         if (wordText.includes(trackerBaseWord) || trackerBaseWord.includes(wordText)) {
           const removeBtn = trackerNode.querySelector('.tracker-word-remove');
-          if (removeBtn) removeBtn.click(); // This triggers your existing Firebase/State deletion logic!
+          if (removeBtn) removeBtn.click(); 
         }
       });
-
-      // 2. Visually strip the word of its special styling in the story so it blends in
       clickedVocabNode.classList.remove('vocab-word', 'selected-word');
       clickedVocabNode.style.color = 'inherit';
       clickedVocabNode.style.border = 'none';
       clickedVocabNode.style.background = 'none';
       clickedVocabNode.style.textShadow = 'none';
-
-      selectedStoryWord = null; // Reset
-    } 
-    // If they clicked a NEW word (Click 1: Select/Highlight)
-    else {
-      // Un-highlight the previously selected word if one exists
-      if (selectedStoryWord) {
-        selectedStoryWord.classList.remove('selected-word');
-      }
-      
-      // Highlight the new one
+      selectedStoryWord = null; 
+    } else {
+      if (selectedStoryWord) selectedStoryWord.classList.remove('selected-word');
       clickedVocabNode.classList.add('selected-word');
       selectedStoryWord = clickedVocabNode;
     }
-  } 
-  // If they clicked anywhere else on the page (Cancel selection)
-  else {
+  } else {
     if (selectedStoryWord) {
       selectedStoryWord.classList.remove('selected-word');
-      selectedStoryWord = null; // Reset
+      selectedStoryWord = null; 
     }
   }
 });
 
 function handleTextTap(e) {
-  // 1. If they clicked an already highlighted vocab word, let your other script handle it
   if (e.target.closest('.vocab-word')) return;
-
   let range, textNode, offset;
-
-  // 2. Find exactly where the user tapped on the screen
-  if (document.caretRangeFromPoint) { // WebKit (iOS, Safari, Chrome)
+  if (document.caretRangeFromPoint) {
     range = document.caretRangeFromPoint(e.clientX, e.clientY);
-    if (range) {
-      textNode = range.startContainer;
-      offset = range.startOffset;
-    }
-  } else if (document.caretPositionFromPoint) { // Firefox
+    if (range) { textNode = range.startContainer; offset = range.startOffset; }
+  } else if (document.caretPositionFromPoint) {
     const pos = document.caretPositionFromPoint(e.clientX, e.clientY);
-    if (pos) {
-      textNode = pos.offsetNode;
-      offset = pos.offset;
-    }
+    if (pos) { textNode = pos.offsetNode; offset = pos.offset; }
   }
-
-  // 3. Make sure they tapped on actual text, not empty space
   if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
-    vocabTooltip.classList.remove('show');
-    return;
+    vocabTooltip.classList.remove('show'); return;
   }
-
   const text = textNode.textContent;
-  
-  // 4. Regex to define what a "word" character is (supports English, accents, hyphens, and apostrophes)
   const isWordChar = (char) => /[\p{L}\p{M}\-']/u.test(char);
-
-  // 5. Expand outward from the tap point to find the start and end of the word
-  let start = offset;
-  while (start > 0 && isWordChar(text[start - 1])) {
-    start--;
-  }
-
-  let end = offset;
-  while (end < text.length && isWordChar(text[end])) {
-    end++;
-  }
-
+  let start = offset; while (start > 0 && isWordChar(text[start - 1])) start--;
+  let end = offset; while (end < text.length && isWordChar(text[end])) end++;
   const clickedWord = text.substring(start, end).trim();
 
-  // 6. If a valid word was found, trigger the tooltip!
   if (clickedWord.length > 1) {
-    // Programmatically highlight the word so the user sees what they selected
     const newRange = document.createRange();
-    newRange.setStart(textNode, start);
-    newRange.setEnd(textNode, end);
-    
+    newRange.setStart(textNode, start); newRange.setEnd(textNode, end);
     const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(newRange);
-
+    sel.removeAllRanges(); sel.addRange(newRange);
     selectedTextToLearn = clickedWord;
-    
-    // Position tooltip slightly above the tap coordinates
     vocabTooltip.style.left = `${e.clientX}px`;
     vocabTooltip.style.top = `${e.clientY - 45}px`;
     vocabTooltip.style.transform = 'translateX(-50%)';
     vocabTooltip.classList.add('show');
     vocabTooltip.textContent = '+ Add to Vocab';
   } else {
-    // They tapped on a space or punctuation
     vocabTooltip.classList.remove('show');
     window.getSelection().removeAllRanges();
   }
 }
 
-/* ── Helpers ─────────────────────────────────────────────────── */
 function parseScene(raw) {
   try { return JSON.parse(raw.replace(/```json/gi,'').replace(/```/g,'').trim()); }
   catch { const m = raw.match(/\{[\s\S]*\}/); return m ? JSON.parse(m[0]) : null; }
@@ -2480,31 +2339,21 @@ function romanize(n) {
   [1000,900,500,400,100,90,50,40,10,9,5,4,1].forEach((v,i)=>{while(n>=v){r+=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'][i];n-=v;}});
   return r;
 }
-/* ── MOBILE SCROLL ACTIVATION LOGIC ── */
-document.addEventListener('click', (e) => {
-  // Only apply this logic on mobile screens
-  if (window.innerWidth > 700) return;
 
-  // Listen for taps on BOTH horizontal and vertical pill containers
+document.addEventListener('click', (e) => {
+  if (window.innerWidth > 700) return;
   const clickedScrollContainer = e.target.closest('.scroll-pills-x, .scroll-pills-y');
   const allActiveContainers = document.querySelectorAll('.scroll-active');
-
-  // If the user tapped on a scrollable pill container
   if (clickedScrollContainer) {
-    // If it's NOT already active, activate it
     if (!clickedScrollContainer.classList.contains('scroll-active')) {
-      // Deactivate any other active containers so only one is open at a time
       allActiveContainers.forEach(el => el.classList.remove('scroll-active'));
-      
-      // Activate the tapped one (shows the border, enables scroll)
       clickedScrollContainer.classList.add('scroll-active');
     }
-  } 
-  // If the user tapped anywhere outside, deactivate everything to clean up
-  else {
+  } else {
     allActiveContainers.forEach(el => el.classList.remove('scroll-active'));
   }
 });
+
 function toggleVocabLock(isLocked, collectionName = "") {
   const ta = document.getElementById('vocab-textarea');
   const uploadLbl = document.getElementById('upload-icon-label');
@@ -2513,9 +2362,7 @@ function toggleVocabLock(isLocked, collectionName = "") {
   const genBtn = document.getElementById('generate-wordlist-btn');
 
   if (isLocked) {
-    ta.readOnly = true;
-    ta.style.opacity = '0.5';
-    ta.placeholder = ""; 
+    ta.readOnly = true; ta.style.opacity = '0.5'; ta.placeholder = ""; 
     if (uploadLbl) uploadLbl.style.display = 'none';
     if (uploadInp) uploadInp.disabled = true;
     if (genBtn) { genBtn.disabled = true; genBtn.classList.add('used'); }
@@ -2524,113 +2371,60 @@ function toggleVocabLock(isLocked, collectionName = "") {
       lockHint.innerHTML = `<span style="color:var(--gold)">🔒 Playing Public Archive:</span> <em>${escHtml(collectionName)}</em>.<br>Words are locked for this session.`;
     }
   } else {
-    ta.readOnly = false;
-    ta.style.opacity = '1';
+    ta.readOnly = false; ta.style.opacity = '1';
     ta.placeholder = "Type words, or upload a .txt file to build your long-term library.\n\nserendipity\ncome hell or high water\nder Augenblick\n\nOne word or phrase per line (or comma-separated).\nOr describe a topic — then hit ✦ Generate Wordlist below.";
     if (uploadLbl) uploadLbl.style.display = 'flex';
     if (uploadInp) uploadInp.disabled = false;
     if (genBtn && !state.generateUsed) { genBtn.disabled = false; genBtn.classList.remove('used'); }
-    if (lockHint) {
-      lockHint.innerHTML = "";
-      lockHint.style.marginBottom = '0';
-    }
+    if (lockHint) { lockHint.innerHTML = ""; lockHint.style.marginBottom = '0'; }
   }
-} /* <--- THIS bracket was missing right here! */
+}
 
-
-/* ── SCROLL MASK TOGGLE LOGIC ── */
 function initScrollMasks() {
   document.querySelectorAll('.scroll-pills-x, .scroll-pills-y').forEach(el => {
     const isX = el.classList.contains('scroll-pills-x');
-    
     const checkScroll = () => {
-      // CRITICAL FIX: Ignore calculation if element is hidden in the background
       if (el.clientHeight === 0) return;
-      
       if (isX) {
         const needsScroll = el.scrollWidth > el.clientWidth;
-        // Adding a 5px buffer to account for rounding errors in scroll position
         const isAtEnd = Math.ceil(el.scrollLeft + el.clientWidth) >= el.scrollWidth - 5;
-        
-        if (needsScroll && !isAtEnd) el.classList.add('mask-right');
-        else el.classList.remove('mask-right');
+        if (needsScroll && !isAtEnd) el.classList.add('mask-right'); else el.classList.remove('mask-right');
       } else {
         const needsScroll = el.scrollHeight > el.clientHeight;
         const isAtEnd = Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight - 5;
-        
-        if (needsScroll && !isAtEnd) el.classList.add('mask-bottom');
-        else el.classList.remove('mask-bottom');
+        if (needsScroll && !isAtEnd) el.classList.add('mask-bottom'); else el.classList.remove('mask-bottom');
       }
     };
-
-    // Run once on load to evaluate initial state
     checkScroll();
-    
-    // Attach listener (removing old one first to avoid duplicates on re-render)
     el.removeEventListener('scroll', checkScroll);
     el.addEventListener('scroll', checkScroll);
   });
 }
 
-/* ── DESKTOP DRAG-TO-SCROLL (SWIPE) LOGIC ── */
-/* ── DESKTOP DRAG-TO-SCROLL (SWIPE) LOGIC ── */
 function initDragToScroll() {
   const sliders = document.querySelectorAll('.scroll-pills-x, .scroll-pills-y');
-  
   sliders.forEach(slider => {
-    let isDown = false;
-    let startX, startY, scrollLeft, scrollTop;
-
-    // Show a "grab" hand cursor on desktop so users know they can swipe
-    // if (window.innerWidth > 700) {
-    //   slider.style.cursor = 'grab';
-    // }
-
+    let isDown = false; let startX, startY, scrollLeft, scrollTop;
     slider.addEventListener('mousedown', (e) => {
       isDown = true;
-      //slider.style.cursor = 'grabbing';
-      startX = e.pageX - slider.offsetLeft;
-      startY = e.pageY - slider.offsetTop;
-      scrollLeft = slider.scrollLeft;
-      scrollTop = slider.scrollTop;
+      startX = e.pageX - slider.offsetLeft; startY = e.pageY - slider.offsetTop;
+      scrollLeft = slider.scrollLeft; scrollTop = slider.scrollTop;
     });
-
-    slider.addEventListener('mouseleave', () => {
-      isDown = false;
-      //if (window.innerWidth > 700) slider.style.cursor = 'grab';
-    });
-
-    slider.addEventListener('mouseup', () => {
-      isDown = false;
-      //if (window.innerWidth > 700) slider.style.cursor = 'grab';
-    });
-
+    slider.addEventListener('mouseleave', () => isDown = false);
+    slider.addEventListener('mouseup', () => isDown = false);
     slider.addEventListener('mousemove', (e) => {
       if (!isDown) return;
-      e.preventDefault(); // Prevents text highlighting while swiping
-      
-      const x = e.pageX - slider.offsetLeft;
-      const y = e.pageY - slider.offsetTop;
-      
+      e.preventDefault(); 
+      const x = e.pageX - slider.offsetLeft; const y = e.pageY - slider.offsetTop;
       if (slider.classList.contains('scroll-pills-x')) {
-        const walk = (x - startX) * 1.5; 
-        slider.scrollLeft = scrollLeft - walk;
+        const walk = (x - startX) * 1.5; slider.scrollLeft = scrollLeft - walk;
       } else {
-        const walk = (y - startY) * 1.5;
-        const newScrollTop = scrollTop - walk;
+        const walk = (y - startY) * 1.5; const newScrollTop = scrollTop - walk;
         const maxScroll = Math.max(0, slider.scrollHeight - slider.clientHeight);
-
-        // Chain the drag to the main window if the container is maxed out
         if (newScrollTop < 0) {
-          slider.scrollTop = 0;
-          window.scrollBy(0, newScrollTop); // Pulls the page up
-          startY = y; // Reset anchor to ensure smooth transfer
-          scrollTop = 0;
+          slider.scrollTop = 0; window.scrollBy(0, newScrollTop); startY = y; scrollTop = 0;
         } else if (newScrollTop > maxScroll) {
-          slider.scrollTop = maxScroll;
-          window.scrollBy(0, newScrollTop - maxScroll); // Pushes the page down
-          startY = y; // Reset anchor
-          scrollTop = maxScroll;
+          slider.scrollTop = maxScroll; window.scrollBy(0, newScrollTop - maxScroll); startY = y; scrollTop = maxScroll;
         } else {
           slider.scrollTop = newScrollTop;
         }
