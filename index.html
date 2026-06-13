@@ -18,7 +18,7 @@
 :root{
   --ink:#0c0a08;--ink-deep:#0E0C0B;--vellum:#F2E8D9;--vellum-dim:#E0D1BA;
   --dust:#7A8C7F;--rose:#B8725A;--gold:#B8923A;--gold-dim:#7A6028;
-  --sage:#6A8E7F;--text-dim:#7A6E64;
+  --sage:#6A8E7F;--text-dim:#b1b1b1;
 }
 html{font-size:16px}
 body{background:var(--ink);color:var(--vellum);font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;min-height:100vh;overflow-x:hidden}
@@ -35,7 +35,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .auth-modal-box { 
   width:100%; 
   max-width:440px; 
-  background:linear-gradient(160deg,#1e1c19,#16140f); 
+  background:linear-gradient(160deg,#141311,#16140f); 
   border:0.5px solid rgba(184,146,58,0.3); 
   border-radius:6px; 
   padding:2.5rem 2.5rem 2rem; 
@@ -193,7 +193,7 @@ input:focus::placeholder, textarea:focus::placeholder { color: transparent !impo
 .card-header{font-family:'IM Fell English',serif;font-style:italic;font-size:1.1rem;color:var(--gold);border-bottom:0.5px solid rgba(184,146,58,0.25);padding-bottom:0.5rem}
 .field-group{display:flex;flex-direction:column;gap:0.4rem}
 .field-label{font-family:'Cormorant SC',serif;font-size:0.72rem;font-weight:600;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase}
-.field-hint{font-family:'Inter',sans-serif;font-size:0.76rem;line-height:1.45;color:rgba(242,232,217,0.32)}
+.field-hint{font-family:'Inter',sans-serif;font-size:0.76rem;line-height:1.45;color:rgba(242,232,217,0.5)}
 .setup-divider{height:0.5px;background:linear-gradient(90deg,transparent,rgba(184,146,58,0.2),transparent);margin:0.25rem 0}
 
 textarea.inp{resize:none;line-height:1.65}
@@ -212,6 +212,20 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .generate-btn.used{opacity:0.3;cursor:not-allowed;color:var(--text-dim);border-color:rgba(255,255,255,0.1)}
 .generate-btn.loading{opacity:0.6}
 
+
+/* Brighter state for selected vocab words in the story */
+.vocab-word {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.vocab-word.selected-word {
+  color: #FFFFFF !important;
+  text-shadow: 0 0 10px rgba(184, 146, 58, 0.8);
+  border-bottom: 1.5px solid var(--gold) !important;
+  background: rgba(184, 146, 58, 0.15);
+  border-radius: 2px;
+}
 /* Custom scrollbars for all textareas */
 .vocab-textarea::-webkit-scrollbar,
 textarea.inp::-webkit-scrollbar {
@@ -794,7 +808,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
       <div class="col-right">
         <div class="setup-card">
           <h2 class="card-header">Ready to begin?</h2>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:rgba(242,232,217,0.5);line-height:1.7;font-style:italic">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:rgba(244, 240, 234, 0.7);line-height:1.7;font-style:italic">
             Your story unfolds across up to ten scenes. Vocabulary is woven naturally into the narrative and — at intermediate and advanced levels — into the choices themselves.
           </div>
           <div class="setup-divider"></div>
@@ -1661,7 +1675,7 @@ function updateApiUI(provider) {
 
   if (provider === 'gemini') {
     inp.placeholder = 'AIza… or AQ… (optional — free tier works without a key)';
-    hint.textContent = 'Leave blank to use the free Gemini tier, or paste your own key for higher limits.';
+    hint.textContent = 'Please put your own API key.';
     linkNote.innerHTML = 'Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a>';
     summaryAi.textContent = 'Gemini 2.0 Flash';
   } else {
@@ -2244,6 +2258,59 @@ function triggerTextDownload(filename, wordsArray) {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+/* ── TWO-STEP IN-STORY DELETION LOGIC ── */
+let selectedStoryWord = null;
+
+document.addEventListener('click', (e) => {
+  // Check if the user clicked on a highlighted vocab word in the story
+  const clickedVocabNode = e.target.closest('.vocab-word');
+
+  if (clickedVocabNode) {
+    // If they clicked the ALREADY selected word (Click 2: Delete)
+    if (selectedStoryWord === clickedVocabNode) {
+      const wordText = clickedVocabNode.textContent.toLowerCase().trim();
+
+      // 1. Find the corresponding word in the top tracker and click its remove button
+      const trackerWords = document.querySelectorAll('.tracker-word');
+      trackerWords.forEach(trackerNode => {
+        const trackerBaseWord = trackerNode.dataset.word;
+        // Check if the story word contains the tracker word (or vice versa) to handle conjugations
+        if (wordText.includes(trackerBaseWord) || trackerBaseWord.includes(wordText)) {
+          const removeBtn = trackerNode.querySelector('.tracker-word-remove');
+          if (removeBtn) removeBtn.click(); // This triggers your existing Firebase/State deletion logic!
+        }
+      });
+
+      // 2. Visually strip the word of its special styling in the story so it blends in
+      clickedVocabNode.classList.remove('vocab-word', 'selected-word');
+      clickedVocabNode.style.color = 'inherit';
+      clickedVocabNode.style.border = 'none';
+      clickedVocabNode.style.background = 'none';
+      clickedVocabNode.style.textShadow = 'none';
+
+      selectedStoryWord = null; // Reset
+    } 
+    // If they clicked a NEW word (Click 1: Select/Highlight)
+    else {
+      // Un-highlight the previously selected word if one exists
+      if (selectedStoryWord) {
+        selectedStoryWord.classList.remove('selected-word');
+      }
+      
+      // Highlight the new one
+      clickedVocabNode.classList.add('selected-word');
+      selectedStoryWord = clickedVocabNode;
+    }
+  } 
+  // If they clicked anywhere else on the page (Cancel selection)
+  else {
+    if (selectedStoryWord) {
+      selectedStoryWord.classList.remove('selected-word');
+      selectedStoryWord = null; // Reset
+    }
+  }
+});
 
 /* ── Helpers ─────────────────────────────────────────────────── */
 function parseScene(raw) {
