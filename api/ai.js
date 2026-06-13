@@ -50,8 +50,8 @@ export default async function handler(req, res) {
     const dailyCalls = data.date === today ? (data.calls || 0) : 0;
     const wordlistCalls = data.date === today ? (data.wordlists || 0) : 0;
 
-    if (dailyCalls >= 20) {
-      return res.status(429).json({ error: 'Daily story limit reached. Try again tomorrow!' });
+    if (dailyCalls >= 50) {
+      return res.status(429).json({ error: 'Daily scenes limit reached. Try again tomorrow!' });
     }
     if (isWordlist && wordlistCalls >= 2) {
       return res.status(429).json({ error: 'Daily wordlist generation limit reached.' });
