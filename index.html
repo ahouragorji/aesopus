@@ -926,10 +926,10 @@ async function renderLibraryFromCache() {
     });
   }
 
-  const grid = document.getElementById('public-collections-grid');
   
+const grid = document.getElementById('public-collections-grid');
   let addedCollectionsHTML = '';
-
+  let unsubscribedCollectionsHTML = ''; // 1. Create a new string for the public grid
   state.publicCollectionsCache.forEach(col => {
     const data = col.data;
     const colId = col.id;
@@ -939,7 +939,7 @@ async function renderLibraryFromCache() {
     const collectionName = data.title || data.name || data.Title || "Untitled Collection";
     
     if (isAdded) {
-      // Subscribed Collection HTML
+      // (Your existing Added Collections code stays exactly the same here)
       const pct = totalWords === 0 ? 0 : Math.round((checkpoint / totalWords) * 100);
       const progressHTML = `
         <div class="lexicon-progress-bg">
@@ -954,7 +954,7 @@ async function renderLibraryFromCache() {
       
       addedCollectionsHTML += buildRowHTML(escHtml(collectionName), `(${checkpoint}/${totalWords})`, data.words, addedBtns, progressHTML);
     } else {
-      // Unsubscribed Collection Note HTML
+      // (Your existing Public Collection Note HTML stays exactly the same here)
       const previewWords = data.words.slice(0, 35);
       const previewPills = previewWords.map(w => `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border-color: rgba(184,146,58,0.2); color: var(--text-dim); display: inline-block;">${escHtml(w)}</span>`).join('');
 
@@ -988,10 +988,13 @@ async function renderLibraryFromCache() {
           </div>
         </div>
       `;
-      grid.insertAdjacentHTML('beforeend', publicCardHTML);
+      // 2. Append to our string instead of the DOM
+      unsubscribedCollectionsHTML += publicCardHTML;
     }
   });
 
+  // 3. Update the DOM exactly once. This overwrites the loader and prevents duplicates!
+  grid.innerHTML = unsubscribedCollectionsHTML;
   // 5. Inject Personal Lexicon + Added Collections combined
   const container = document.getElementById('personal-lexicon-container');
   container.innerHTML = personalHTML + addedCollectionsHTML;
