@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Tab Favicon (Filled Golden Open Book) -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23B8923A' stroke='%237A6028' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23B8923A' stroke='%237A6028' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z'/%3E%3Cpath d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://firestore.googleapis.com">
 <link rel="preconnect" href="https://identitytoolkit.googleapis.com">
 <link rel="dns-prefetch" href="https://generativelanguage.googleapis.com">
@@ -224,16 +223,14 @@ select.inp option{background:#1C1917;color:var(--vellum)}
   overscroll-behavior-x: contain; /* Prevents page swipe-back when reaching the end */
 }
 .scroll-pills-y {
-    border: 0.5px solid transparent;
-    border-radius: 4px;
-    padding: 6px 4px; 
-    margin: -6px -4px; 
-    transition: border-color 0.3s ease, background 0.3s ease;
-    cursor: pointer;
-    
-    overflow-y: hidden; /* Lock internal scrolling */
-    overscroll-behavior-y: auto; /* ALLOW the main page to scroll if swiped */
-  }
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 6px; 
+  max-height: 110px; 
+  overflow-y: auto; 
+  align-content: flex-start; 
+  overscroll-behavior-y: auto;
+}
 
 /* Fading Masks */
 .mask-right {
@@ -580,7 +577,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   /* Story end */
   .story-end{padding:1.25rem 0.5rem}
   .end-title{font-size:1.35rem}
-/* ── MOBILE SCROLL LOCK LOGIC ── */
+
   /* ── MOBILE SCROLL LOCK LOGIC (Only for vertical Public Archives) ── */
   .scroll-pills-y {
     border: 0.5px solid transparent;
@@ -598,7 +595,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   /* The active state when tapped (Gold Border) */
   .scroll-pills-y.scroll-active {
     overflow-y: auto; /* Unlock internal scrolling */
-    overscroll-behavior-y: contain; /* TRAP the scroll so the page doesn't move */
+    overscroll-behavior-y: auto; /* TRAP the scroll so the page doesn't move */
     border-color: rgba(184, 146, 58, 0.4); 
     background: rgba(184, 146, 58, 0.04); 
     cursor: default;
@@ -745,7 +742,6 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   </div>
 
 </div>
-
 
 <div id="setup" class="hidden">
   <div class="setup-wrap">
@@ -955,7 +951,6 @@ async function renderLibraryFromCache() {
   const userProgress = userData.publicProgress || {};
 
   // -- Standardized Row HTML Builder --
-  // -- Standardized Row HTML Builder --
   const buildRowHTML = (title, countText, wordsList, actionBtns, progressBarHTML = '') => {
     const preview = wordsList.slice(0, 15); 
     
@@ -1077,7 +1072,6 @@ const grid = document.getElementById('public-collections-grid');
             
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
-            <!-- Actions div remains unchanged -->
             <div style="display: flex; gap: 6px; flex-wrap: wrap;">
               ${langTagHTML}
               ${levelTagHTML}
@@ -1103,40 +1097,6 @@ const grid = document.getElementById('public-collections-grid');
   const container = document.getElementById('personal-lexicon-container');
   container.innerHTML = personalHTML + addedCollectionsHTML;
 
-
-
-  /* ── SCROLL MASK TOGGLE LOGIC ── */
-function initScrollMasks() {
-  document.querySelectorAll('.scroll-pills-x, .scroll-pills-y').forEach(el => {
-    const isX = el.classList.contains('scroll-pills-x');
-    
-    const checkScroll = () => {
-      if (el.clientHeight === 0) return;
-      
-      if (isX) {
-        const needsScroll = el.scrollWidth > el.clientWidth;
-        // Adding a 5px buffer to account for rounding errors in scroll position
-        const isAtEnd = Math.ceil(el.scrollLeft + el.clientWidth) >= el.scrollWidth - 5;
-        
-        if (needsScroll && !isAtEnd) el.classList.add('mask-right');
-        else el.classList.remove('mask-right');
-      } else {
-        const needsScroll = el.scrollHeight > el.clientHeight;
-        const isAtEnd = Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight - 5;
-        
-        if (needsScroll && !isAtEnd) el.classList.add('mask-bottom');
-        else el.classList.remove('mask-bottom');
-      }
-    };
-
-    // Run once on load to evaluate initial state
-    checkScroll();
-    
-    // Attach listener (removing old one first to avoid duplicates on re-render)
-    el.removeEventListener('scroll', checkScroll);
-    el.addEventListener('scroll', checkScroll);
-  });
-}
   // 6. Toggle Visibility of the Entire Personal Lexicon Section
   const personalCard = document.getElementById('personal-lexicon-card');
   const hasActiveContent = unlearned.length > 0 || learned.length > 0 || addedCollectionsHTML.length > 0;
@@ -1167,8 +1127,10 @@ function initScrollMasks() {
   
   // Re-apply any active filters
   filterArchives();
-  // Initialize dynamic scroll masks
+  
+  // Initialize dynamic scroll masks and desktop swiping
   initScrollMasks();
+  initDragToScroll();
 }
 
 function attachPersonalListeners(learned, unlearned) {
@@ -2573,6 +2535,108 @@ function toggleVocabLock(isLocked, collectionName = "") {
       lockHint.style.marginBottom = '0';
     }
   }
+} /* <--- THIS bracket was missing right here! */
+
+
+/* ── SCROLL MASK TOGGLE LOGIC ── */
+function initScrollMasks() {
+  document.querySelectorAll('.scroll-pills-x, .scroll-pills-y').forEach(el => {
+    const isX = el.classList.contains('scroll-pills-x');
+    
+    const checkScroll = () => {
+      // CRITICAL FIX: Ignore calculation if element is hidden in the background
+      if (el.clientHeight === 0) return;
+      
+      if (isX) {
+        const needsScroll = el.scrollWidth > el.clientWidth;
+        // Adding a 5px buffer to account for rounding errors in scroll position
+        const isAtEnd = Math.ceil(el.scrollLeft + el.clientWidth) >= el.scrollWidth - 5;
+        
+        if (needsScroll && !isAtEnd) el.classList.add('mask-right');
+        else el.classList.remove('mask-right');
+      } else {
+        const needsScroll = el.scrollHeight > el.clientHeight;
+        const isAtEnd = Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight - 5;
+        
+        if (needsScroll && !isAtEnd) el.classList.add('mask-bottom');
+        else el.classList.remove('mask-bottom');
+      }
+    };
+
+    // Run once on load to evaluate initial state
+    checkScroll();
+    
+    // Attach listener (removing old one first to avoid duplicates on re-render)
+    el.removeEventListener('scroll', checkScroll);
+    el.addEventListener('scroll', checkScroll);
+  });
+}
+
+/* ── DESKTOP DRAG-TO-SCROLL (SWIPE) LOGIC ── */
+/* ── DESKTOP DRAG-TO-SCROLL (SWIPE) LOGIC ── */
+function initDragToScroll() {
+  const sliders = document.querySelectorAll('.scroll-pills-x, .scroll-pills-y');
+  
+  sliders.forEach(slider => {
+    let isDown = false;
+    let startX, startY, scrollLeft, scrollTop;
+
+    // Show a "grab" hand cursor on desktop so users know they can swipe
+    if (window.innerWidth > 700) {
+      slider.style.cursor = 'grab';
+    }
+
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      slider.style.cursor = 'grabbing';
+      startX = e.pageX - slider.offsetLeft;
+      startY = e.pageY - slider.offsetTop;
+      scrollLeft = slider.scrollLeft;
+      scrollTop = slider.scrollTop;
+    });
+
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      if (window.innerWidth > 700) slider.style.cursor = 'grab';
+    });
+
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      if (window.innerWidth > 700) slider.style.cursor = 'grab';
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault(); // Prevents text highlighting while swiping
+      
+      const x = e.pageX - slider.offsetLeft;
+      const y = e.pageY - slider.offsetTop;
+      
+      if (slider.classList.contains('scroll-pills-x')) {
+        const walk = (x - startX) * 1.5; 
+        slider.scrollLeft = scrollLeft - walk;
+      } else {
+        const walk = (y - startY) * 1.5;
+        const newScrollTop = scrollTop - walk;
+        const maxScroll = Math.max(0, slider.scrollHeight - slider.clientHeight);
+
+        // Chain the drag to the main window if the container is maxed out
+        if (newScrollTop < 0) {
+          slider.scrollTop = 0;
+          window.scrollBy(0, newScrollTop); // Pulls the page up
+          startY = y; // Reset anchor to ensure smooth transfer
+          scrollTop = 0;
+        } else if (newScrollTop > maxScroll) {
+          slider.scrollTop = maxScroll;
+          window.scrollBy(0, newScrollTop - maxScroll); // Pushes the page down
+          startY = y; // Reset anchor
+          scrollTop = maxScroll;
+        } else {
+          slider.scrollTop = newScrollTop;
+        }
+      }
+    });
+  });
 }
 </script>
 </body>
