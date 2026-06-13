@@ -457,7 +457,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 .new-story-btn{margin-top:0.5rem;padding:0.65rem 1.8rem;background:rgba(184,146,58,0.12);border:0.5px solid rgba(184,146,58,0.4);border-radius:3px;font-family:'IM Fell English',serif;font-style:italic;font-size:1rem;color:var(--gold);letter-spacing:0.04em;transition:background 0.2s}
 .new-story-btn:hover{background:rgba(184,146,58,0.22)}
 .story-error{font-style:italic;color:var(--rose);font-size:0.95rem}
-#vocab-tooltip{position:absolute;display:none;background:rgba(14,12,11,0.95);border:0.5px solid var(--gold);color:var(--gold);padding:6px 14px;border-radius:4px;font-family:'Cormorant SC',sans-serif;font-size:0.85rem;letter-spacing:0.08em;cursor:pointer;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.5);transition:background 0.2s;pointer-events:auto}
+#vocab-tooltip{position:fixed;display:none;background:rgba(14,12,11,0.95);border:0.5px solid var(--gold);color:var(--gold);padding:6px 14px;border-radius:4px;font-family:'Cormorant SC',sans-serif;font-size:0.85rem;letter-spacing:0.08em;cursor:pointer;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,0.5);transition:background 0.2s;pointer-events:auto}
 #vocab-tooltip:hover{background:rgba(184,146,58,0.15)}
 #vocab-tooltip.show{display:block;animation:popIn 0.2s cubic-bezier(0.175,0.885,0.32,1.275)}
 @keyframes popIn{from{opacity:0;transform:translateY(5px) scale(0.95) translateX(-50%)}to{opacity:1;transform:translateY(0) scale(1) translateX(-50%)}}
@@ -1574,6 +1574,7 @@ setPersistence(auth, browserLocalPersistence)
         document.getElementById('nav-setup-btn').classList.add('active-nav');
         document.getElementById('nav-library-btn').classList.remove('active-nav');
 
+        const userRef = doc(db, "users", user.uid);
         if (libraryUnsubscribe) libraryUnsubscribe();
           libraryUnsubscribe = onSnapshot(userRef, (docSnap) => {
             state.userData = docSnap.data() || {};
@@ -1657,7 +1658,7 @@ function updateApiUI(provider) {
 
   if (provider === 'gemini') {
     inp.placeholder = 'AIza… or AQ… (optional — free tier works without a key)';
-    hint.textContent = 'Nah you gotta have your own key for this one, if you don\'t, try chatgpt.';
+    hint.textContent = 'Leave blank to use the free Gemini tier, or paste your own key for higher limits.';
     linkNote.innerHTML = 'Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" id="api-link">aistudio.google.com</a>';
     summaryAi.textContent = 'Gemini 2.0 Flash';
   } else {
@@ -1771,28 +1772,26 @@ async function beginStory() {
     }
     state.words = manualWords.slice(0, 30);
   } else {
-    let unlearnedPool = state.userData.unlearned || [];
-    // try {
-    //   const userRef = doc(db, "users", state.currentUser.uid);
-    //   const userSnap = await getDoc(userRef);
-    //   let unlearnedPool = userSnap.exists() ? (userSnap.data().unlearned || []) : [];
-      
-    //   const combinedPool = [...new Set([...manualWords, ...state.uploadedWords, ...unlearnedPool])];
-      
-    //   if (combinedPool.length === 0) {
-    //     errEl.textContent = 'Your personal queue is empty. Enter words manually or upload a .txt file.';
-    //     return;
-    //   }
-      
-    //   await setDoc(userRef, { unlearned: combinedPool }, { merge: true });
-    //   state.uploadedWords = [];
-    //   state.words = combinedPool.slice(0, 30);
-      
-    // } catch (err) {
-    //   console.error("Error fetching vocab:", err);
-    //   errEl.textContent = 'Could not load your vocabulary. Check your connection.';
-    //   return;
-    // }
+    const unlearnedPool = state.userData.unlearned || [];
+    const combinedPool = [...new Set([...manualWords, ...state.uploadedWords, ...unlearnedPool])];
+
+    if (combinedPool.length === 0) {
+      errEl.textContent = 'Your personal queue is empty. Enter words manually or upload a .txt file.';
+      return;
+    }
+
+    // Persist any newly added words back to Firebase
+    if (state.currentUser && (manualWords.length > 0 || state.uploadedWords.length > 0)) {
+      try {
+        const userRef = doc(db, "users", state.currentUser.uid);
+        await setDoc(userRef, { unlearned: combinedPool }, { merge: true });
+      } catch (err) {
+        console.warn("Could not persist vocab to Firebase:", err);
+      }
+    }
+
+    state.uploadedWords = [];
+    state.words = combinedPool.slice(0, 30);
   }
 
   state.targetLang = document.getElementById('target-lang').value;
@@ -1913,8 +1912,8 @@ function handleTextSelection() {
     if (text.length > 0 && text.length < 40) {
       selectedTextToLearn = text;
       const rect = sel.getRangeAt(0).getBoundingClientRect();
-      vocabTooltip.style.left      = `${rect.left + rect.width/2 + window.scrollX}px`;
-      vocabTooltip.style.top       = `${rect.top - 40 + window.scrollY}px`;
+      vocabTooltip.style.left      = `${rect.left + rect.width/2}px`;
+      vocabTooltip.style.top       = `${rect.top - 40}px`;
       vocabTooltip.style.transform = 'translateX(-50%)';
       vocabTooltip.classList.add('show');
       vocabTooltip.textContent = '+ Add to Vocab';
@@ -2244,7 +2243,6 @@ function triggerTextDownload(filename, wordsArray) {
 }
 
 /* ── Helpers ─────────────────────────────────────────────────── */
-grid.innerHTML = '';
 function parseScene(raw) {
   try { return JSON.parse(raw.replace(/```json/gi,'').replace(/```/g,'').trim()); }
   catch { const m = raw.match(/\{[\s\S]*\}/); return m ? JSON.parse(m[0]) : null; }
