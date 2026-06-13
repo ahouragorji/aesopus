@@ -57,10 +57,10 @@ export default async function handler(req, res) {
       return res.status(429).json({ error: 'Daily wordlist generation limit reached.' });
     }
 
-    // Increment quotas
+    // Increment quotas — wordlist generation does NOT consume a scene slot
     await userQuotaRef.set({ 
       date: today, 
-      calls: dailyCalls + 1,
+      calls: isWordlist ? dailyCalls : dailyCalls + 1,
       wordlists: isWordlist ? wordlistCalls + 1 : wordlistCalls 
     }, { merge: true });
 

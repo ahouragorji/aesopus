@@ -913,7 +913,8 @@ const state = {
   activePublicCollection: null, 
   generateUsed: false,
   userData: {},               
-  publicCollectionsCache: null 
+  publicCollectionsCache: null,
+  cachedQuotaData: null
 };
 const MAX_WORDS = 30;
 
@@ -1541,9 +1542,32 @@ let libraryUnsubscribe = null;
 let quotaUnsubscribe = null;
 
 function updateSettingsStats() {
-  if (state.currentUser) {
-    document.getElementById('stat-words-learned').textContent = (state.userData.learned || []).length;
-    document.getElementById('stat-total-stories').textContent = state.userData.totalStories || 0;
+  if (!state.currentUser) return;
+  document.getElementById('stat-words-learned').textContent = (state.userData.learned || []).length;
+  document.getElementById('stat-total-stories').textContent = state.userData.totalStories || 0;
+
+  // Re-read the latest cached quota data so the bars are current on navigation
+  if (state.cachedQuotaData) {
+    const quotaData = state.cachedQuotaData;
+    const today = new Date().toISOString().slice(0,10);
+    const calls = quotaData.date === today ? (quotaData.calls || 0) : 0;
+    const wordlists = quotaData.date === today ? (quotaData.wordlists || 0) : 0;
+    const scenesUsed = Math.min(50, calls);
+    const wordlistsUsed = Math.min(2, wordlists);
+
+    document.getElementById('stat-stories-left').textContent = `${scenesUsed} / 50`;
+    document.getElementById('stat-wordlists-left').textContent = `${wordlistsUsed} / 2`;
+
+    const fillStories = document.getElementById('limit-bar-stories');
+    if (fillStories) {
+      fillStories.style.width = `${Math.round((scenesUsed / 50) * 100)}%`;
+      fillStories.classList.toggle('danger', scenesUsed >= 45);
+    }
+    const fillWordlists = document.getElementById('limit-bar-wordlists');
+    if (fillWordlists) {
+      fillWordlists.style.width = `${Math.round((wordlistsUsed / 2) * 100)}%`;
+      fillWordlists.classList.toggle('danger', wordlistsUsed >= 2);
+    }
   }
 }
 
@@ -1594,10 +1618,10 @@ setPersistence(auth, browserLocalPersistence)
 
         // Track user dynamic cloud compute limit fields
         const quotaRef = doc(db, "quotas", user.uid);
-       if (quotaUnsubscribe) quotaUnsubscribe();
-    if (quotaUnsubscribe) quotaUnsubscribe();
-    quotaUnsubscribe = onSnapshot(quotaRef, (docSnap) => {
+        if (quotaUnsubscribe) quotaUnsubscribe();
+        quotaUnsubscribe = onSnapshot(quotaRef, (docSnap) => {
       const quotaData = docSnap.data() || {};
+      state.cachedQuotaData = quotaData;  // cache so updateSettingsStats can use it on navigation
       const today = new Date().toISOString().slice(0,10);
       const calls = quotaData.date === today ? (quotaData.calls || 0) : 0;
       const wordlists = quotaData.date === today ? (quotaData.wordlists || 0) : 0;
@@ -1630,6 +1654,7 @@ setPersistence(auth, browserLocalPersistence)
         tokenExpiry = 0;
         state.currentUser = null;
         state.userData = {};
+        state.cachedQuotaData = null;
         
         document.getElementById('topbar-login-btn').classList.remove('hidden');
         document.getElementById('topbar-logout-btn').classList.add('hidden');
@@ -1639,10 +1664,12 @@ setPersistence(auth, browserLocalPersistence)
         if (libraryUnsubscribe) { libraryUnsubscribe(); libraryUnsubscribe = null; }
         if (quotaUnsubscribe) { quotaUnsubscribe(); quotaUnsubscribe = null; }
         
-        document.getElementById('stat-stories-left').textContent = "20 / 20";
-        document.getElementById('stat-wordlists-left').textContent = "2 / 2";
-        const fill = document.getElementById('limit-bar-fill');
-        if (fill) fill.style.width = "100%";
+        document.getElementById('stat-stories-left').textContent = "0 / 50";
+        document.getElementById('stat-wordlists-left').textContent = "0 / 2";
+        const fillStories = document.getElementById('limit-bar-stories');
+        if (fillStories) { fillStories.style.width = "0%"; fillStories.classList.remove('danger'); }
+        const fillWordlists = document.getElementById('limit-bar-wordlists');
+        if (fillWordlists) { fillWordlists.style.width = "0%"; fillWordlists.classList.remove('danger'); }
 
         renderLibraryFromCache();
       }
@@ -1756,7 +1783,8 @@ document.getElementById('provider-toggle-wrap').addEventListener('click', async 
     await setDoc(doc(db, "users", state.currentUser.uid), { provider: nextProvider }, { merge: true });
   }
 });
-updateApiUI('openai');
+// Default provider UI — will be overridden by onSnapshot if the user has a saved preference
+if (!state.currentUser) updateApiUI('openai');
 
 /* ════════════════════════════════════════════════════════════════
    SETUP INTERACTIONS
