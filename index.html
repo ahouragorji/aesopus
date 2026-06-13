@@ -581,6 +581,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   .story-end{padding:1.25rem 0.5rem}
   .end-title{font-size:1.35rem}
 /* ── MOBILE SCROLL LOCK LOGIC ── */
+  /* ── MOBILE SCROLL LOCK LOGIC (Only for vertical Public Archives) ── */
   .scroll-pills-y {
     border: 0.5px solid transparent;
     border-radius: 4px;
@@ -589,6 +590,7 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
     transition: border-color 0.3s ease, background 0.3s ease;
     cursor: pointer;
     
+    max-height: 110px !important; /* Force the height limit */
     overflow-y: hidden; /* Lock internal scrolling initially */
     overscroll-behavior-y: auto; /* ALLOW the main page to scroll if swiped */
   }
@@ -1109,6 +1111,8 @@ function initScrollMasks() {
     const isX = el.classList.contains('scroll-pills-x');
     
     const checkScroll = () => {
+      if (el.clientHeight === 0) return;
+      
       if (isX) {
         const needsScroll = el.scrollWidth > el.clientWidth;
         // Adding a 5px buffer to account for rounding errors in scroll position
