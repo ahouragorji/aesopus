@@ -1919,9 +1919,7 @@ function markWordsUsed(usedArr) {
 const vocabTooltip = document.getElementById('vocab-tooltip');
 let selectedTextToLearn = '';
 
-document.getElementById('page-left').addEventListener('mouseup', handleTextSelection);
-document.getElementById('page-left').addEventListener('touchend', handleTextSelection);
-
+document.getElementById('page-left').addEventListener('click', handleTextTap);
 function handleTextSelection() {
   setTimeout(() => {
     const sel  = window.getSelection();
@@ -2311,6 +2309,77 @@ document.addEventListener('click', (e) => {
     }
   }
 });
+
+function handleTextTap(e) {
+  // 1. If they clicked an already highlighted vocab word, let your other script handle it
+  if (e.target.closest('.vocab-word')) return;
+
+  let range, textNode, offset;
+
+  // 2. Find exactly where the user tapped on the screen
+  if (document.caretRangeFromPoint) { // WebKit (iOS, Safari, Chrome)
+    range = document.caretRangeFromPoint(e.clientX, e.clientY);
+    if (range) {
+      textNode = range.startContainer;
+      offset = range.startOffset;
+    }
+  } else if (document.caretPositionFromPoint) { // Firefox
+    const pos = document.caretPositionFromPoint(e.clientX, e.clientY);
+    if (pos) {
+      textNode = pos.offsetNode;
+      offset = pos.offset;
+    }
+  }
+
+  // 3. Make sure they tapped on actual text, not empty space
+  if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
+    vocabTooltip.classList.remove('show');
+    return;
+  }
+
+  const text = textNode.textContent;
+  
+  // 4. Regex to define what a "word" character is (supports English, accents, hyphens, and apostrophes)
+  const isWordChar = (char) => /[\p{L}\p{M}\-']/u.test(char);
+
+  // 5. Expand outward from the tap point to find the start and end of the word
+  let start = offset;
+  while (start > 0 && isWordChar(text[start - 1])) {
+    start--;
+  }
+
+  let end = offset;
+  while (end < text.length && isWordChar(text[end])) {
+    end++;
+  }
+
+  const clickedWord = text.substring(start, end).trim();
+
+  // 6. If a valid word was found, trigger the tooltip!
+  if (clickedWord.length > 1) {
+    // Programmatically highlight the word so the user sees what they selected
+    const newRange = document.createRange();
+    newRange.setStart(textNode, start);
+    newRange.setEnd(textNode, end);
+    
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+
+    selectedTextToLearn = clickedWord;
+    
+    // Position tooltip slightly above the tap coordinates
+    vocabTooltip.style.left = `${e.clientX}px`;
+    vocabTooltip.style.top = `${e.clientY - 45}px`;
+    vocabTooltip.style.transform = 'translateX(-50%)';
+    vocabTooltip.classList.add('show');
+    vocabTooltip.textContent = '+ Add to Vocab';
+  } else {
+    // They tapped on a space or punctuation
+    vocabTooltip.classList.remove('show');
+    window.getSelection().removeAllRanges();
+  }
+}
 
 /* ── Helpers ─────────────────────────────────────────────────── */
 function parseScene(raw) {
