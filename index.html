@@ -202,6 +202,48 @@ select.inp option{background:#1C1917;color:var(--vellum)}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
 .col-left,.col-centre,.col-right{min-width:0}
 
+
+/* ── SCROLLABLE PILL CONTAINERS ── */
+
+/* Hide scrollbars for all browsers */
+.hide-scrollbar {
+  -ms-overflow-style: none;     /* IE and Edge */
+  scrollbar-width: none;        /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari, Opera */
+}
+
+/* Base horizontal/vertical scroll layouts */
+.scroll-pills-x {
+  display: flex; 
+  gap: 8px; 
+  width: 100%; 
+  overflow-x: auto; 
+  white-space: nowrap; 
+  overscroll-behavior-x: contain; /* Prevents page swipe-back when reaching the end */
+}
+
+.scroll-pills-y {
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 6px; 
+  max-height: 110px; 
+  overflow-y: auto; 
+  align-content: flex-start; 
+  overscroll-behavior-y: contain;
+}
+
+/* Fading Masks */
+.mask-right {
+  mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%);
+}
+
+.mask-bottom {
+  mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+}
 /* Vocab textarea wrapper */
 .vocab-wrap{position:relative;border:0.5px solid rgba(184,146,58,0.22);border-radius:3px;overflow:hidden;background:transparent;transition:border-color 0.2s}
 .vocab-wrap:focus-within{border-color:rgba(184,146,58,0.55)}
@@ -537,6 +579,44 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
   /* Story end */
   .story-end{padding:1.25rem 0.5rem}
   .end-title{font-size:1.35rem}
+/* ── MOBILE SCROLL LOCK LOGIC ── */
+  .scroll-pills-x, .scroll-pills-y {
+    border: 0.5px solid transparent;
+    border-radius: 4px;
+    padding: 6px 4px; 
+    margin: -6px -4px; 
+    transition: border-color 0.3s ease, background 0.3s ease;
+    cursor: pointer;
+  }
+
+  /* Lock horizontal lists */
+  .scroll-pills-x {
+    overflow-x: hidden; 
+    touch-action: pan-y; /* Only allow page to scroll up/down */
+  }
+
+  /* Lock vertical lists (Public Archives) */
+  .scroll-pills-y {
+    overflow-y: hidden;
+  }
+
+  /* The active state when tapped (Gold Border) */
+  .scroll-pills-x.scroll-active {
+    overflow-x: auto;
+    touch-action: pan-x pan-y;
+  }
+
+  .scroll-pills-y.scroll-active {
+    overflow-y: auto;
+  }
+
+  /* Shared highlight styles */
+  .scroll-pills-x.scroll-active, 
+  .scroll-pills-y.scroll-active {
+    border-color: rgba(184, 146, 58, 0.4); 
+    background: rgba(184, 146, 58, 0.04); 
+    cursor: default;
+  }
 }
 
 /* Very small phones */
@@ -683,8 +763,15 @@ textarea.inp::-webkit-scrollbar-thumb:hover {
 
 <div id="setup" class="hidden">
   <div class="setup-wrap">
-    <div class="masthead">
-      <div class="masthead-rule"><span class="masthead-ornament">✦ ✦ ✦</span></div>
+   <div class="masthead">
+      <div class="masthead-rule">
+        <span class="masthead-ornament" style="display: flex; align-items: center; justify-content: center;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="var(--gold)" stroke="var(--gold-dim)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </span>
+      </div>
       <h1>Aesopus</h1>
       <p class="masthead-sub">language woven into living stories</p>
     </div>
@@ -882,9 +969,16 @@ async function renderLibraryFromCache() {
   const userProgress = userData.publicProgress || {};
 
   // -- Standardized Row HTML Builder --
+  // -- Standardized Row HTML Builder --
   const buildRowHTML = (title, countText, wordsList, actionBtns, progressBarHTML = '') => {
     const preview = wordsList.slice(0, 15); 
-    const pills = preview.map(w => `<span class="lexicon-pill">${escHtml(w)}</span>`).join('');
+    
+    // Create the pills and add "..." if the list exceeds the preview count
+    let pillsHtml = preview.map(w => `<span class="lexicon-pill">${escHtml(w)}</span>`).join('');
+    if (wordsList.length > 15) {
+      pillsHtml += `<span class="lexicon-pill" style="border:none; padding: 2px 4px; color: var(--text-dim);">...</span>`;
+    }
+
     return `
       <div class="lexicon-row">
         <div class="lexicon-header">
@@ -892,8 +986,8 @@ async function renderLibraryFromCache() {
         </div>
         <div class="lexicon-middle">
           <div class="lexicon-pills-wrapper" style="flex: 1; min-width: 0;">
-            <div class="lexicon-pills-mask" style="display: flex; gap: 8px; width: 100%; overflow: hidden; white-space: nowrap; mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%); -webkit-mask-image: linear-gradient(to right, black calc(100% - 60px), transparent 100%);">
-              ${pills}
+            <div class="scroll-pills-x hide-scrollbar mask-right">
+              ${pillsHtml}
             </div>
           </div>
           <div class="lexicon-actions">
@@ -968,10 +1062,17 @@ const grid = document.getElementById('public-collections-grid');
       
       addedCollectionsHTML += buildRowHTML(escHtml(collectionName), `(${checkpoint}/${totalWords})`, data.words, addedBtns, progressHTML);
     } else {
-      // (Your existing Public Collection Note HTML stays exactly the same here)
-      const previewWords = data.words.slice(0, 35);
-      const previewPills = previewWords.map(w => `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border-color: rgba(184,146,58,0.2); color: var(--text-dim); display: inline-block;">${escHtml(w)}</span>`).join('');
 
+      // 1. Define previewWords by taking the first 35 words of the collection
+      const previewWords = data.words.slice(0, 35);
+      
+      // 2. Generate the pills
+      let previewPills = previewWords.map(w => `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border-color: rgba(184,146,58,0.2); color: var(--text-dim); display: inline-block;">${escHtml(w)}</span>`).join('');
+      
+      if (data.words.length > 35) {
+        previewPills += `<span class="lexicon-pill" style="font-size: 0.8rem; padding: 2px 10px; border:none; color: var(--text-dim); display: inline-block;">...</span>`;
+      }
+      
       const langTag = data.language || 'Unknown';
       const levelTag = data.level || 'Unrated';
       const langTagHTML = langTag !== 'Unknown' ? `<span class="archive-tag">${escHtml(langTag)}</span>` : '';
@@ -983,11 +1084,14 @@ const grid = document.getElementById('public-collections-grid');
           <div>
             <h3 style="font-family:'IM Fell English',serif; color:var(--vellum); font-size:1.4rem; line-height: 1.2;">${escHtml(collectionName)}</h3>
             <div class="lexicon-count" style="margin-top: 0.3rem; margin-bottom: 1rem;">(${totalWords} words)</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 110px; overflow: hidden; mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);">
+            
+            <div class="scroll-pills-y hide-scrollbar mask-bottom">
               ${previewPills}
             </div>
+            
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+            <!-- Actions div remains unchanged -->
             <div style="display: flex; gap: 6px; flex-wrap: wrap;">
               ${langTagHTML}
               ${levelTagHTML}
@@ -1013,6 +1117,38 @@ const grid = document.getElementById('public-collections-grid');
   const container = document.getElementById('personal-lexicon-container');
   container.innerHTML = personalHTML + addedCollectionsHTML;
 
+
+
+  /* ── SCROLL MASK TOGGLE LOGIC ── */
+function initScrollMasks() {
+  document.querySelectorAll('.scroll-pills-x, .scroll-pills-y').forEach(el => {
+    const isX = el.classList.contains('scroll-pills-x');
+    
+    const checkScroll = () => {
+      if (isX) {
+        const needsScroll = el.scrollWidth > el.clientWidth;
+        // Adding a 5px buffer to account for rounding errors in scroll position
+        const isAtEnd = Math.ceil(el.scrollLeft + el.clientWidth) >= el.scrollWidth - 5;
+        
+        if (needsScroll && !isAtEnd) el.classList.add('mask-right');
+        else el.classList.remove('mask-right');
+      } else {
+        const needsScroll = el.scrollHeight > el.clientHeight;
+        const isAtEnd = Math.ceil(el.scrollTop + el.clientHeight) >= el.scrollHeight - 5;
+        
+        if (needsScroll && !isAtEnd) el.classList.add('mask-bottom');
+        else el.classList.remove('mask-bottom');
+      }
+    };
+
+    // Run once on load to evaluate initial state
+    checkScroll();
+    
+    // Attach listener (removing old one first to avoid duplicates on re-render)
+    el.removeEventListener('scroll', checkScroll);
+    el.addEventListener('scroll', checkScroll);
+  });
+}
   // 6. Toggle Visibility of the Entire Personal Lexicon Section
   const personalCard = document.getElementById('personal-lexicon-card');
   const hasActiveContent = unlearned.length > 0 || learned.length > 0 || addedCollectionsHTML.length > 0;
@@ -1043,6 +1179,8 @@ const grid = document.getElementById('public-collections-grid');
   
   // Re-apply any active filters
   filterArchives();
+  // Initialize dynamic scroll masks
+  initScrollMasks();
 }
 
 function attachPersonalListeners(learned, unlearned) {
@@ -2392,6 +2530,31 @@ function romanize(n) {
   [1000,900,500,400,100,90,50,40,10,9,5,4,1].forEach((v,i)=>{while(n>=v){r+=['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'][i];n-=v;}});
   return r;
 }
+/* ── MOBILE SCROLL ACTIVATION LOGIC ── */
+document.addEventListener('click', (e) => {
+  // Only apply this logic on mobile screens
+  if (window.innerWidth > 700) return;
+
+  // Listen for taps on BOTH horizontal and vertical pill containers
+  const clickedScrollContainer = e.target.closest('.scroll-pills-x, .scroll-pills-y');
+  const allActiveContainers = document.querySelectorAll('.scroll-active');
+
+  // If the user tapped on a scrollable pill container
+  if (clickedScrollContainer) {
+    // If it's NOT already active, activate it
+    if (!clickedScrollContainer.classList.contains('scroll-active')) {
+      // Deactivate any other active containers so only one is open at a time
+      allActiveContainers.forEach(el => el.classList.remove('scroll-active'));
+      
+      // Activate the tapped one (shows the border, enables scroll)
+      clickedScrollContainer.classList.add('scroll-active');
+    }
+  } 
+  // If the user tapped anywhere outside, deactivate everything to clean up
+  else {
+    allActiveContainers.forEach(el => el.classList.remove('scroll-active'));
+  }
+});
 function toggleVocabLock(isLocked, collectionName = "") {
   const ta = document.getElementById('vocab-textarea');
   const uploadLbl = document.getElementById('upload-icon-label');
