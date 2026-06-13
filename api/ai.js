@@ -23,7 +23,8 @@ export default async function handler(req, res) {
   }
 
   const uid = decodedToken.uid;
-  const { provider, payload, isWordlist } = req.body; // Add a flag to detect wordlist generations
+  // ADDED: Extract customKey from the incoming request body
+  const { provider, payload, isWordlist, customKey } = req.body; 
   const isGemini = provider === 'gemini';
 
   // --- QUOTA CHECK ---
@@ -70,12 +71,15 @@ export default async function handler(req, res) {
     console.error("Brevity injection failed.");
   }
 
+  // ADDED: Use customKey if provided, otherwise fallback to .env variables
   const targetUrl = isGemini
-    ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`
+    ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${customKey || process.env.GEMINI_API_KEY}`
     : 'https://api.openai.com/v1/chat/completions';
 
   const headers = { 'Content-Type': 'application/json' };
-  if (!isGemini) headers['Authorization'] = `Bearer ${process.env.OPENAI_API_KEY}`;
+  
+  // ADDED: Apply customKey to OpenAI authorization header if provided
+  if (!isGemini) headers['Authorization'] = `Bearer ${customKey || process.env.OPENAI_API_KEY}`;
 
   const upstream = await fetch(targetUrl, { method: 'POST', headers, body: JSON.stringify(payload) });
   const data = await upstream.json();
