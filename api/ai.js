@@ -1,29 +1,41 @@
 // api/ai.js
 import admin from 'firebase-admin';
 
+let adminInitError = null;
+
 if (!admin.apps.length) {
   try {
     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
     serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
     admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
   } catch (error) {
-    console.error("Firebase Init Error: Check your FIREBASE_SERVICE_ACCOUNT JSON formatting.");
+    adminInitError = error.message;
+    console.error("Firebase Init Error:", error);
   }
 }
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
+  // 1. Check if the server actually initialized correctly
+  if (adminInitError) {
+    return res.status(500).json({ error: 'Server Config Error: Check your FIREBASE_SERVICE_ACCOUNT variable.' });
+  }
+
   const idToken = req.headers['x-firebase-token'];
+  if (!idToken) {
+    return res.status(401).json({ error: 'Unauthorized: No token provided.' });
+  }
+
   let decodedToken;
   try {
     decodedToken = await admin.auth().verifyIdToken(idToken);
-  } catch {
-    return res.status(401).json({ error: 'Unauthorized' });
+  } catch (e) {
+    console.error("Token verification failed:", e);
+    return res.status(401).json({ error: 'Unauthorized: Invalid or expired token.' });
   }
 
   const uid = decodedToken.uid;
-  // ADDED: Extract customKey from the incoming request body
   const { provider, payload, isWordlist, customKey } = req.body; 
   const isGemini = provider === 'gemini';
 
@@ -71,14 +83,12 @@ export default async function handler(req, res) {
     console.error("Brevity injection failed.");
   }
 
-  // ADDED: Use customKey if provided, otherwise fallback to .env variables
   const targetUrl = isGemini
     ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${customKey || process.env.GEMINI_API_KEY}`
     : 'https://api.openai.com/v1/chat/completions';
 
   const headers = { 'Content-Type': 'application/json' };
   
-  // ADDED: Apply customKey to OpenAI authorization header if provided
   if (!isGemini) headers['Authorization'] = `Bearer ${customKey || process.env.OPENAI_API_KEY}`;
 
   const upstream = await fetch(targetUrl, { method: 'POST', headers, body: JSON.stringify(payload) });

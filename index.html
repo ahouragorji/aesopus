@@ -2169,9 +2169,16 @@ async function getFastToken() {
   if(!state.currentUser) return null;
   const now = Date.now();
   if (cachedToken && now < tokenExpiry - 60000) return cachedToken;
-  cachedToken = await auth.currentUser.getIdToken();
-  tokenExpiry = now + 3600000;
-  return cachedToken;
+  
+  try {
+    // Passing 'true' forces a refresh to guarantee the token isn't stale
+    cachedToken = await state.currentUser.getIdToken(true);
+    tokenExpiry = now + 3600000;
+    return cachedToken;
+  } catch (err) {
+    console.error("Failed to retrieve token:", err);
+    return null;
+  }
 }
 
 async function callAI(system, userMsg, maxTokens = 800, isWordlist = false) {
